@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import com.chopping.application.LL;
 import com.chopping.utils.Utils;
 import com.playground.notification.R;
+import com.playground.notification.app.App;
 import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ds.sync.Favorite;
 import com.playground.notification.ds.sync.SyncPlayground;
@@ -80,8 +81,8 @@ public abstract class SyncManager<T extends SyncPlayground> {
 				if (anchorV != null) {
 					Snackbar.make(anchorV, getAddSuccessText(), Snackbar.LENGTH_SHORT)
 					        .show();
-					Utils.showShortToast(anchorV.getContext(), getAddSuccessText());
 				}
+				Utils.showShortToast(App.Instance, getAddSuccessText());
 				if (btn != null) {
 					btn.setEnabled(true);
 				}
@@ -102,8 +103,8 @@ public abstract class SyncManager<T extends SyncPlayground> {
 						        }
 					        })
 					        .show();
-					Utils.showLongToast(anchorV.getContext(), R.string.meta_load_error);
 				}
+				Utils.showLongToast(App.Instance, R.string.meta_load_error);
 				if (btn != null) {
 					btn.setEnabled(true);
 					btn.setImageResource(getRemovedIcon());
@@ -144,8 +145,8 @@ public abstract class SyncManager<T extends SyncPlayground> {
 				if (anchorV != null) {
 					Snackbar.make(anchorV, getRemoveSuccessText(), Snackbar.LENGTH_SHORT)
 					        .show();
-					Utils.showShortToast(anchorV.getContext(), getRemoveSuccessText());
 				}
+				Utils.showShortToast(App.Instance, getRemoveSuccessText());
 				if (btn != null) {
 					btn.setEnabled(true);
 				}
@@ -167,8 +168,8 @@ public abstract class SyncManager<T extends SyncPlayground> {
 						        }
 					        })
 					        .show();
-					Utils.showLongToast(anchorV.getContext(), R.string.meta_load_error);
 				}
+				Utils.showLongToast(App.Instance, R.string.meta_load_error);
 				if (btn != null) {
 					btn.setEnabled(true);
 					btn.setImageResource(getAddedIcon());

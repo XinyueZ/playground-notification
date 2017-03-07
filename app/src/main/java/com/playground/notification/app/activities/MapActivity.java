@@ -506,7 +506,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 				}
 				final LatLng center = mMap.getProjection()
 				                          .getVisibleRegion().latLngBounds.getCenter();
-				showDialogFragment(MyLocationFragment.newInstance(App.Instance, location.getLatitude(), location.getLongitude(), new Playground(center.latitude, center.longitude), false), null);
+				showDialogFragment(MyLocationFragment.newInstance(App.Instance, location.getLatitude(), location.getLongitude(), new Playground(center.latitude, center.longitude)), null);
 				return true;
 			}
 		});

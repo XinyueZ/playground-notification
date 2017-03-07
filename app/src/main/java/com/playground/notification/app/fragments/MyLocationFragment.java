@@ -1,22 +1,23 @@
 package com.playground.notification.app.fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
-import com.bumptech.glide.Glide;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.playground.notification.R;
 import com.playground.notification.api.Api;
 import com.playground.notification.api.ApiNotInitializedException;
 import com.playground.notification.app.App;
-import com.playground.notification.app.activities.MapActivity;
 import com.playground.notification.databinding.MyLocationBinding;
 import com.playground.notification.ds.google.Matrix;
 import com.playground.notification.ds.grounds.Playground;
@@ -33,20 +34,22 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+import static com.playground.notification.utils.Utils.setPlaygroundIcon;
+
 /**
  * Information for my own location.
  *
  * @author Xinyue Zhao
  */
 public final class MyLocationFragment extends DialogFragment {
-	private static final String EXTRAS_LAT       = MyLocationFragment.class.getName() + ".EXTRAS.lat";
-	private static final String EXTRAS_LNG       = MyLocationFragment.class.getName() + ".EXTRAS.lng";
-	private static final String EXTRAS_GROUND    = MyLocationFragment.class.getName() + ".EXTRAS.playground";
+	private static final String EXTRAS_LAT = MyLocationFragment.class.getName() + ".EXTRAS.lat";
+	private static final String EXTRAS_LNG = MyLocationFragment.class.getName() + ".EXTRAS.lng";
+	private static final String EXTRAS_GROUND = MyLocationFragment.class.getName() + ".EXTRAS.playground";
 	private static final String EXTRAS_CLICKABLE = MyLocationFragment.class.getName() + ".EXTRAS.clickable";
 	/**
 	 * Main layout for this component.
 	 */
-	private static final int    LAYOUT           = R.layout.fragment_my_location;
+	private static final int LAYOUT = R.layout.fragment_my_location;
 	/**
 	 * Data-binding.
 	 */
@@ -55,66 +58,96 @@ public final class MyLocationFragment extends DialogFragment {
 	/**
 	 * New an instance of {@link MyLocationFragment}.
 	 *
-	 * @param context
-	 * 		{@link android.content.Context}.
-	 * @param fromLat
-	 * 		The latitude of "from" position to {@code playground}.
-	 * @param fromLng
-	 * 		The longitude of "from" position to {@code playground}.
-	 * @param playground
-	 * 		{@link Playground}.
-	 * @param clickable
-	 * 		{@code true} if the preview map can be clicked and show marker on main map.
-	 *
+	 * @param context    {@link android.content.Context}.
+	 * @param fromLat    The latitude of "from" position to {@code playground}.
+	 * @param fromLng    The longitude of "from" position to {@code playground}.
+	 * @param playground {@link Playground}.
 	 * @return An instance of {@link MyLocationFragment}.
 	 */
-	public static MyLocationFragment newInstance( Context context, double fromLat, double fromLng, Playground playground, boolean clickable ) {
+	public static MyLocationFragment newInstance(Context context, double fromLat, double fromLng, Playground playground) {
 		Bundle args = new Bundle();
-		args.putDouble( EXTRAS_LAT, fromLat );
-		args.putDouble( EXTRAS_LNG, fromLng );
-		args.putSerializable( EXTRAS_GROUND, (Serializable) playground );
-		args.putBoolean( EXTRAS_CLICKABLE, clickable );
-		return (MyLocationFragment) MyLocationFragment.instantiate( context, MyLocationFragment.class.getName(), args );
+		args.putDouble(EXTRAS_LAT, fromLat);
+		args.putDouble(EXTRAS_LNG, fromLng);
+		args.putSerializable(EXTRAS_GROUND, (Serializable) playground);
+		return (MyLocationFragment) MyLocationFragment.instantiate(context, MyLocationFragment.class.getName(), args);
 	}
 
 
 	@Override
-	public void onCreate( Bundle savedInstanceState ) {
-		super.onCreate( savedInstanceState );
-		setStyle( DialogFragment.STYLE_NO_TITLE, R.style.Theme_AppCompat_Light_Dialog );
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setStyle(DialogFragment.STYLE_NO_TITLE, R.style.Theme_AppCompat_Light_Dialog);
 	}
 
 
 	@Override
-	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
-		return inflater.inflate( LAYOUT, container, false );
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		return inflater.inflate(LAYOUT, container, false);
 	}
 
 	@Override
-	public void onViewCreated( View view, Bundle savedInstanceState ) {
-		super.onViewCreated( view, savedInstanceState );
-		Bundle           args       = getArguments();
-		final Playground playground = (Playground) args.getSerializable( EXTRAS_GROUND );
-		if( playground != null ) {
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		mBinding.map.onSaveInstanceState(outState);
+	}
 
-			final double lat = args.getDouble( EXTRAS_LAT );
-			final double lng = args.getDouble( EXTRAS_LNG );
+	@Override
+	public void onDestroy() {
+		mBinding.map.onDestroy();
+		super.onDestroy();
+	}
 
-			MyLocationManager manager    = MyLocationManager.getInstance();
-			MyLocation        myLocation = manager.findInCache( playground );
+	@Override
+	public void onStart() {
+		mBinding.map.onStart();
+		super.onStart();
+	}
+
+	@Override
+	public void onResume() {
+		mBinding.map.onResume();
+		super.onResume();
+	}
+
+	@Override
+	public void onPause() {
+		mBinding.map.onPause();
+		super.onPause();
+	}
+
+	@Override
+	public void onLowMemory() {
+		mBinding.map.onLowMemory();
+		super.onLowMemory();
+	}
+
+
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		Bundle args = getArguments();
+		final Playground playground = (Playground) args.getSerializable(EXTRAS_GROUND);
+		if (playground != null) {
+
+			final double lat = args.getDouble(EXTRAS_LAT);
+			final double lng = args.getDouble(EXTRAS_LNG);
+
+			MyLocationManager manager = MyLocationManager.getInstance();
+			MyLocation myLocation = manager.findInCache(playground);
 
 			Prefs prefs = Prefs.getInstance();
-			mBinding = DataBindingUtil.bind( view.findViewById( R.id.my_location_vg ) );
+			mBinding = DataBindingUtil.bind(view.findViewById(R.id.my_location_vg));
+			mBinding.map.onCreate(savedInstanceState);
 
-			if( myLocation != null ) {
-				mBinding.saveMyLocationIv.setImageResource( R.drawable.ic_action_delete );
-				mBinding.shareGroundBtn.setVisibility( View.VISIBLE );
-				mBinding.myLocationNameTv.setText( myLocation.getLabel() );
-				mBinding.myLocationNameTv.setEnabled( false );
+			if (myLocation != null) {
+				mBinding.saveMyLocationIv.setImageResource(R.drawable.ic_action_delete);
+				mBinding.shareGroundBtn.setVisibility(View.VISIBLE);
+				mBinding.myLocationNameTv.setText(myLocation.getLabel());
+				mBinding.myLocationNameTv.setEnabled(false);
 			}
 
 			final String method;
-			switch( prefs.getTransportationMethod() ) {
+			switch (prefs.getTransportationMethod()) {
 				case "0":
 					method = "driving";
 					break;
@@ -132,7 +165,7 @@ public final class MyLocationFragment extends DialogFragment {
 					break;
 			}
 			String units = "metric";
-			switch( prefs.getDistanceUnitsType() ) {
+			switch (prefs.getDistanceUnitsType()) {
 				case "0":
 					units = "metric";
 					break;
@@ -142,67 +175,90 @@ public final class MyLocationFragment extends DialogFragment {
 
 			}
 			try {
-				Api.getMatrix( lat + "," + lng, playground.getLatitude() + "," + playground.getLongitude(), Locale.getDefault().getLanguage(), method,
-							   App.Instance.getDistanceMatrixKey(), units, new Callback<Matrix>() {
-							@Override
-							public void success( Matrix matrix, Response response ) {
-								mBinding.setMatrix( matrix );
-								mBinding.setMode( method );
-								mBinding.setHandler( new EventHandler( lat, lng, playground, mBinding ) );
-							}
+				Api.getMatrix(lat + "," + lng,
+				              playground.getLatitude() + "," + playground.getLongitude(),
+				              Locale.getDefault()
+				                    .getLanguage(),
+				              method,
+				              App.Instance.getDistanceMatrixKey(),
+				              units,
+				              new Callback<Matrix>() {
+					              @Override
+					              public void success(Matrix matrix, Response response) {
+						              mBinding.setMatrix(matrix);
+						              mBinding.setMode(method);
+						              mBinding.setHandler(new EventHandler(lat, lng, playground, mBinding));
+					              }
 
-							@Override
-							public void failure( RetrofitError error ) {
+					              @Override
+					              public void failure(RetrofitError error) {
 
-							}
-						}
-				);
-			} catch( ApiNotInitializedException e ) {
+					              }
+				              });
+			} catch (ApiNotInitializedException e) {
 				dismiss();
 			}
 
 
-			String latlng  = playground.getLatitude() + "," + playground.getLongitude();
-			String maptype = prefs.getMapType().equals( "0" ) ? "roadmap" : "hybrid";
-			String url = prefs.getGoogleApiHost() + "maps/api/staticmap?center=" + latlng +
-						 "&zoom=16&size=" + prefs.getDetailPreviewSize() + "&markers=color:red%7Clabel:S%7C" + latlng + "&key=" +
-						 App.Instance.getDistanceMatrixKey() + "&sensor=true&maptype=" + maptype;
-			Glide.with(App.Instance ).load(url ).into(mBinding.locationPreviewIv );
-			if( getArguments().getBoolean( EXTRAS_CLICKABLE ) ) {
-				mBinding.locationPreviewIv.setOnClickListener( new OnClickListener() {
-					@Override
-					public void onClick( View v ) {
+			mBinding.map.getLayoutParams().width = (int) App.Instance.getListItemWidth() * 2;
+			mBinding.map.getLayoutParams().height = (int) App.Instance.getListItemHeight() * 2;
 
-						MapActivity.showInstance((Activity) mBinding.locationPreviewIv.getContext(), playground );
-					}
-				} );
-			}
+			mBinding.loadingPb.setVisibility(View.VISIBLE);
+			mBinding.map.getMapAsync(mOnMapReadyCallback);
 		}
 	}
+
+	/**
+	 * Map can be loaded successfully or not.
+	 */
+	private final OnMapReadyCallback mOnMapReadyCallback = new OnMapReadyCallback() {
+		@Override
+		public void onMapReady(GoogleMap googleMap) {
+			Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
+			googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(playground.getPosition(), 16));
+			MarkerOptions markerOptions = new MarkerOptions().position(playground.getPosition());
+			setPlaygroundIcon(App.Instance, playground, markerOptions);
+			googleMap.addMarker(markerOptions);
+			googleMap.setOnMapClickListener(mOnMapClickListener);
+			mBinding.map.setVisibility(View.VISIBLE);
+			mBinding.loadingPb.setVisibility(View.GONE);
+		}
+	};
+
+	/**
+	 * Click on map.
+	 */
+	private final GoogleMap.OnMapClickListener mOnMapClickListener = new GoogleMap.OnMapClickListener() {
+		@Override
+		public void onMapClick(LatLng latLng) {
+			//Ignore here...
+		}
+	};
 
 	/**
 	 * Event-handler for all radio-buttons on UI.
 	 */
 	public static class EventHandler {
-		private double            mLat;
-		private double            mLng;
-		private Playground        mGround;
+		private double mLat;
+		private double mLng;
+		private Playground mGround;
 		private MyLocationBinding mBinding;
 
-		public EventHandler( double fromLat, double fromLng, Playground playground, MyLocationBinding binding ) {
+		public EventHandler(double fromLat, double fromLng, Playground playground, MyLocationBinding binding) {
 			mLat = fromLat;
 			mLng = fromLng;
 			mGround = playground;
 			mBinding = binding;
 		}
 
-		public void onModeSelected( View view ) {
-			mBinding.setMode( view.getTag().toString() );
-			mBinding.changingPb.setVisibility( View.VISIBLE );
+		public void onModeSelected(View view) {
+			mBinding.setMode(view.getTag()
+			                     .toString());
+			mBinding.changingPb.setVisibility(View.VISIBLE);
 
-			Prefs  prefs = Prefs.getInstance();
+			Prefs prefs = Prefs.getInstance();
 			String units = "metric";
-			switch( prefs.getDistanceUnitsType() ) {
+			switch (prefs.getDistanceUnitsType()) {
 				case "0":
 					break;
 				case "1":
@@ -210,63 +266,76 @@ public final class MyLocationFragment extends DialogFragment {
 
 			}
 			try {
-				Api.getMatrix( mLat + "," + mLng, mGround.getLatitude() + "," + mGround.getLongitude(), Locale.getDefault().getLanguage(),
-							   mBinding.getMode(), App.Instance.getDistanceMatrixKey(), units, new Callback<Matrix>() {
-							@Override
-							public void success( Matrix matrix, Response response ) {
-								mBinding.setMatrix( matrix );
-								mBinding.setHandler( new EventHandler( mLat, mLng, mGround, mBinding ) );
-								mBinding.changingPb.setVisibility( View.GONE );
-							}
+				Api.getMatrix(mLat + "," + mLng,
+				              mGround.getLatitude() + "," + mGround.getLongitude(),
+				              Locale.getDefault()
+				                    .getLanguage(),
+				              mBinding.getMode(),
+				              App.Instance.getDistanceMatrixKey(),
+				              units,
+				              new Callback<Matrix>() {
+					              @Override
+					              public void success(Matrix matrix, Response response) {
+						              mBinding.setMatrix(matrix);
+						              mBinding.setHandler(new EventHandler(mLat, mLng, mGround, mBinding));
+						              mBinding.changingPb.setVisibility(View.GONE);
+					              }
 
-							@Override
-							public void failure( RetrofitError error ) {
-								mBinding.changingPb.setVisibility( View.GONE );
-							}
-						}
-				);
-			} catch( ApiNotInitializedException e ) {
+					              @Override
+					              public void failure(RetrofitError error) {
+						              mBinding.changingPb.setVisibility(View.GONE);
+					              }
+				              });
+			} catch (ApiNotInitializedException e) {
 				//Ignore this request.
-				mBinding.changingPb.setVisibility( View.GONE );
+				mBinding.changingPb.setVisibility(View.GONE);
 			}
 		}
 
-		public void onSaveMyLocationClicked( View v ) {
-			MyLocationManager manager    = MyLocationManager.getInstance();
-			MyLocation        myLocation = manager.findInCache( mGround );
-			if( myLocation != null ) {
-				manager.removeMyLocation( myLocation, mBinding.saveMyLocationIv, mBinding.myLocationVg );
+		public void onSaveMyLocationClicked(View v) {
+			MyLocationManager manager = MyLocationManager.getInstance();
+			MyLocation myLocation = manager.findInCache(mGround);
+			if (myLocation != null) {
+				manager.removeMyLocation(myLocation, mBinding.saveMyLocationIv, mBinding.myLocationVg);
 			} else {
-				String name = mBinding.myLocationNameTv.getText().toString();
-				if( Utils.validateStr( App.Instance, name ) ) {
-					InputMethodManager imm = (InputMethodManager) App.Instance.getSystemService( Context.INPUT_METHOD_SERVICE );
-					imm.hideSoftInputFromWindow( mBinding.myLocationNameTv.getWindowToken(), 0 );
+				String name = mBinding.myLocationNameTv.getText()
+				                                       .toString();
+				if (Utils.validateStr(App.Instance, name)) {
+					InputMethodManager imm = (InputMethodManager) App.Instance.getSystemService(Context.INPUT_METHOD_SERVICE);
+					imm.hideSoftInputFromWindow(mBinding.myLocationNameTv.getWindowToken(), 0);
 					mGround.setId(PlaygroundIdUtils.getId(mGround));
-					manager.addMyLocation( mGround, name, mBinding.saveMyLocationIv, mBinding.myLocationVg );
-					mBinding.shareGroundBtn.setVisibility( View.VISIBLE );
+					manager.addMyLocation(mGround, name, mBinding.saveMyLocationIv, null);
+					mBinding.shareGroundBtn.setVisibility(View.VISIBLE);
 				}
 			}
 		}
 
-		public void onShareGround( View v ) {
-			final String url = Prefs.getInstance().getGoogleMapSearchHost() + mGround.getLatitude() + "," + mGround.getLongitude();
-			com.tinyurl4j.Api.getTinyUrl( url, new Callback<com.tinyurl4j.data.Response>() {
+		public void onShareGround(View v) {
+			final String url = Prefs.getInstance()
+			                        .getGoogleMapSearchHost() + mGround.getLatitude() + "," + mGround.getLongitude();
+			com.tinyurl4j.Api.getTinyUrl(url, new Callback<com.tinyurl4j.data.Response>() {
 				@Override
-				public void success( com.tinyurl4j.data.Response response, retrofit.client.Response response2 ) {
-					String subject = App.Instance.getString( R.string.lbl_share_ground_title );
-					String content = App.Instance.getString( R.string.lbl_share_ground_content, response.getResult(),
-															 Prefs.getInstance().getAppDownloadInfo()
-					);
-					mBinding.shareGroundBtn.getContext().startActivity( Utils.getShareInformation( subject, content ) );
+				public void success(com.tinyurl4j.data.Response response, retrofit.client.Response response2) {
+					String subject = App.Instance.getString(R.string.lbl_share_ground_title);
+					String content = App.Instance.getString(R.string.lbl_share_ground_content,
+					                                        response.getResult(),
+					                                        Prefs.getInstance()
+					                                             .getAppDownloadInfo());
+					mBinding.shareGroundBtn.getContext()
+					                       .startActivity(Utils.getShareInformation(subject, content));
 				}
 
 				@Override
-				public void failure( RetrofitError error ) {
-					String subject = App.Instance.getString( R.string.lbl_share_ground_title );
-					String content = App.Instance.getString( R.string.lbl_share_ground_content, url, Prefs.getInstance().getAppDownloadInfo() );
-					mBinding.shareGroundBtn.getContext().startActivity( Utils.getShareInformation( subject, content ) );
+				public void failure(RetrofitError error) {
+					String subject = App.Instance.getString(R.string.lbl_share_ground_title);
+					String content = App.Instance.getString(R.string.lbl_share_ground_content,
+					                                        url,
+					                                        Prefs.getInstance()
+					                                             .getAppDownloadInfo());
+					mBinding.shareGroundBtn.getContext()
+					                       .startActivity(Utils.getShareInformation(subject, content));
 				}
-			} );
+			});
 		}
 
 	}

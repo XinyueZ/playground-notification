@@ -229,6 +229,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 
 	@Override
 	public void onStart() {
+		mBinding.map.onStart();
 		super.onStart();
 		if (mBehavior != null) {
 			mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);

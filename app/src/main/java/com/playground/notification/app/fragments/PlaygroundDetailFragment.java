@@ -25,7 +25,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.OnStreetViewPanoramaReadyCallback;
 import com.google.android.gms.maps.StreetViewPanorama;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.StreetViewPanoramaLocation;
 import com.google.android.gms.maps.model.StreetViewPanoramaOrientation;
@@ -68,7 +67,7 @@ import retrofit.client.Response;
 
 import static com.playground.notification.sync.RatingManager.showPersonalRatingOnLocation;
 import static com.playground.notification.sync.RatingManager.showRatingSummaryOnLocation;
-import static com.playground.notification.utils.Utils.getBitmapDescriptor;
+import static com.playground.notification.utils.Utils.setPlaygroundIcon;
 
 /**
  * Show details of a playground, address, rating.
@@ -491,10 +490,10 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 		public void onMapReady(GoogleMap googleMap) {
 			Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
 			googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(playground.getPosition(), 16));
-			Marker marker = googleMap.addMarker(new MarkerOptions().position(playground.getPosition()));
-			marker.setIcon(getBitmapDescriptor(App.Instance, R.drawable.ic_pin_500));
+			MarkerOptions markerOptions = new MarkerOptions().position(playground.getPosition());
+			setPlaygroundIcon(App.Instance, playground, markerOptions);
+			googleMap.addMarker(markerOptions);
 			googleMap.setOnMapClickListener(mOnMapClickListener);
-
 			if (mStreetViewPanoramaLocation != null) {
 				mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
 			}

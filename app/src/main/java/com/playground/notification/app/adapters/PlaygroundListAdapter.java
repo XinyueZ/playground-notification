@@ -16,7 +16,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.playground.notification.R;
 import com.playground.notification.app.App;
@@ -25,8 +24,6 @@ import com.playground.notification.bus.PinSelectedEvent;
 import com.playground.notification.databinding.ItemPlaygroundBinding;
 import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ds.sync.Rating;
-import com.playground.notification.sync.FavoriteManager;
-import com.playground.notification.sync.NearRingManager;
 import com.playground.notification.sync.RatingManager;
 
 import java.lang.ref.WeakReference;
@@ -35,7 +32,7 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
-import static com.playground.notification.utils.Utils.getBitmapDescriptor;
+import static com.playground.notification.utils.Utils.setPlaygroundIcon;
 
 
 /**
@@ -187,10 +184,6 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 			Playground playground = mPlaygroundListAdapter.mPlaygroundList.get(getAdapterPosition());
 
 			RatingManager.showRatingSummaryOnLocation(playground, this);
-			mBinding.setFavorited(FavoriteManager.getInstance()
-			                                     .isCached(playground));
-			mBinding.setNearRing(NearRingManager.getInstance()
-			                                     .isCached(playground));
 			mGoogleMap = googleMap;
 			mGoogleMap.setBuildingsEnabled(false);
 			mGoogleMap.setIndoorEnabled(false);
@@ -199,8 +192,9 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 			googleMap.getUiSettings()
 			         .setScrollGesturesEnabled(false);
 			googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(playground.getPosition(), 16));
-			Marker marker = googleMap.addMarker(new MarkerOptions().position(playground.getPosition()));
-			marker.setIcon(getBitmapDescriptor(App.Instance, R.drawable.ic_pin_500));
+			MarkerOptions options = new MarkerOptions().position(playground.getPosition());
+			setPlaygroundIcon(App.Instance, playground, options);
+			googleMap.addMarker(options);
 			googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 				@Override
 				public void onMapClick(LatLng latLng) {

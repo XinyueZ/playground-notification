@@ -18,14 +18,11 @@ package com.playground.notification.map;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v4.content.res.ResourcesCompat;
 
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CircleOptions;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
@@ -33,10 +30,10 @@ import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.playground.notification.R;
 import com.playground.notification.app.App;
 import com.playground.notification.ds.grounds.Playground;
-import com.playground.notification.ds.sync.MyLocation;
-import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.NearRingManager;
 import com.playground.notification.utils.Prefs;
+
+import static com.playground.notification.utils.Utils.setPlaygroundIcon;
 
 
 /**
@@ -54,28 +51,18 @@ final class PlaygroundClusterRenderer extends DefaultClusterRenderer<Playground>
 
 	@Override
 	protected boolean shouldRenderAsCluster(Cluster<Playground> cluster) {
-		return cluster.getSize() >= Prefs.getInstance().getClusterLimit();
+		return cluster.getSize() >= Prefs.getInstance()
+		                                 .getClusterLimit();
 	}
 
 	@Override
 	protected void onBeforeClusterItemRendered(Playground playground, MarkerOptions options) {
-		Location location = App.Instance.getCurrentLocation();
-		final LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-		LatLng to = new LatLng(playground.getLatitude(), playground.getLongitude());
-		//Draw different markers, for fav , for normal ground, for grounds in near-rings.
-		options.position(to);
-
-		if (playground instanceof MyLocation) {
-			options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_saved_ground));
-		} else {
-			FavoriteManager favMgr = FavoriteManager.getInstance();
-			if (favMgr.isInit() && favMgr.isCached(playground)) {
-				options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_favorited));
-			} else {
-				com.playground.notification.utils.Utils.changeMarkerIcon(options, currentLatLng, to);
-			}
+		if (playground == null || options == null) {
+			return;
 		}
-
+		//Draw different markers, for fav , for normal ground, for grounds in near-rings.
+		options.position(playground.getPosition());
+		setPlaygroundIcon(App.Instance, playground, options);
 		//Geofence-ring.
 		NearRingManager nearRingMgr = NearRingManager.getInstance();
 		if (nearRingMgr.isInit() && nearRingMgr.isCached(playground)) {

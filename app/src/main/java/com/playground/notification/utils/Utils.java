@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
@@ -20,6 +21,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.playground.notification.R;
 import com.playground.notification.app.App;
+import com.playground.notification.ds.grounds.Playground;
+import com.playground.notification.ds.sync.MyLocation;
+import com.playground.notification.sync.FavoriteManager;
+import com.playground.notification.sync.MyLocationManager;
 import com.playground.notification.sync.SyncManager;
 
 /**
@@ -172,7 +177,7 @@ public final class Utils {
 	}
 
 
-	public static BitmapDescriptor getBitmapDescriptor(Context cxt, int resId) {
+	private static BitmapDescriptor getBitmapDescriptor(@NonNull Context cxt, int resId) {
 		if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
 			return BitmapDescriptorFactory.fromResource(resId);
 		}
@@ -186,4 +191,19 @@ public final class Utils {
 	}
 
 
+	public static void setPlaygroundIcon(@NonNull Context cxt, @NonNull Playground playground, @NonNull MarkerOptions options) {
+		Location location = App.Instance.getCurrentLocation();
+		LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+		MyLocationManager myLocMgr = MyLocationManager.getInstance();
+		if (playground instanceof MyLocation || (myLocMgr.isInit() && myLocMgr.isCached(playground))) {
+			options.icon(getBitmapDescriptor(cxt, R.drawable.ic_saved_ground));
+		} else {
+			FavoriteManager favMgr = FavoriteManager.getInstance();
+			if (favMgr.isInit() && favMgr.isCached(playground)) {
+				options.icon(getBitmapDescriptor(cxt, R.drawable.ic_favorited));
+			} else {
+				com.playground.notification.utils.Utils.changeMarkerIcon(options, currentLatLng, playground.getPosition());
+			}
+		}
+	}
 }

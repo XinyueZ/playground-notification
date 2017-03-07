@@ -11,15 +11,6 @@
         <variable
             name="ratedValue"
             type="float"/>
-
-        <variable
-            name="favorited"
-            type="boolean"/>
-
-
-        <variable
-            name="nearRing"
-            type="boolean"/>
     </data>
 
 
@@ -65,6 +56,8 @@
                         android:id="@+id/item_bar_fl"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_marginBottom="@dimen/common_padding"
+                        android:layout_marginTop="@dimen/common_padding"
                         android:background="@drawable/selector_list_item">
 
                         <RatingBar
@@ -76,23 +69,6 @@
                             android:isIndicator="true"
                             android:rating="@{ratedValue}"/>
 
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="end|right|center_vertical"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:background="@drawable/ic_geo_fence"
-                                android:visibility="@{!nearRing ? View.GONE : View.VISIBLE}"/>
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:background="@drawable/ic_favorited"
-                                android:visibility="@{!favorited ? View.GONE : View.VISIBLE}"/>
-                        </LinearLayout>
                     </FrameLayout>
 
 

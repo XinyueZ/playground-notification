@@ -15,6 +15,11 @@
         <variable
             name="favorited"
             type="boolean"/>
+
+
+        <variable
+            name="nearRing"
+            type="boolean"/>
     </data>
 
 
@@ -67,16 +72,27 @@
                             style="?attr/ratingBarStyleSmall"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:isIndicator="true"
                             android:layout_gravity="center_vertical|start|left"
+                            android:isIndicator="true"
                             android:rating="@{ratedValue}"/>
 
-                        <ImageView
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="end|right|center_vertical"
-                            android:background="@drawable/ic_favorited"
-                            android:visibility="@{!favorited ? View.INVISIBLE : View.VISIBLE}"/>
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/ic_geo_fence"
+                                android:visibility="@{!nearRing ? View.GONE : View.VISIBLE}"/>
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/ic_favorited"
+                                android:visibility="@{!favorited ? View.GONE : View.VISIBLE}"/>
+                        </LinearLayout>
                     </FrameLayout>
 
 

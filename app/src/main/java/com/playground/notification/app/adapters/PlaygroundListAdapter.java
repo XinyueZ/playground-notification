@@ -26,6 +26,7 @@ import com.playground.notification.databinding.ItemPlaygroundBinding;
 import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ds.sync.Rating;
 import com.playground.notification.sync.FavoriteManager;
+import com.playground.notification.sync.NearRingManager;
 import com.playground.notification.sync.RatingManager;
 
 import java.lang.ref.WeakReference;
@@ -188,7 +189,8 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 			RatingManager.showRatingSummaryOnLocation(playground, this);
 			mBinding.setFavorited(FavoriteManager.getInstance()
 			                                     .isCached(playground));
-
+			mBinding.setNearRing(NearRingManager.getInstance()
+			                                     .isCached(playground));
 			mGoogleMap = googleMap;
 			mGoogleMap.setBuildingsEnabled(false);
 			mGoogleMap.setIndoorEnabled(false);

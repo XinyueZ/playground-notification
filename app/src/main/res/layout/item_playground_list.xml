@@ -8,18 +8,22 @@
 
         <import type="android.view.View"/>
 
+        <import type="android.text.TextUtils"/>
+
         <variable
             name="ratedValue"
             type="float"/>
+
+        <variable
+            name="address"
+            type="String"/>
     </data>
 
 
     <android.support.v7.widget.CardView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
         app:cardCornerRadius="1dp"
-        app:cardUseCompatPadding="false">
+        app:cardUseCompatPadding="false"
+        style="@style/ListItem">
 
         <com.playground.notification.ui.MaterialRippleLayout
             android:id="@+id/item_container_fl"
@@ -52,13 +56,17 @@
                         app:uiZoomGestures="false"/>
 
 
-                    <FrameLayout
+                    <LinearLayout
                         android:id="@+id/item_bar_fl"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginBottom="@dimen/common_padding"
                         android:layout_marginTop="@dimen/common_padding"
-                        android:background="@drawable/selector_list_item">
+                        android:background="@drawable/selector_list_item"
+                        android:orientation="vertical"
+                        android:paddingBottom="@dimen/common_padding"
+                        android:paddingLeft="@dimen/common_padding"
+                        android:paddingTop="@dimen/common_padding">
 
                         <RatingBar
                             android:id="@+id/location_rb"
@@ -69,7 +77,34 @@
                             android:isIndicator="true"
                             android:rating="@{ratedValue}"/>
 
-                    </FrameLayout>
+
+                        <FrameLayout
+                            android:layout_marginLeft="2dp"
+                            android:layout_marginStart="2dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <com.pnikosis.materialishprogress.ProgressWheel
+                                android:layout_width="15dp"
+                                android:layout_height="15dp"
+                                android:layout_gravity="center"
+                                android:visibility="@{!TextUtils.isEmpty(address) ? View.GONE : View.VISIBLE}"
+                                app:matProg_barColor="@color/primary_dark_color"
+                                app:matProg_barWidth="2dp"
+                                app:matProg_fillRadius="true"
+                                app:matProg_progressIndeterminate="true"/>
+
+                            <TextView
+                                android:id="@+id/address_tv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@{address}"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                                android:textColor="@color/common_black"
+                                android:visibility="@{TextUtils.isEmpty(address) ? View.GONE : View.VISIBLE}"/>
+                        </FrameLayout>
+
+                    </LinearLayout>
 
 
                 </LinearLayout>

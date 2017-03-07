@@ -2,10 +2,13 @@ package com.playground.notification.app.adapters;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.location.Address;
+import android.location.Geocoder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,14 +27,22 @@ import com.playground.notification.bus.PinSelectedEvent;
 import com.playground.notification.databinding.ItemPlaygroundBinding;
 import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ds.sync.Rating;
-import com.playground.notification.sync.RatingManager;
 
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import de.greenrobot.event.EventBus;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
+import static com.playground.notification.sync.RatingManager.RatingUI;
+import static com.playground.notification.sync.RatingManager.showRatingSummaryOnLocation;
 import static com.playground.notification.utils.Utils.setPlaygroundIcon;
 
 
@@ -42,11 +53,11 @@ import static com.playground.notification.utils.Utils.setPlaygroundIcon;
  */
 public final class PlaygroundListAdapter extends RecyclerView.Adapter<PlaygroundListAdapter.PlaygroundListAdapterViewHolder> {
 	private static final int ITEM_LAYOUT = R.layout.item_playground_list;
-	private List<Playground> mPlaygroundList = new ArrayList<>();
+	private final List<Playground> mPlaygroundList = new ArrayList<>();
 	private int mLastSelectedPosition = Adapter.NO_SELECTION;
 
 	private Playground mPlaygroundScrolledTo = null;
-	private LinearLayoutManager mLinearLayoutManager;
+	private final LinearLayoutManager mLinearLayoutManager;
 
 	public RecyclerView.OnScrollListener recyclerViewOnScrollListener = new RecyclerView.OnScrollListener() {
 		public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -76,6 +87,7 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 	 *
 	 * @param e Event {@link PinSelectedEvent}.
 	 */
+	@SuppressWarnings("unused")
 	public void onEvent(PinSelectedEvent e) {
 		mPlaygroundScrolledTo = e.getPlayground();
 		for (int i = 0, cnt = getItemCount();
@@ -147,10 +159,11 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 	}
 
 	protected static class PlaygroundListAdapterViewHolder extends RecyclerView.ViewHolder implements OnMapReadyCallback,
-	                                                                                                  RatingManager.RatingUI {
+	                                                                                                  RatingUI {
 		private final ItemPlaygroundBinding mBinding;
 		private final PlaygroundListAdapter mPlaygroundListAdapter;
 		private GoogleMap mGoogleMap;
+		private static final Geocoder GEOCODER = new Geocoder(App.Instance, Locale.getDefault());
 
 		private PlaygroundListAdapterViewHolder(PlaygroundListAdapter playgroundListAdapter, ItemPlaygroundBinding binding) {
 			super(binding.getRoot());
@@ -183,10 +196,11 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 			}
 			Playground playground = mPlaygroundListAdapter.mPlaygroundList.get(getAdapterPosition());
 
-			RatingManager.showRatingSummaryOnLocation(playground, this);
+			showRatingSummaryOnLocation(playground, this);
 			mGoogleMap = googleMap;
-			mGoogleMap.setBuildingsEnabled(false);
-			mGoogleMap.setIndoorEnabled(false);
+
+			setAddress(playground);
+
 			googleMap.getUiSettings()
 			         .setMapToolbarEnabled(false);
 			googleMap.getUiSettings()
@@ -209,6 +223,39 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 			});
 			mBinding.itemBarFl.setSelected(getAdapterPosition() == mPlaygroundListAdapter.mLastSelectedPosition);
 			mBinding.loadingPb.setVisibility(View.GONE);
+		}
+
+		private void setAddress(Playground playground) {
+			Observable.just(playground.getPosition())
+			          .subscribeOn(Schedulers.newThread())
+			          .map(new Function<LatLng, Address>() {
+				          @Override
+				          public Address apply(LatLng latLng) throws Exception {
+					          try {
+						          List<Address> fromLocation = GEOCODER.getFromLocation(latLng.latitude, latLng.longitude, 1);
+						          if (fromLocation == null || fromLocation.size() <= 0) {
+							          return new Address(Locale.getDefault());
+						          } else {
+							          return fromLocation.get(0);
+						          }
+					          } catch (IOException e) {
+						          return new Address(Locale.getDefault());
+					          }
+				          }
+			          })
+			          .observeOn(AndroidSchedulers.mainThread())
+			          .subscribe(new Consumer<Address>() {
+				          @Override
+				          public void accept(Address address) throws Exception {
+					          if (address.getAddressLine(0) == null) {
+						          mBinding.setAddress(null);
+					          } else {
+						          mBinding.setAddress(address.getAddressLine(0) + (TextUtils.isEmpty(address.getAddressLine(1)) ?
+						                                                           "" :
+						                                                           "\n" + address.getAddressLine(1)));
+					          }
+				          }
+			          });
 		}
 
 		private void openItem() {

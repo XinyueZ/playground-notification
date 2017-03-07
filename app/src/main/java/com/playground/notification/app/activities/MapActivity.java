@@ -10,6 +10,7 @@ import android.app.SearchableInfo;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
+import android.content.res.Resources;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.location.Location;
@@ -21,6 +22,7 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MarginLayoutParamsCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -458,6 +460,17 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	 * Define UI for add my-location.
 	 */
 	private void initAddMyLocation() {
+		final Resources resources = getResources();
+		boolean isSmall = resources.getBoolean(R.bool.is_small_screen);
+		MarginLayoutParamsCompat.setMarginStart(((ViewGroup.MarginLayoutParams) mBinding.addPaneV.getLayoutParams()),
+		                                        !isSmall ?
+		                                        (int) App.Instance.getListItemWidth() + resources.getDimensionPixelSize(R.dimen.list_padding_left) :
+		                                        0);
+		MarginLayoutParamsCompat.setMarginStart(((ViewGroup.MarginLayoutParams) mBinding.currentBtn.getLayoutParams()),
+		                                        !isSmall ?
+		                                        (int) App.Instance.getListItemWidth() - resources.getDimensionPixelSize(R.dimen.list_padding_left) - resources.getDimensionPixelSize(R.dimen.common_padding) * 5:
+
+		                                        0);
 		mBinding.addPaneV.hide();
 		mBinding.exitAddBtn.setOnClickListener(new OnClickListener() {
 			@Override

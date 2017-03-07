@@ -460,17 +460,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	 * Define UI for add my-location.
 	 */
 	private void initAddMyLocation() {
-		final Resources resources = getResources();
-		boolean isSmall = resources.getBoolean(R.bool.is_small_screen);
-		MarginLayoutParamsCompat.setMarginStart(((ViewGroup.MarginLayoutParams) mBinding.addPaneV.getLayoutParams()),
-		                                        !isSmall ?
-		                                        (int) App.Instance.getListItemWidth() + resources.getDimensionPixelSize(R.dimen.list_padding_left) :
-		                                        0);
-		MarginLayoutParamsCompat.setMarginStart(((ViewGroup.MarginLayoutParams) mBinding.currentBtn.getLayoutParams()),
-		                                        !isSmall ?
-		                                        (int) App.Instance.getListItemWidth() - resources.getDimensionPixelSize(R.dimen.list_padding_left) - resources.getDimensionPixelSize(R.dimen.common_padding) * 5:
-
-		                                        0);
+		updateMyLocationCurrentPosition();
 		mBinding.addPaneV.hide();
 		mBinding.exitAddBtn.setOnClickListener(new OnClickListener() {
 			@Override
@@ -540,6 +530,22 @@ public final class MapActivity extends AppActivity implements LocationListener,
 			});
 			prefs.setShowcase(Prefs.KEY_SHOWCASE_MY_LOCATION, true);
 		}
+	}
+
+	private void updateMyLocationCurrentPosition() {
+		Resources resources = getResources();
+		boolean isSmall = resources.getBoolean(R.bool.is_small_screen);
+		MarginLayoutParamsCompat.setMarginStart(((ViewGroup.MarginLayoutParams) mBinding.addPaneV.getLayoutParams()),
+		                                        !isSmall ?
+		                                        (int) App.Instance.getListItemWidth() + resources.getDimensionPixelSize(R.dimen.list_padding_left) :
+		                                        0);
+		MarginLayoutParamsCompat.setMarginStart(((ViewGroup.MarginLayoutParams) mBinding.currentBtn.getLayoutParams()),
+		                                        !isSmall ?
+		                                        (int) App.Instance.getListItemWidth() - resources.getDimensionPixelSize(R.dimen.list_padding_left) - resources.getDimensionPixelSize(R.dimen
+				                                                                                                                                                                             .common_padding) * 5 :
+
+		                                        0);
+		mBinding.addPaneV.requestLayout();
 	}
 
 	@Override

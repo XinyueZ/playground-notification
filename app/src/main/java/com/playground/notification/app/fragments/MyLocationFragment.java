@@ -199,9 +199,10 @@ public final class MyLocationFragment extends DialogFragment {
 				dismiss();
 			}
 
-
-			mBinding.map.getLayoutParams().width = (int) App.Instance.getListItemWidth() * 2;
-			mBinding.map.getLayoutParams().height = (int) App.Instance.getListItemHeight() * 2;
+			if(getResources().getBoolean(R.bool.is_small_screen)) {
+				mBinding.map.getLayoutParams().width = (int) App.Instance.getListItemWidth();
+			}
+			mBinding.map.getLayoutParams().height = (int) App.Instance.getListItemHeight();
 
 			mBinding.loadingPb.setVisibility(View.VISIBLE);
 			mBinding.map.getMapAsync(mOnMapReadyCallback);

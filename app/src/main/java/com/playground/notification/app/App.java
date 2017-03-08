@@ -32,6 +32,7 @@
 package com.playground.notification.app;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.location.Location;
 import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
@@ -147,6 +148,10 @@ public final class App extends MultiDexApplication {
 		mScreenSize = DeviceUtils.getScreenSize(this);
 		startAppGuardService();
 
+		updateListSize();
+	}
+
+	private void updateListSize() {
 		ScreenSize screenSize = getScreenSize();
 		if (!getResources().getBoolean(R.bool.is_small_screen)) {
 			mListItemWidth = screenSize.Width / 3f;
@@ -216,5 +221,11 @@ public final class App extends MultiDexApplication {
 	 */
 	public double getListItemHeight() {
 		return mListItemHeight;
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		updateListSize();
 	}
 }

@@ -59,8 +59,10 @@ public abstract class SyncManager<T extends SyncPlayground> {
 			return;
 		}
 		mCachedList.add(newT);
-		v.setImageResource(getAddedIcon());
-		v.setEnabled(false);
+		if (v != null) {
+			v.setImageResource(getAddedIcon());
+			v.setEnabled(false);
+		}
 		addInternal(newT, v, viewForSnack);
 	}
 
@@ -123,8 +125,10 @@ public abstract class SyncManager<T extends SyncPlayground> {
 					break;
 				}
 			}
-			v.setImageResource(getRemovedIcon());
-			v.setEnabled(false);
+			if (v != null) {
+				v.setImageResource(getRemovedIcon());
+				v.setEnabled(false);
+			}
 			removeInternal(oldT, v, viewForSnack);
 		}
 	}

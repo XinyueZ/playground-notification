@@ -1,5 +1,6 @@
 package com.playground.notification.app.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.location.Location;
@@ -55,6 +56,10 @@ public final class PlaygroundListFragment extends Fragment implements GoogleMap.
 	 * @param e Event {@link com.playground.notification.bus.OpenPlaygroundEvent}.
 	 */
 	public void onEvent(OpenPlaygroundEvent e) {
+		Activity activity = getActivity();
+		if (activity == null) {
+			return;
+		}
 		if (e.getSelectedV() != null) {
 			mBinding.playgroundListRv.setSelectedPosition(e.getPosition(), e.getPosition());
 			mBinding.playgroundDetailContainerIbLayout.openWithAnim(e.getSelectedV()
@@ -63,7 +68,7 @@ public final class PlaygroundListFragment extends Fragment implements GoogleMap.
 			Location location = App.Instance.getCurrentLocation();
 			LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
 			getChildFragmentManager().beginTransaction()
-			                         .replace(R.id.playground_detail_container, PlaygroundDetailFragment.newInstance(App.Instance, currentLatLng.latitude, currentLatLng.longitude, playground))
+			                         .replace(R.id.playground_detail_container, PlaygroundDetailFragment.newInstance(activity, currentLatLng.latitude, currentLatLng.longitude, playground))
 			                         .addToBackStack(null)
 			                         .commit();
 		}

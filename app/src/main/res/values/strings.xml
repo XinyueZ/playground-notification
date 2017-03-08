@@ -214,4 +214,8 @@
 
     <string name="no_map_app_title">Route unavailable</string>
     <string name="no_map_apps">You must download a map-like application to get route.</string>
+
+
+    <string name="add_to_near_ring_before_route_title">Add to near-ring</string>
+    <string name="add_to_near_ring_before_route">Do you want to add this target into near-ring, we can notify you if you are near to the playground when you navigate to it ?</string>
 </resources>

@@ -108,6 +108,8 @@ import com.playground.notification.utils.Prefs;
 import com.readystatesoftware.viewbadger.BadgeView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -225,7 +227,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		if (getResources().getBoolean(R.bool.is_small_screen)) {
 			Location location = App.Instance.getCurrentLocation();
 			LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-			PlaygroundDetailFragment.newInstance(App.Instance, currentLatLng.latitude, currentLatLng.longitude, e.getPlayground())
+			PlaygroundDetailFragment.newInstance(this, currentLatLng.latitude, currentLatLng.longitude, e.getPlayground())
 			                        .show(getSupportFragmentManager(), null);
 			return;
 		}

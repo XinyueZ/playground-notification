@@ -3,6 +3,7 @@ package com.playground.notification.app.fragments;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,6 +13,7 @@ import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatDialogFragment;
 import android.support.v7.content.res.AppCompatResources;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,6 +40,7 @@ import com.playground.notification.app.App;
 import com.playground.notification.app.activities.AppActivity;
 import com.playground.notification.app.activities.MapActivity;
 import com.playground.notification.bus.OpenRouteEvent;
+import com.playground.notification.bus.PostOpenRouteEvent;
 import com.playground.notification.bus.ShowLocationRatingEvent;
 import com.playground.notification.bus.ShowStreetViewEvent;
 import com.playground.notification.databinding.PlaygroundDetailBinding;
@@ -106,7 +109,29 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 		if (activity == null) {
 			return;
 		}
-		RouteCalcClientPicker.show(activity, e.getIntent());
+		final Bundle arguments = getArguments();
+		NearRingManager mgr = NearRingManager.getInstance();
+		SyncPlayground ringFound = mgr.findInCache((Playground) arguments.getSerializable(EXTRAS_GROUND));
+		if (ringFound == null) {
+			AddToNearRingFragment.newInstance(activity, arguments.getDouble(EXTRAS_LAT), arguments.getDouble(EXTRAS_LNG), ((Playground) arguments.getSerializable(EXTRAS_GROUND)))
+			                     .show(getChildFragmentManager(), null);
+		} else {
+			EventBus.getDefault().post(new PostOpenRouteEvent(false));
+		}
+	}
+
+	/**
+	 * Handler for {@link PostOpenRouteEvent}.
+	 *
+	 * @param e Event {@link PostOpenRouteEvent}.
+	 */
+	public void onEvent(PostOpenRouteEvent e) {
+		if (e.isFlag()) {
+			NearRingManager.getInstance()
+			               .addNearRing(((Playground) getArguments().getSerializable(EXTRAS_GROUND)), mBinding.ringIv, mBinding.playgroundDetailVg);
+		}
+
+		openRoute();
 	}
 
 	/**
@@ -120,7 +145,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 		}
 		AppActivity activity = (AppActivity) getActivity();
 		if (activity != null) {
-			activity.showDialogFragment(RatingDialogFragment.newInstance(App.Instance, e.getPlayground(), mBinding.getRating()), "rating");
+			activity.showDialogFragment(RatingDialogFragment.newInstance(activity, e.getPlayground(), mBinding.getRating()), "rating");
 		}
 	}
 	//------------------------------------------------
@@ -450,6 +475,18 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 		mBinding.map.getMapAsync(mOnMapReadyCallback);
 	}
 
+	private void openRoute() {
+		FragmentActivity activity = getActivity();
+		if (activity == null) {
+			return;
+		}
+
+		Bundle arguments = getArguments();
+		RouteCalcClientPicker.show(activity,
+		                           com.playground.notification.utils.Utils.getMapWeb(new LatLng(arguments.getDouble(EXTRAS_LAT), arguments.getDouble(EXTRAS_LNG)),
+		                                                                             ((Playground) arguments.getSerializable(EXTRAS_GROUND)).getPosition()));
+	}
+
 	/**
 	 * Streeview can show photo correctly or not.
 	 */
@@ -628,7 +665,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 
 		public void onGoClicked(@SuppressWarnings("UnusedParameters") View v) {
 			EventBus.getDefault()
-			        .post(new OpenRouteEvent(com.playground.notification.utils.Utils.getMapWeb(new LatLng(mLat, mLng), mGround.getPosition())));
+			        .post(new OpenRouteEvent());
 		}
 
 
@@ -658,6 +695,44 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 					                       .startActivity(Utils.getShareInformation(subject, content));
 				}
 			});
+		}
+	}
+
+
+	public static final class AddToNearRingFragment extends AppCompatDialogFragment {
+		private static final String EXTRAS_GROUND = PlaygroundDetailFragment.class.getName() + ".EXTRAS.playground";
+		private static final String EXTRAS_LAT = PlaygroundDetailFragment.class.getName() + ".EXTRAS.lat";
+		private static final String EXTRAS_LNG = PlaygroundDetailFragment.class.getName() + ".EXTRAS.lng";
+
+		public static AddToNearRingFragment newInstance(Context cxt, double fromLat, double fromLng, Playground playground) {
+			Bundle args = new Bundle();
+			args.putDouble(EXTRAS_LAT, fromLat);
+			args.putDouble(EXTRAS_LNG, fromLng);
+			args.putSerializable(EXTRAS_GROUND, (Serializable) playground);
+			return (AddToNearRingFragment) AddToNearRingFragment.instantiate(cxt, AddToNearRingFragment.class.getName(), args);
+		}
+
+
+		@NonNull
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			// Use the Builder class for convenient dialog construction
+			android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+			builder.setTitle(R.string.add_to_near_ring_before_route_title)
+			       .setMessage(R.string.add_to_near_ring_before_route)
+			       .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+				       public void onClick(DialogInterface dialog, int id) {
+					       EventBus.getDefault()
+					               .post(new PostOpenRouteEvent(true));
+				       }
+			       })
+			       .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+				       public void onClick(DialogInterface dialog, int id) {
+					       EventBus.getDefault()
+					               .post(new PostOpenRouteEvent(false));
+				       }
+			       });
+			return builder.create();
 		}
 	}
 }

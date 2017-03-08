@@ -290,6 +290,8 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mBinding = DataBindingUtil.inflate(inflater, LAYOUT, container, false);
+		mBinding.map.onCreate(savedInstanceState);
+		mBinding.streetview.onCreate(savedInstanceState);
 		return mBinding.getRoot();
 	}
 
@@ -306,6 +308,8 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 		BottomSheetDialog dialog = (BottomSheetDialog) super.onCreateDialog(savedInstanceState);
 		View view = View.inflate(getContext(), LAYOUT, null);
 		mBinding = DataBindingUtil.bind(view);
+		mBinding.map.onCreate(savedInstanceState);
+		mBinding.streetview.onCreate(savedInstanceState);
 		dialog.setContentView(view);
 		mBehavior = BottomSheetBehavior.from((View) view.getParent());
 		return dialog;
@@ -321,8 +325,6 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 			final double lng = args.getDouble(EXTRAS_LNG);
 
 			Prefs prefs = Prefs.getInstance();
-			mBinding.map.onCreate(savedInstanceState);
-			mBinding.streetview.onCreate(savedInstanceState);
 
 			if (!prefs.isShowcaseShown(Prefs.KEY_SHOWCASE_NEAR_RING)) {
 				mBinding.showcaseVg.setVisibility(View.VISIBLE);

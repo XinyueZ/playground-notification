@@ -45,7 +45,6 @@ public final class MyLocationFragment extends DialogFragment {
 	private static final String EXTRAS_LAT = MyLocationFragment.class.getName() + ".EXTRAS.lat";
 	private static final String EXTRAS_LNG = MyLocationFragment.class.getName() + ".EXTRAS.lng";
 	private static final String EXTRAS_GROUND = MyLocationFragment.class.getName() + ".EXTRAS.playground";
-	private static final String EXTRAS_CLICKABLE = MyLocationFragment.class.getName() + ".EXTRAS.clickable";
 	/**
 	 * Main layout for this component.
 	 */
@@ -82,7 +81,8 @@ public final class MyLocationFragment extends DialogFragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(LAYOUT, container, false);
+		mBinding = DataBindingUtil.inflate(inflater, LAYOUT, container, false);
+		return mBinding.getRoot();
 	}
 
 	@Override
@@ -136,7 +136,6 @@ public final class MyLocationFragment extends DialogFragment {
 			MyLocation myLocation = manager.findInCache(playground);
 
 			Prefs prefs = Prefs.getInstance();
-			mBinding = DataBindingUtil.bind(view.findViewById(R.id.my_location_vg));
 			mBinding.map.onCreate(savedInstanceState);
 
 			if (myLocation != null) {

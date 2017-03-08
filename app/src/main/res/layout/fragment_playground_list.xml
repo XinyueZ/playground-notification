@@ -16,8 +16,7 @@
                 android:id="@+id/playground_list_rv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:overScrollMode="always"
-                android:scrollbars="none"/>
+                android:scrollbars="vertical"/>
         </android.support.v4.widget.SwipeRefreshLayout>
 
         <com.playground.notification.ui.ib.appcompat.IBCompatFrameLayout

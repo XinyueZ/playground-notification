@@ -116,7 +116,8 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 			AddToNearRingFragment.newInstance(activity, arguments.getDouble(EXTRAS_LAT), arguments.getDouble(EXTRAS_LNG), ((Playground) arguments.getSerializable(EXTRAS_GROUND)))
 			                     .show(getChildFragmentManager(), null);
 		} else {
-			EventBus.getDefault().post(new PostOpenRouteEvent(false));
+			EventBus.getDefault()
+			        .post(new PostOpenRouteEvent(false));
 		}
 	}
 
@@ -288,17 +289,15 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(LAYOUT, container, false);
+		mBinding = DataBindingUtil.inflate(inflater, LAYOUT, container, false);
+		return mBinding.getRoot();
 	}
 
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		View view = getView();
-		if (view != null) {
-			initView(view, savedInstanceState);
-		}
+		initView(savedInstanceState);
 	}
 
 	@NonNull
@@ -306,24 +305,22 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		BottomSheetDialog dialog = (BottomSheetDialog) super.onCreateDialog(savedInstanceState);
 		View view = View.inflate(getContext(), LAYOUT, null);
+		mBinding = DataBindingUtil.bind(view);
 		dialog.setContentView(view);
 		mBehavior = BottomSheetBehavior.from((View) view.getParent());
 		return dialog;
 	}
 
-	private void initView(View view, @Nullable Bundle savedInstanceState) {
+	private void initView(@Nullable Bundle savedInstanceState) {
 		Bundle args = getArguments();
 		final Playground playground = (Playground) args.getSerializable(EXTRAS_GROUND);
-		LL.d("Ground ID: " + playground.getId());
 		if (playground != null) {
+			LL.d("Ground ID: " + playground.getId());
 
 			final double lat = args.getDouble(EXTRAS_LAT);
 			final double lng = args.getDouble(EXTRAS_LNG);
 
 			Prefs prefs = Prefs.getInstance();
-			mBinding = DataBindingUtil.bind(view.findViewById(R.id.playground_detail_vg));
-
-
 			mBinding.map.onCreate(savedInstanceState);
 			mBinding.streetview.onCreate(savedInstanceState);
 

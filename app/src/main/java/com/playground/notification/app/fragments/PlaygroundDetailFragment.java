@@ -256,9 +256,6 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 	public void onStart() {
 		mBinding.map.onStart();
 		super.onStart();
-		if (mBehavior != null) {
-			mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-		}
 	}
 
 	@Override
@@ -288,6 +285,9 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		if(mDialogMode) {
+			return super.onCreateView(inflater, container, savedInstanceState);
+		}
 		mBinding = DataBindingUtil.inflate(inflater, LAYOUT, container, false);
 		mBinding.map.onCreate(savedInstanceState);
 		mBinding.streetview.onCreate(savedInstanceState);
@@ -301,6 +301,8 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 		initView();
 	}
 
+	private boolean mDialogMode;
+
 	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -311,6 +313,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 		mBinding.streetview.onCreate(savedInstanceState);
 		dialog.setContentView(view);
 		mBehavior = BottomSheetBehavior.from((View) view.getParent());
+		mDialogMode = true;
 		return dialog;
 	}
 

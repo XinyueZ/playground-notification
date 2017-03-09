@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.BottomSheetDialogFragment;
@@ -299,7 +298,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		initView(savedInstanceState);
+		initView();
 	}
 
 	@NonNull
@@ -315,7 +314,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 		return dialog;
 	}
 
-	private void initView(@Nullable Bundle savedInstanceState) {
+	private void initView() {
 		Bundle args = getArguments();
 		final Playground playground = (Playground) args.getSerializable(EXTRAS_GROUND);
 		if (playground != null) {

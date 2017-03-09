@@ -113,8 +113,7 @@
                         <com.google.android.gms.maps.StreetViewPanoramaView
                             android:id="@+id/streetview"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:visibility="invisible"/>
+                            android:layout_height="match_parent" />
                     </FrameLayout>
 
                     <com.playground.notification.ui.MaterialRippleLayout

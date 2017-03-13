@@ -4,6 +4,7 @@ import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AppCompatDialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +42,7 @@ import static com.playground.notification.utils.Utils.setPlaygroundIcon;
  *
  * @author Xinyue Zhao
  */
-public final class MyLocationFragment extends DialogFragment {
+public final class MyLocationFragment extends AppCompatDialogFragment {
 	private static final String EXTRAS_LAT = MyLocationFragment.class.getName() + ".EXTRAS.lat";
 	private static final String EXTRAS_LNG = MyLocationFragment.class.getName() + ".EXTRAS.lng";
 	private static final String EXTRAS_GROUND = MyLocationFragment.class.getName() + ".EXTRAS.playground";

@@ -5,17 +5,19 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.chopping.application.BasicPrefs;
+import com.chopping.fragments.BaseFragment;
 import com.google.android.gms.maps.OnStreetViewPanoramaReadyCallback;
 import com.google.android.gms.maps.StreetViewPanorama;
 import com.google.android.gms.maps.SupportStreetViewPanoramaFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.playground.notification.R;
 import com.playground.notification.databinding.FragmentStreetViewBinding;
+import com.playground.notification.utils.Prefs;
 
 
 /**
@@ -23,7 +25,7 @@ import com.playground.notification.databinding.FragmentStreetViewBinding;
  *
  * @author Xinyue Zhao
  */
-public final class StreetViewFragment extends Fragment implements OnStreetViewPanoramaReadyCallback {
+public final class StreetViewFragment extends BaseFragment implements OnStreetViewPanoramaReadyCallback {
 	private static final String EXTRAS_LOCATION = StreetViewFragment.class.getName() + ".EXTRAS.location";
 	private static final int LAYOUT = R.layout.fragment_street_view;
 	private FragmentStreetViewBinding mBinding;
@@ -66,5 +68,11 @@ public final class StreetViewFragment extends Fragment implements OnStreetViewPa
 		if (mStreetViewPanorama != null) {
 			mStreetViewPanorama.setPosition(location);
 		}
+	}
+
+
+	@Override
+	protected BasicPrefs getPrefs() {
+		return Prefs.getInstance();
 	}
 }

@@ -6,7 +6,6 @@ import android.databinding.DataBindingUtil;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.DividerItemDecoration;
@@ -15,6 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.chopping.application.BasicPrefs;
+import com.chopping.fragments.BaseFragment;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.playground.notification.R;
@@ -28,6 +29,7 @@ import com.playground.notification.databinding.PlaygroundListBinding;
 import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ui.ib.IBBackgroundRecyclerView;
 import com.playground.notification.ui.ib.IBLayoutBase;
+import com.playground.notification.utils.Prefs;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -40,7 +42,7 @@ import de.greenrobot.event.EventBus;
  *
  * @author Xinyue Zhao
  */
-public final class PlaygroundListFragment extends Fragment implements GoogleMap.OnCameraMoveStartedListener {
+public final class PlaygroundListFragment extends BaseFragment implements GoogleMap.OnCameraMoveStartedListener {
 	private static final String EXTRAS_PLAYGROUND_LIST = PlaygroundListFragment.class.getName() + ".EXTRAS.playground.list";
 	private static final int LAYOUT = R.layout.fragment_playground_list;
 	private PlaygroundListBinding mBinding;
@@ -165,8 +167,6 @@ public final class PlaygroundListFragment extends Fragment implements GoogleMap.
 	public void onResume() {
 		super.onResume();
 		EventBus.getDefault()
-		        .register(this);
-		EventBus.getDefault()
 		        .register(mPlaygroundListAdapter);
 	}
 
@@ -174,8 +174,6 @@ public final class PlaygroundListFragment extends Fragment implements GoogleMap.
 	public void onPause() {
 		EventBus.getDefault()
 		        .unregister(mPlaygroundListAdapter);
-		EventBus.getDefault()
-		        .unregister(this);
 		super.onPause();
 	}
 
@@ -192,5 +190,10 @@ public final class PlaygroundListFragment extends Fragment implements GoogleMap.
 		if (mBinding.playgroundListRv.isOpened()) {
 			mBinding.playgroundDetailContainerIbLayout.close();
 		}
+	}
+
+	@Override
+	protected BasicPrefs getPrefs() {
+		return Prefs.getInstance();
 	}
 }

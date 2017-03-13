@@ -85,26 +85,36 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal">
 
-                    <com.google.android.gms.maps.MapView
-                        android:id="@+id/map"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:visibility="invisible"
-                        app:cameraZoom="16"
-                        app:liteMode="true"
-                        app:mapType="normal"
-                        app:uiCompass="false"
-                        app:uiRotateGestures="false"
-                        app:uiScrollGestures="false"
-                        app:uiTiltGestures="false"
-                        app:uiZoomControls="false"
-                        app:uiZoomGestures="false">
-                    </com.google.android.gms.maps.MapView>
 
-                    <com.google.android.gms.maps.StreetViewPanoramaView
-                        android:id="@+id/streetview"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"/>
+                    <FrameLayout
+                        android:id="@+id/location_container"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}">
+
+
+                        <com.google.android.gms.maps.MapView
+                            android:id="@+id/map"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:visibility="invisible"
+                            app:cameraZoom="16"
+                            app:liteMode="true"
+                            app:mapType="normal"
+                            app:uiCompass="false"
+                            app:uiRotateGestures="false"
+                            app:uiScrollGestures="false"
+                            app:uiTiltGestures="false"
+                            app:uiZoomControls="false"
+                            app:uiZoomGestures="false">
+                        </com.google.android.gms.maps.MapView>
+
+                        <com.google.android.gms.maps.StreetViewPanoramaView
+                            android:id="@+id/streetview"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+                    </FrameLayout>
 
                     <com.playground.notification.ui.MaterialRippleLayout
                         style="@style/MaterialRippleLayout"

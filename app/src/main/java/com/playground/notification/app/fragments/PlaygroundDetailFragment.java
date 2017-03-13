@@ -457,10 +457,8 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 			return;
 		}
 
-		mBinding.map.getLayoutParams().width  = (int) App.Instance.getListItemWidth() * 2;
-		mBinding.map.getLayoutParams().height = (int) App.Instance.getListItemHeight() * 2;
-		mBinding.streetview.getLayoutParams().width  = (int) App.Instance.getListItemWidth() * 2;
-		mBinding.streetview.getLayoutParams().height = (int) App.Instance.getListItemHeight() * 2;
+		mBinding.locationContainer.getLayoutParams().width  = (int) App.Instance.getListItemWidth() * 2;
+		mBinding.locationContainer.getLayoutParams().height = (int) App.Instance.getListItemHeight() * 2;
 		if (mShowMap) {
 			showMapLite();
 		} else {

@@ -45,7 +45,6 @@ import com.playground.notification.ds.sync.SyncPlayground;
 import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.NearRingManager;
 import com.playground.notification.sync.RatingManager;
-import com.playground.notification.ui.RouteCalcClientPicker;
 import com.playground.notification.utils.Prefs;
 import com.playground.notification.utils.Utils;
 
@@ -59,6 +58,7 @@ import retrofit.client.Response;
 
 import static com.playground.notification.sync.RatingManager.showPersonalRatingOnLocation;
 import static com.playground.notification.sync.RatingManager.showRatingSummaryOnLocation;
+import static com.playground.notification.utils.Utils.openRoute;
 import static com.playground.notification.utils.Utils.setPlaygroundIcon;
 
 /**
@@ -121,7 +121,13 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 			               .addNearRing(((Playground) getArguments().getSerializable(EXTRAS_GROUND)), mBinding.ringIv, mBinding.playgroundDetailVg);
 		}
 
-		openRoute();
+		FragmentActivity activity = getActivity();
+		if (activity == null) {
+			return;
+		}
+
+		Bundle arguments = getArguments();
+		openRoute(activity, new LatLng(arguments.getDouble(EXTRAS_LAT), arguments.getDouble(EXTRAS_LNG)), ((Playground) arguments.getSerializable(EXTRAS_GROUND)).getPosition());
 	}
 
 	/**
@@ -383,17 +389,6 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 		mBinding.map.getMapAsync(mOnMapReadyCallback);
 	}
 
-	private void openRoute() {
-		FragmentActivity activity = getActivity();
-		if (activity == null) {
-			return;
-		}
-
-		Bundle arguments = getArguments();
-		RouteCalcClientPicker.show(activity,
-		                           com.playground.notification.utils.Utils.getMapWeb(new LatLng(arguments.getDouble(EXTRAS_LAT), arguments.getDouble(EXTRAS_LNG)),
-		                                                                             ((Playground) arguments.getSerializable(EXTRAS_GROUND)).getPosition()));
-	}
 
 	/**
 	 * Streeview can show photo correctly or not.

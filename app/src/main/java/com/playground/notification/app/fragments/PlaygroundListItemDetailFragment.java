@@ -45,7 +45,6 @@ import com.playground.notification.ds.sync.SyncPlayground;
 import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.NearRingManager;
 import com.playground.notification.sync.RatingManager;
-import com.playground.notification.ui.RouteCalcClientPicker;
 import com.playground.notification.utils.Prefs;
 import com.playground.notification.utils.Utils;
 
@@ -59,6 +58,7 @@ import retrofit.client.Response;
 
 import static com.playground.notification.sync.RatingManager.showPersonalRatingOnLocation;
 import static com.playground.notification.sync.RatingManager.showRatingSummaryOnLocation;
+import static com.playground.notification.utils.Utils.openRoute;
 import static com.playground.notification.utils.Utils.setPlaygroundIcon;
 
 /**
@@ -117,7 +117,14 @@ public final class PlaygroundListItemDetailFragment extends BaseFragment impleme
 			               .addNearRing(((Playground) getArguments().getSerializable(EXTRAS_GROUND)), mBinding.ringIv, mBinding.playgroundDetailVg);
 		}
 
-		openRoute();
+		FragmentActivity activity =  getActivity();
+		if (activity == null) {
+			return;
+		}
+
+		Bundle arguments =  getArguments();
+		openRoute(activity, new LatLng(arguments.getDouble(EXTRAS_LAT), arguments.getDouble(EXTRAS_LNG)),
+		                ((Playground) arguments.getSerializable(EXTRAS_GROUND)).getPosition());
 	}
 
 	/**
@@ -342,18 +349,6 @@ public final class PlaygroundListItemDetailFragment extends BaseFragment impleme
 		mBinding.loadingImgPb.setVisibility(View.VISIBLE);
 		mBinding.map.getMapAsync(mOnMapReadyCallback);
 		mBinding.streetview.getStreetViewPanoramaAsync(mOnStreetViewPanoramaReadyCallback);
-	}
-
-	private void openRoute() {
-		FragmentActivity activity = getActivity();
-		if (activity == null) {
-			return;
-		}
-
-		Bundle arguments = getArguments();
-		RouteCalcClientPicker.show(activity,
-		                           Utils.getMapWeb(new LatLng(arguments.getDouble(EXTRAS_LAT), arguments.getDouble(EXTRAS_LNG)),
-		                                           ((Playground) arguments.getSerializable(EXTRAS_GROUND)).getPosition()));
 	}
 
 	/**

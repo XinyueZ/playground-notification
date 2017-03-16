@@ -13,6 +13,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.content.res.AppCompatResources;
 
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -26,6 +27,7 @@ import com.playground.notification.ds.sync.MyLocation;
 import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.MyLocationManager;
 import com.playground.notification.sync.SyncManager;
+import com.playground.notification.ui.RouteCalcClientPicker;
 
 /**
  * Util-methods of application.
@@ -205,5 +207,11 @@ public final class Utils {
 				com.playground.notification.utils.Utils.changeMarkerIcon(options, currentLatLng, playground.getPosition());
 			}
 		}
+	}
+
+	public static void openRoute(@NonNull FragmentActivity activity, @NonNull LatLng startLatLng, @NonNull LatLng endLatLng) {
+		RouteCalcClientPicker.show(activity,
+		                           getMapWeb(startLatLng,
+		                                     endLatLng));
 	}
 }

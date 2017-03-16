@@ -12,25 +12,29 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
 
-
-        <android.support.design.widget.CoordinatorLayout
-            android:id="@id/error_content"
+        <FrameLayout
+            android:id="@+id/app_activity_root_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fitsSystemWindows="true">
+            android:layout_height="match_parent" >
 
-            <include
-                android:id="@+id/appbar"
-                layout="@layout/appbar"/>
-
-            <FrameLayout
-                android:id="@+id/appbar_content"
+            <android.support.design.widget.CoordinatorLayout
+                android:id="@id/error_content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                />
-        </android.support.design.widget.CoordinatorLayout>
+                android:fitsSystemWindows="true">
 
+                <include
+                    android:id="@+id/appbar"
+                    layout="@layout/appbar"/>
+
+                <FrameLayout
+                    android:id="@+id/appbar_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    />
+            </android.support.design.widget.CoordinatorLayout>
+        </FrameLayout>
 
         <android.support.design.widget.NavigationView
             android:id="@+id/nav_view"

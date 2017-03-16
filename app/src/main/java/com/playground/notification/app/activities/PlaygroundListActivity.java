@@ -16,16 +16,11 @@ import com.playground.notification.R;
 import com.playground.notification.app.App;
 import com.playground.notification.app.fragments.AboutDialogFragment;
 import com.playground.notification.app.fragments.PlaygroundListFragment;
-import com.playground.notification.bus.BackPressedEvent;
-import com.playground.notification.bus.DetailClosedEvent;
-import com.playground.notification.bus.DetailShownEvent;
 import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.utils.Prefs;
 
 import java.io.Serializable;
 import java.util.List;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * {@link PlaygroundListActivity} shows the list-mode of search result.

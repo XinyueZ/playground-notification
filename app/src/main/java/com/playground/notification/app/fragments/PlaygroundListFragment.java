@@ -116,6 +116,7 @@ public final class PlaygroundListFragment extends BaseFragment implements Google
 		});
 		LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
 		mBinding.playgroundListRv.setLayoutManager(linearLayoutManager);
+		mBinding.playgroundListRv.setHasFixedSize(true);
 		if (getArguments() != null) {
 			mBinding.playgroundListRv.setAdapter(mPlaygroundListAdapter = new PlaygroundListAdapter(linearLayoutManager,
 			                                                                                        (List<? extends Playground>) getArguments().getSerializable(EXTRAS_PLAYGROUND_LIST)));

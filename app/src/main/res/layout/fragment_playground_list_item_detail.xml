@@ -426,6 +426,7 @@
                         android:id="@+id/rating_vg"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/common_padding"
                         android:onClick="@{handler.onRatingClicked}"
                         android:orientation="horizontal"
                         android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -451,6 +452,19 @@
                             android:src="@{rating == null ? @drawable/ic_wanna_rating : @drawable/ic_rated}"/>
                     </LinearLayout>
 
+
+                    <android.support.v7.widget.ViewStubCompat
+                        android:id="@+id/streetview_button_stub"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_marginStart="@dimen/activity_horizontal_margin"
+                        android:layout_marginTop="@dimen/activity_vertical_margin"
+                        android:inflatedId="@+id/streetview_btn"
+                        android:layout="@layout/layout_button_street_view"/>
 
                     <View
                         android:layout_width="match_parent"

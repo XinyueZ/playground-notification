@@ -17,6 +17,7 @@
     <string name="action_my_location">Mein Ort</string>
     <string name="action_list_mode">Liste</string>
     <string name="action_map_mode">Karte</string>
+    <string name="action_street_view">Google Street View öffnen</string>
 
     <string name="btn_confirm">Sicher</string>
     <string name="btn_yes">Ja</string>

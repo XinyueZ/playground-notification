@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.playground.notification.ui.MaterialRippleLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                     style="@style/MaterialRippleLayout"
+                                                     android:layout_width="match_parent"
+                                                     android:layout_height="wrap_content">
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary_color"
+        android:drawableLeft="@drawable/state_streetview"
+        android:drawablePadding="@dimen/activity_horizontal_margin"
+        android:drawableStart="@drawable/state_streetview"
+        android:gravity="center"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:text="@string/action_street_view"
+        android:textColor="@color/common_white"/>
+</com.playground.notification.ui.MaterialRippleLayout>

@@ -448,22 +448,34 @@ public final class PlaygroundListItemDetailFragment extends BaseFragment impleme
 				                .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 					                @Override
 					                public boolean onMenuItemClick(MenuItem item) {
-						                Matrix matrix = mBinding.getMatrix();
-						                Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
-						                if (playground.getPosition() != null && matrix != null && matrix.getDestination() != null && matrix.getDestination()
-						                                                                                                                   .size() > 0 && matrix.getDestination()
-						                                                                                                                                        .get(0) != null) {
-							                EventBus.getDefault()
-							                        .post(new ShowStreetViewEvent(matrix.getDestination()
-							                                                            .get(0), playground.getPosition()));
-						                }
+						                openStreetView();
 						                return true;
 					                }
 				                });
+
+				mBinding.streetviewButtonStub.inflate()
+				                             .setOnClickListener(new OnClickListener() {
+					                             @Override
+					                             public void onClick(View v) {
+						                             openStreetView();
+					                             }
+				                             });
 			}
 			mBinding.loadingImgPb.setVisibility(View.GONE);
 		}
 	};
+
+	private void openStreetView() {
+		Matrix matrix = mBinding.getMatrix();
+		Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
+		if (playground.getPosition() != null && matrix != null && matrix.getDestination() != null && matrix.getDestination()
+		                                                                                                   .size() > 0 && matrix.getDestination()
+		                                                                                                                        .get(0) != null) {
+			EventBus.getDefault()
+			        .post(new ShowStreetViewEvent(matrix.getDestination()
+			                                            .get(0), playground.getPosition()));
+		}
+	}
 
 
 	/**

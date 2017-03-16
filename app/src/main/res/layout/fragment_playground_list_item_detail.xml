@@ -68,10 +68,10 @@
                 app:collapsedTitleTextAppearance="@style/TextAppearance.AppCompat.Small"
                 app:contentScrim="?attr/colorPrimary"
                 app:expandedTitleGravity="start|bottom|left"
-                app:expandedTitleTextAppearance="@style/TextAppearance.AppCompat.Title"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed"
                 app:expandedTitleMarginEnd="@dimen/activity_horizontal_margin"
                 app:expandedTitleMarginStart="@dimen/activity_horizontal_margin"
+                app:expandedTitleTextAppearance="@style/TextAppearance.AppCompat.Title"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
                 app:title='@{matrix == null ? "" : matrix.destination.get(0)}'>
 
                 <FrameLayout
@@ -153,8 +153,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     >
-
-
 
 
                     <LinearLayout
@@ -453,6 +451,10 @@
                             android:src="@{rating == null ? @drawable/ic_wanna_rating : @drawable/ic_rated}"/>
                     </LinearLayout>
 
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="300dp"/>
 
                 </LinearLayout>
 

@@ -1,9 +1,9 @@
 package com.playground.notification.ds.grounds;
 
 
-import java.util.List;
-
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 public final class Request {
 	@SerializedName("left")

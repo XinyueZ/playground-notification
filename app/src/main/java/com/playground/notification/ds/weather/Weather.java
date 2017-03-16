@@ -1,9 +1,9 @@
 package com.playground.notification.ds.weather;
 
 
-import java.util.List;
-
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 public final class Weather {
 	@SerializedName("weather")

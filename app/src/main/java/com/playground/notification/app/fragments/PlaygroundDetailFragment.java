@@ -3,21 +3,16 @@ package com.playground.notification.app.fragments;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.BottomSheetDialogFragment;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatDialogFragment;
 import android.support.v7.content.res.AppCompatResources;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 
 import com.chopping.application.LL;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -43,7 +38,6 @@ import com.playground.notification.bus.PostOpenRouteEvent;
 import com.playground.notification.bus.ShowLocationRatingEvent;
 import com.playground.notification.bus.ShowStreetViewEvent;
 import com.playground.notification.databinding.PlaygroundDetailBinding;
-import com.playground.notification.databinding.RatingDialogBinding;
 import com.playground.notification.ds.google.Matrix;
 import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ds.sync.Rating;
@@ -52,16 +46,12 @@ import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.NearRingManager;
 import com.playground.notification.sync.RatingManager;
 import com.playground.notification.ui.RouteCalcClientPicker;
-import com.playground.notification.utils.PlaygroundIdUtils;
 import com.playground.notification.utils.Prefs;
 import com.playground.notification.utils.Utils;
 
 import java.io.Serializable;
 import java.util.Locale;
 
-import cn.bmob.v3.exception.BmobException;
-import cn.bmob.v3.listener.SaveListener;
-import cn.bmob.v3.listener.UpdateListener;
 import de.greenrobot.event.EventBus;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -149,76 +139,6 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 		}
 	}
 	//------------------------------------------------
-
-	//A dialog to update current rating status of a ground for you.
-	public static final class RatingDialogFragment extends DialogFragment {
-		/**
-		 * Data-binding.
-		 */
-		private RatingDialogBinding mBinding;
-
-		public static RatingDialogFragment newInstance(Context cxt, Playground playground, Rating rating) {
-			Bundle args = new Bundle();
-			args.putSerializable("rating", (Serializable) rating);
-			args.putSerializable("ground", (Serializable) playground);
-			return (RatingDialogFragment) RatingDialogFragment.instantiate(cxt, RatingDialogFragment.class.getName(), args);
-		}
-
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-			return inflater.inflate(R.layout.fragment_rating, container, false);
-		}
-
-		@Override
-		public void onViewCreated(View view, Bundle savedInstanceState) {
-			super.onViewCreated(view, savedInstanceState);
-			mBinding = DataBindingUtil.bind(view.findViewById(R.id.rating_dialog_vg));
-			getDialog().setTitle(R.string.lbl_rating);
-			Rating rating = ((Rating) getArguments().getSerializable("rating"));
-			if (rating != null) {
-				mBinding.setRating(rating);
-			}
-			view.findViewById(R.id.close_iv)
-			    .setOnClickListener(new OnClickListener() {
-				    @Override
-				    public void onClick(View v) {
-					    dismiss();
-					    Playground playground = (Playground) getArguments().getSerializable("ground");
-					    playground.setId(PlaygroundIdUtils.getId(playground));
-					    Rating rating = ((Rating) getArguments().getSerializable("rating"));
-					    if (rating == null) {
-						    Rating newRating = new Rating(Prefs.getInstance()
-						                                       .getGoogleId(), playground);
-						    newRating.setValue(mBinding.locationRb.getRating());
-						    newRating.save(new SaveListener<String>() {
-							    @Override
-							    public void done(String s, BmobException exp) {
-								    if (exp != null) {
-									    LL.d("newRating failed");
-									    return;
-								    }
-								    LL.d("newRating success");
-							    }
-						    });
-					    } else {
-						    Rating updateRating = new Rating(Prefs.getInstance()
-						                                          .getGoogleId(), playground);
-						    updateRating.setValue(mBinding.locationRb.getRating());
-						    updateRating.update(rating.getObjectId(), new UpdateListener() {
-							    @Override
-							    public void done(BmobException exp) {
-								    if (exp != null) {
-									    LL.d("updateRating failed");
-									    return;
-								    }
-								    LL.d("updateRating success");
-							    }
-						    });
-					    }
-				    }
-			    });
-		}
-	}
 
 
 	/**
@@ -686,41 +606,4 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 		}
 	}
 
-
-	public static final class AddToNearRingFragment extends AppCompatDialogFragment {
-		private static final String EXTRAS_GROUND = PlaygroundDetailFragment.class.getName() + ".EXTRAS.playground";
-		private static final String EXTRAS_LAT = PlaygroundDetailFragment.class.getName() + ".EXTRAS.lat";
-		private static final String EXTRAS_LNG = PlaygroundDetailFragment.class.getName() + ".EXTRAS.lng";
-
-		public static AddToNearRingFragment newInstance(Context cxt, double fromLat, double fromLng, Playground playground) {
-			Bundle args = new Bundle();
-			args.putDouble(EXTRAS_LAT, fromLat);
-			args.putDouble(EXTRAS_LNG, fromLng);
-			args.putSerializable(EXTRAS_GROUND, (Serializable) playground);
-			return (AddToNearRingFragment) AddToNearRingFragment.instantiate(cxt, AddToNearRingFragment.class.getName(), args);
-		}
-
-
-		@NonNull
-		@Override
-		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			// Use the Builder class for convenient dialog construction
-			android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
-			builder.setTitle(R.string.add_to_near_ring_before_route_title)
-			       .setMessage(R.string.add_to_near_ring_before_route)
-			       .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-				       public void onClick(DialogInterface dialog, int id) {
-					       EventBus.getDefault()
-					               .post(new PostOpenRouteEvent(true));
-				       }
-			       })
-			       .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-				       public void onClick(DialogInterface dialog, int id) {
-					       EventBus.getDefault()
-					               .post(new PostOpenRouteEvent(false));
-				       }
-			       });
-			return builder.create();
-		}
-	}
 }

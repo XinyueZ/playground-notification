@@ -1,13 +1,13 @@
 package com.playground.notification.db;
 
-import java.io.File;
-
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
 
 import com.playground.notification.app.App;
+
+import java.io.File;
 
 /**
  * Classical helper pattern on Android DB ops.

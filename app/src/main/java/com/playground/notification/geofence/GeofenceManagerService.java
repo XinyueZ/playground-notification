@@ -1,8 +1,5 @@
 package com.playground.notification.geofence;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -25,6 +22,9 @@ import com.playground.notification.ds.sync.NearRing;
 import com.playground.notification.sync.NearRingManager;
 import com.playground.notification.utils.PlaygroundIdUtils;
 import com.playground.notification.utils.Prefs;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A background {@link Service} that controls "near-ring" geofence transition.

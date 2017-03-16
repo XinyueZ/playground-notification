@@ -7,19 +7,19 @@ import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.BottomSheetDialog;
-import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.support.v7.content.res.AppCompatResources;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
+import com.chopping.application.BasicPrefs;
 import com.chopping.application.LL;
+import com.chopping.fragments.BaseFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -28,7 +28,6 @@ import com.google.android.gms.maps.StreetViewPanorama;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.StreetViewPanoramaLocation;
-import com.google.android.gms.maps.model.StreetViewPanoramaOrientation;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.view.ViewPropertyAnimator;
@@ -38,11 +37,12 @@ import com.playground.notification.api.ApiNotInitializedException;
 import com.playground.notification.app.App;
 import com.playground.notification.app.activities.AppActivity;
 import com.playground.notification.app.activities.MapActivity;
+import com.playground.notification.bus.BackPressedEvent;
 import com.playground.notification.bus.OpenRouteEvent;
 import com.playground.notification.bus.PostOpenRouteEvent;
 import com.playground.notification.bus.ShowLocationRatingEvent;
 import com.playground.notification.bus.ShowStreetViewEvent;
-import com.playground.notification.databinding.PlaygroundDetailBinding;
+import com.playground.notification.databinding.PlaygroundListItemDetailBinding;
 import com.playground.notification.databinding.RatingDialogBinding;
 import com.playground.notification.ds.google.Matrix;
 import com.playground.notification.ds.grounds.Playground;
@@ -76,24 +76,20 @@ import static com.playground.notification.utils.Utils.setPlaygroundIcon;
  *
  * @author Xinyue Zhao
  */
-public final class PlaygroundDetailFragment extends BottomSheetDialogFragment implements RatingManager.RatingUI {
-	private static final String EXTRAS_GROUND = PlaygroundDetailFragment.class.getName() + ".EXTRAS.playground";
-	private static final String EXTRAS_LAT = PlaygroundDetailFragment.class.getName() + ".EXTRAS.lat";
-	private static final String EXTRAS_LNG = PlaygroundDetailFragment.class.getName() + ".EXTRAS.lng";
+public final class PlaygroundListItemDetailFragment extends BaseFragment implements RatingManager.RatingUI {
+	private static final String EXTRAS_GROUND = PlaygroundListItemDetailFragment.class.getName() + ".EXTRAS.playground";
+	private static final String EXTRAS_LAT = PlaygroundListItemDetailFragment.class.getName() + ".EXTRAS.lat";
+	private static final String EXTRAS_LNG = PlaygroundListItemDetailFragment.class.getName() + ".EXTRAS.lng";
 	/**
 	 * Main layout for this component.
 	 */
-	private static final int LAYOUT = R.layout.fragment_playground_detail;
+	private static final int LAYOUT = R.layout.fragment_playground_list_item_detail;
 	/**
 	 * Data-binding.
 	 */
-	private PlaygroundDetailBinding mBinding;
+	private PlaygroundListItemDetailBinding mBinding;
 
-	/**
-	 * {@code true} if we show map here, otherwise we show streetview.
-	 */
-	private boolean mShowMap = false;
-	private BottomSheetBehavior mBehavior;
+
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -135,9 +131,9 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 	}
 
 	/**
-	 * Handler for {@link com.playground.notification.bus.ShowLocationRatingEvent}.
+	 * Handler for {@link ShowLocationRatingEvent}.
 	 *
-	 * @param e Event {@link com.playground.notification.bus.ShowLocationRatingEvent}.
+	 * @param e Event {@link ShowLocationRatingEvent}.
 	 */
 	public void onEvent(ShowLocationRatingEvent e) {
 		if (!getUserVisibleHint()) {
@@ -222,20 +218,20 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 
 
 	/**
-	 * New an instance of {@link PlaygroundDetailFragment}.
+	 * New an instance of {@link PlaygroundListItemDetailFragment}.
 	 *
-	 * @param context    {@link android.content.Context}.
+	 * @param context    {@link Context}.
 	 * @param fromLat    The latitude of "from" position to {@code playground}.
 	 * @param fromLng    The longitude of "from" position to {@code playground}.
 	 * @param playground {@link Playground}.
-	 * @return An instance of {@link PlaygroundDetailFragment}.
+	 * @return An instance of {@link PlaygroundListItemDetailFragment}.
 	 */
-	public static PlaygroundDetailFragment newInstance(Context context, double fromLat, double fromLng, Playground playground) {
+	public static PlaygroundListItemDetailFragment newInstance(Context context, double fromLat, double fromLng, Playground playground) {
 		Bundle args = new Bundle();
 		args.putDouble(EXTRAS_LAT, fromLat);
 		args.putDouble(EXTRAS_LNG, fromLng);
 		args.putSerializable(EXTRAS_GROUND, (Serializable) playground);
-		return (PlaygroundDetailFragment) PlaygroundDetailFragment.instantiate(context, PlaygroundDetailFragment.class.getName(), args);
+		return (PlaygroundListItemDetailFragment) PlaygroundListItemDetailFragment.instantiate(context, PlaygroundListItemDetailFragment.class.getName(), args);
 	}
 
 	@Override
@@ -260,8 +256,6 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 
 	@Override
 	public void onResume() {
-		EventBus.getDefault()
-		        .register(this);
 		mBinding.map.onResume();
 		mBinding.streetview.onResume();
 		super.onResume();
@@ -269,8 +263,6 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 
 	@Override
 	public void onPause() {
-		EventBus.getDefault()
-		        .unregister(this);
 		mBinding.map.onPause();
 		mBinding.streetview.onPause();
 		super.onPause();
@@ -283,6 +275,14 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 		super.onLowMemory();
 	}
 
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		mBinding = DataBindingUtil.inflate(inflater, LAYOUT, container, false);
+		mBinding.map.onCreate(savedInstanceState);
+		mBinding.streetview.onCreate(savedInstanceState);
+		return mBinding.getRoot();
+	}
+
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -291,20 +291,17 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 	}
 
 
-	@NonNull
-	@Override
-	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		BottomSheetDialog dialog = (BottomSheetDialog) super.onCreateDialog(savedInstanceState);
-		View view = View.inflate(getContext(), LAYOUT, null);
-		mBinding = DataBindingUtil.bind(view);
-		mBinding.map.onCreate(savedInstanceState);
-		mBinding.streetview.onCreate(savedInstanceState);
-		dialog.setContentView(view);
-		mBehavior = BottomSheetBehavior.from((View) view.getParent());
-		return dialog;
-	}
-
 	private void initView() {
+		mBinding.toolbar.setNavigationIcon(AppCompatResources.getDrawable(getContext(), R.drawable.ic_action_close));
+		mBinding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				EventBus.getDefault()
+				        .post(new BackPressedEvent());
+			}
+		});
+
+
 		Bundle args = getArguments();
 		final Playground playground = (Playground) args.getSerializable(EXTRAS_GROUND);
 		if (playground != null) {
@@ -335,17 +332,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 				});
 				prefs.setShowcase(Prefs.KEY_SHOWCASE_NEAR_RING, true);
 			}
-			updateSwitchButton();
-			mBinding.viewSwitchIbtn.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View view) {
-					view.setVisibility(View.INVISIBLE);
-					mBinding.loadingImgPb.setVisibility(View.VISIBLE);
-					mShowMap = !mShowMap;
-					updateSwitchButton();
-					setGoogleMapOrStreetView();
-				}
-			});
+
 
 			final String method;
 			switch (prefs.getTransportationMethod()) {
@@ -397,7 +384,6 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 					              }
 				              });
 			} catch (ApiNotInitializedException e) {
-				dismiss();
 			}
 
 
@@ -411,20 +397,11 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 			}
 
 
-			//Have you rated?
 			showPersonalRatingOnLocation(playground, this);
 			showRatingSummaryOnLocation(playground, this);
 
-			//Preview
-			setGoogleMapOrStreetView();
+			setupGoogleTools();
 		}
-	}
-
-	private void updateSwitchButton() {
-		mBinding.viewSwitchIbtn.setImageDrawable(AppCompatResources.getDrawable(App.Instance,
-		                                                                        mShowMap ?
-		                                                                        R.drawable.ic_streetview :
-		                                                                        R.drawable.ic_map));
 	}
 
 	@Override
@@ -438,29 +415,12 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 	}
 
 
-	private void setGoogleMapOrStreetView() {
-		Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
-		if (playground == null) {
-			return;
-		}
-
+	private void setupGoogleTools() {
 		mBinding.locationContainer.getLayoutParams().width = (int) App.Instance.getListItemWidth() * 2;
 		mBinding.locationContainer.getLayoutParams().height = (int) App.Instance.getListItemHeight() * 2;
-		if (mShowMap) {
-			showMapLite();
-		} else {
-			showStreetView();
-		}
-	}
-
-	private void showStreetView() {
-		mBinding.loadingImgPb.setVisibility(View.VISIBLE);
-		mBinding.streetview.getStreetViewPanoramaAsync(mOnStreetViewPanoramaReadyCallback);
-	}
-
-	private void showMapLite() {
 		mBinding.loadingImgPb.setVisibility(View.VISIBLE);
 		mBinding.map.getMapAsync(mOnMapReadyCallback);
+		mBinding.streetview.getStreetViewPanoramaAsync(mOnStreetViewPanoramaReadyCallback);
 	}
 
 	private void openRoute() {
@@ -471,8 +431,8 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 
 		Bundle arguments = getArguments();
 		RouteCalcClientPicker.show(activity,
-		                           com.playground.notification.utils.Utils.getMapWeb(new LatLng(arguments.getDouble(EXTRAS_LAT), arguments.getDouble(EXTRAS_LNG)),
-		                                                                             ((Playground) arguments.getSerializable(EXTRAS_GROUND)).getPosition()));
+		                           Utils.getMapWeb(new LatLng(arguments.getDouble(EXTRAS_LAT), arguments.getDouble(EXTRAS_LNG)),
+		                                           ((Playground) arguments.getSerializable(EXTRAS_GROUND)).getPosition()));
 	}
 
 	/**
@@ -481,19 +441,30 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 	private final StreetViewPanorama.OnStreetViewPanoramaChangeListener mOnStreetViewPanoramaChangeListener = new StreetViewPanorama.OnStreetViewPanoramaChangeListener() {
 		@Override
 		public void onStreetViewPanoramaChange(StreetViewPanoramaLocation streetViewPanoramaLocation) {
-			mStreetViewPanoramaLocation = streetViewPanoramaLocation;
-			if (mStreetViewPanoramaLocation != null && mStreetViewPanoramaLocation.links != null) {
-				mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
-				mBinding.streetview.setVisibility(View.VISIBLE);
-				mBinding.map.setVisibility(View.INVISIBLE);
-			} else {
-				mBinding.viewSwitchIbtn.performClick();
+			if (streetViewPanoramaLocation != null && streetViewPanoramaLocation.links != null) {
+				mBinding.toolbar.inflateMenu(R.menu.menu_list_item_detail);
+				mBinding.toolbar.getMenu()
+				                .findItem(R.id.action_street_view)
+				                .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+					                @Override
+					                public boolean onMenuItemClick(MenuItem item) {
+						                Matrix matrix = mBinding.getMatrix();
+						                Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
+						                if (playground.getPosition() != null && matrix != null && matrix.getDestination() != null && matrix.getDestination()
+						                                                                                                                   .size() > 0 && matrix.getDestination()
+						                                                                                                                                        .get(0) != null) {
+							                EventBus.getDefault()
+							                        .post(new ShowStreetViewEvent(matrix.getDestination()
+							                                                            .get(0), playground.getPosition()));
+						                }
+						                return true;
+					                }
+				                });
 			}
 			mBinding.loadingImgPb.setVisibility(View.GONE);
 		}
 	};
 
-	private StreetViewPanoramaLocation mStreetViewPanoramaLocation;
 
 	/**
 	 * Streeview can be loaded successfully or not.
@@ -501,7 +472,6 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 	private final OnStreetViewPanoramaReadyCallback mOnStreetViewPanoramaReadyCallback = new OnStreetViewPanoramaReadyCallback() {
 		@Override
 		public void onStreetViewPanoramaReady(StreetViewPanorama streetViewPanorama) {
-			streetViewPanorama.setOnStreetViewPanoramaClickListener(mOnStreetViewPanoramaClickListener);
 			streetViewPanorama.setOnStreetViewPanoramaChangeListener(mOnStreetViewPanoramaChangeListener);
 			Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
 			streetViewPanorama.setPosition(playground.getPosition());
@@ -520,35 +490,10 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 			setPlaygroundIcon(App.Instance, playground, markerOptions);
 			googleMap.addMarker(markerOptions);
 			googleMap.setOnMapClickListener(mOnMapClickListener);
-			if (mStreetViewPanoramaLocation != null) {
-				mBinding.viewSwitchIbtn.setVisibility(View.VISIBLE);
-			}
-			mBinding.streetview.setVisibility(View.INVISIBLE);
-			mBinding.map.setVisibility(View.VISIBLE);
 			mBinding.loadingImgPb.setVisibility(View.GONE);
 		}
 	};
 
-	/**
-	 * Click on streetview.
-	 */
-	private final StreetViewPanorama.OnStreetViewPanoramaClickListener mOnStreetViewPanoramaClickListener = new StreetViewPanorama.OnStreetViewPanoramaClickListener() {
-		@Override
-		public void onStreetViewPanoramaClick(StreetViewPanoramaOrientation streetViewPanoramaOrientation) {
-			Matrix matrix = mBinding.getMatrix();
-			Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
-			if (playground.getPosition() != null && matrix != null && matrix.getDestination() != null && matrix.getDestination()
-			                                                                                                   .size() > 0 && matrix.getDestination()
-			                                                                                                                        .get(0) != null) {
-				if (mBehavior != null) {
-					dismiss();
-				}
-				EventBus.getDefault()
-				        .post(new ShowStreetViewEvent(matrix.getDestination()
-				                                            .get(0), playground.getPosition()));
-			}
-		}
-	};
 
 	/**
 	 * Click on map.
@@ -561,7 +506,6 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 				if (activity == null) {
 					return;
 				}
-				dismiss();
 				Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
 				MapActivity.showInstance(activity, playground);
 			}
@@ -576,9 +520,9 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 		private final double mLat;
 		private final double mLng;
 		private final Playground mGround;
-		private final PlaygroundDetailBinding mBinding;
+		private final PlaygroundListItemDetailBinding mBinding;
 
-		public EventHandler(double fromLat, double fromLng, Playground playground, PlaygroundDetailBinding binding) {
+		public EventHandler(double fromLat, double fromLng, Playground playground, PlaygroundListItemDetailBinding binding) {
 			mLat = fromLat;
 			mLng = fromLng;
 			mGround = playground;
@@ -662,7 +606,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 			                        .getGoogleMapSearchHost() + mGround.getLatitude() + "," + mGround.getLongitude();
 			com.tinyurl4j.Api.getTinyUrl(url, new Callback<com.tinyurl4j.data.Response>() {
 				@Override
-				public void success(com.tinyurl4j.data.Response response, retrofit.client.Response response2) {
+				public void success(com.tinyurl4j.data.Response response, Response response2) {
 					String subject = App.Instance.getString(R.string.lbl_share_ground_title);
 					String content = App.Instance.getString(R.string.lbl_share_ground_content,
 					                                        response.getResult(),
@@ -688,9 +632,9 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 
 
 	public static final class AddToNearRingFragment extends AppCompatDialogFragment {
-		private static final String EXTRAS_GROUND = PlaygroundDetailFragment.class.getName() + ".EXTRAS.playground";
-		private static final String EXTRAS_LAT = PlaygroundDetailFragment.class.getName() + ".EXTRAS.lat";
-		private static final String EXTRAS_LNG = PlaygroundDetailFragment.class.getName() + ".EXTRAS.lng";
+		private static final String EXTRAS_GROUND = PlaygroundListItemDetailFragment.class.getName() + ".EXTRAS.playground";
+		private static final String EXTRAS_LAT = PlaygroundListItemDetailFragment.class.getName() + ".EXTRAS.lat";
+		private static final String EXTRAS_LNG = PlaygroundListItemDetailFragment.class.getName() + ".EXTRAS.lng";
 
 		public static AddToNearRingFragment newInstance(Context cxt, double fromLat, double fromLng, Playground playground) {
 			Bundle args = new Bundle();
@@ -722,5 +666,10 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 			       });
 			return builder.create();
 		}
+	}
+
+	@Override
+	protected BasicPrefs getPrefs() {
+		return Prefs.getInstance();
 	}
 }

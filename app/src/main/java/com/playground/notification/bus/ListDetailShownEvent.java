@@ -2,4 +2,4 @@ package com.playground.notification.bus;
 
 
 
-public final class DetailShownEvent {}
+public final class ListDetailShownEvent {}

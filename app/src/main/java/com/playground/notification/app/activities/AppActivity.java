@@ -27,8 +27,8 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.playground.notification.R;
 import com.playground.notification.app.fragments.AboutDialogFragment.EulaConfirmationDialog;
 import com.playground.notification.bus.BackPressedEvent;
-import com.playground.notification.bus.DetailClosedEvent;
-import com.playground.notification.bus.DetailShownEvent;
+import com.playground.notification.bus.ListDetailClosedEvent;
+import com.playground.notification.bus.ListDetailShownEvent;
 import com.playground.notification.bus.EULAConfirmedEvent;
 import com.playground.notification.bus.EULARejectEvent;
 import com.playground.notification.bus.FavoriteListLoadingErrorEvent;
@@ -367,21 +367,21 @@ public abstract class AppActivity extends BaseActivity {
 
 
 		/**
-		 * Handler for {@link DetailShownEvent}.
+		 * Handler for {@link ListDetailShownEvent}.
 		 *
-		 * @param e Event {@link DetailShownEvent}.
+		 * @param e Event {@link ListDetailShownEvent}.
 		 */
-		public void onEvent(DetailShownEvent e) {
+		public void onEvent(ListDetailShownEvent e) {
 			mItemSelected = true;
 		}
 
 
 		/**
-		 * Handler for {@link DetailClosedEvent}.
+		 * Handler for {@link ListDetailClosedEvent}.
 		 *
-		 * @param e Event {@link DetailClosedEvent}.
+		 * @param e Event {@link ListDetailClosedEvent}.
 		 */
-		public void onEvent(DetailClosedEvent e) {
+		public void onEvent(ListDetailClosedEvent e) {
 			mItemSelected = false;
 		}
 

@@ -22,8 +22,8 @@ import com.playground.notification.R;
 import com.playground.notification.app.App;
 import com.playground.notification.app.adapters.PlaygroundListAdapter;
 import com.playground.notification.bus.BackPressedEvent;
-import com.playground.notification.bus.DetailClosedEvent;
-import com.playground.notification.bus.DetailShownEvent;
+import com.playground.notification.bus.ListDetailClosedEvent;
+import com.playground.notification.bus.ListDetailShownEvent;
 import com.playground.notification.bus.OpenPlaygroundEvent;
 import com.playground.notification.databinding.PlaygroundListBinding;
 import com.playground.notification.ds.grounds.Playground;
@@ -70,7 +70,7 @@ public final class PlaygroundListFragment extends BaseFragment implements Google
 			Location location = App.Instance.getCurrentLocation();
 			LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
 			getChildFragmentManager().beginTransaction()
-			                         .replace(R.id.playground_detail_container, PlaygroundDetailFragment.newInstance(activity, currentLatLng.latitude, currentLatLng.longitude, playground))
+			                         .replace(R.id.playground_detail_container, PlaygroundListItemDetailFragment.newInstance(activity, currentLatLng.latitude, currentLatLng.longitude, playground))
 			                         .addToBackStack(null)
 			                         .commit();
 		}
@@ -132,13 +132,13 @@ public final class PlaygroundListFragment extends BaseFragment implements Google
 			@Override
 			public void onClose(IBBackgroundRecyclerView v) {
 				EventBus.getDefault()
-				        .post(new DetailClosedEvent());
+				        .post(new ListDetailClosedEvent());
 			}
 
 			@Override
 			public void onOpen(IBBackgroundRecyclerView v) {
 				EventBus.getDefault()
-				        .post(new DetailShownEvent());
+				        .post(new ListDetailShownEvent());
 			}
 
 		});

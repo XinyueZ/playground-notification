@@ -18,6 +18,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.playground.notification.R;
+import com.playground.notification.bus.ListDetailClosedEvent;
+import com.playground.notification.bus.ListDetailShownEvent;
 import com.playground.notification.databinding.AppBarLayoutBinding;
 import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.MyLocationManager;
@@ -32,6 +34,32 @@ public abstract class AppBarActivity extends AppActivity {
 	private AppBarLayoutBinding mBinding;
 	private ActionBarDrawerToggle mDrawerToggle;
 
+	//------------------------------------------------
+	//Subscribes, event-handlers
+	//------------------------------------------------
+
+
+	/**
+	 * Handler for {@link ListDetailShownEvent}.
+	 *
+	 * @param e Event {@link ListDetailShownEvent}.
+	 */
+	public void onEvent(ListDetailShownEvent e) {
+		mBinding.appbar.appbarLayout.setExpanded(true);
+		dismissToolbar();
+	}
+
+
+	/**
+	 * Handler for {@link ListDetailClosedEvent}.
+	 *
+	 * @param e Event {@link ListDetailClosedEvent}.
+	 */
+	public void onEvent(ListDetailClosedEvent e) {
+		showToolbar();
+	}
+
+	//------------------------------------------------
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,10 +106,24 @@ public abstract class AppBarActivity extends AppActivity {
 
 	private void setupMain() {
 		setSupportActionBar(mBinding.appbar.toolbar);
-		final ActionBar actionBar = getSupportActionBar();
+		ActionBar actionBar = getSupportActionBar();
 		if (actionBar != null) {
 			actionBar.setDisplayShowHomeEnabled(true);
 			actionBar.setDisplayHomeAsUpEnabled(true);
+		}
+	}
+
+	private void showToolbar() {
+		ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null) {
+			actionBar.show();
+		}
+	}
+
+	private void dismissToolbar() {
+		ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null) {
+			actionBar.hide();
 		}
 	}
 

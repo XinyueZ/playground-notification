@@ -2,15 +2,15 @@ package com.playground.notification.bus;
 
 
 public final class PostOpenRouteEvent {
-	private final boolean mFlag;
+	private final boolean mAddToNearRing;
 
 
-	public PostOpenRouteEvent(boolean flag) {
-		mFlag = flag;
+	public PostOpenRouteEvent(boolean addToNearRing) {
+		mAddToNearRing = addToNearRing;
 	}
 
 
-	public boolean isFlag() {
-		return mFlag;
+	public boolean isAddToNearRing() {
+		return mAddToNearRing;
 	}
 }

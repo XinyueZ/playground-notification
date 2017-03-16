@@ -15,13 +15,14 @@ import java.io.Serializable;
 
 import de.greenrobot.event.EventBus;
 
+import static com.playground.notification.app.fragments.AppFragment.EXTRAS_GROUND;
+import static com.playground.notification.app.fragments.AppFragment.EXTRAS_LAT;
+import static com.playground.notification.app.fragments.AppFragment.EXTRAS_LNG;
+
 /**
  * Created by xzhao on 16.03.17.
  */
-public final class AddToNearRingFragment extends AppCompatDialogFragment {
-	private static final String EXTRAS_GROUND = PlaygroundListItemDetailFragment.class.getName() + ".EXTRAS.playground";
-	private static final String EXTRAS_LAT = PlaygroundListItemDetailFragment.class.getName() + ".EXTRAS.lat";
-	private static final String EXTRAS_LNG = PlaygroundListItemDetailFragment.class.getName() + ".EXTRAS.lng";
+public final class AddToNearRingFragment extends AppCompatDialogFragment { ;
 
 	public static AddToNearRingFragment newInstance(Context cxt, double fromLat, double fromLng, Playground playground) {
 		Bundle args = new Bundle();

@@ -3,7 +3,7 @@ package com.playground.notification.app.fragments;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AppCompatDialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +25,7 @@ import cn.bmob.v3.listener.UpdateListener;
 /**
  * Created by xzhao on 16.03.17.
  */ //A dialog to update current rating status of a ground for you.
-public final class RatingDialogFragment extends DialogFragment {
+public final class RatingDialogFragment extends AppCompatDialogFragment {
 	/**
 	 * Data-binding.
 	 */

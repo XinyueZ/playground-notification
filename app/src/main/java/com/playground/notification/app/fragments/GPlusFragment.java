@@ -14,9 +14,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
-import com.chopping.application.BasicPrefs;
 import com.chopping.bus.CloseDrawerEvent;
-import com.chopping.fragments.BaseFragment;
 import com.chopping.utils.Utils;
 import com.playground.notification.R;
 import com.playground.notification.app.App;
@@ -36,7 +34,7 @@ import de.greenrobot.event.EventBus;
  *
  * @author Xinyue Zhao
  */
-public final class GPlusFragment extends BaseFragment {
+public final class GPlusFragment extends AppFragment {
 	/**
 	 * Main layout for this component.
 	 */
@@ -120,13 +118,4 @@ public final class GPlusFragment extends BaseFragment {
 		super.onResume();
 	}
 
-	/**
-	 * App that use this Chopping should know the preference-storage.
-	 *
-	 * @return An instance of {@link com.chopping.application.BasicPrefs}.
-	 */
-	@Override
-	protected BasicPrefs getPrefs() {
-		return Prefs.getInstance();
-	}
 }

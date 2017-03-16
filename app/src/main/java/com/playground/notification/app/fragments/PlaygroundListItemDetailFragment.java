@@ -1,10 +1,8 @@
 package com.playground.notification.app.fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.content.res.AppCompatResources;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -12,16 +10,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
-import com.chopping.application.BasicPrefs;
 import com.chopping.application.LL;
-import com.chopping.fragments.BaseFragment;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.OnStreetViewPanoramaReadyCallback;
 import com.google.android.gms.maps.StreetViewPanorama;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.StreetViewPanoramaLocation;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
@@ -30,13 +23,9 @@ import com.playground.notification.R;
 import com.playground.notification.api.Api;
 import com.playground.notification.api.ApiNotInitializedException;
 import com.playground.notification.app.App;
-import com.playground.notification.app.activities.AppActivity;
-import com.playground.notification.app.activities.MapActivity;
 import com.playground.notification.bus.BackPressedEvent;
 import com.playground.notification.bus.OpenRouteEvent;
-import com.playground.notification.bus.PostOpenRouteEvent;
 import com.playground.notification.bus.ShowLocationRatingEvent;
-import com.playground.notification.bus.ShowStreetViewEvent;
 import com.playground.notification.databinding.PlaygroundListItemDetailBinding;
 import com.playground.notification.ds.google.Matrix;
 import com.playground.notification.ds.grounds.Playground;
@@ -58,18 +47,13 @@ import retrofit.client.Response;
 
 import static com.playground.notification.sync.RatingManager.showPersonalRatingOnLocation;
 import static com.playground.notification.sync.RatingManager.showRatingSummaryOnLocation;
-import static com.playground.notification.utils.Utils.openRoute;
-import static com.playground.notification.utils.Utils.setPlaygroundIcon;
 
 /**
  * Show details of a playground, address, rating.
  *
  * @author Xinyue Zhao
  */
-public final class PlaygroundListItemDetailFragment extends BaseFragment implements RatingManager.RatingUI {
-	private static final String EXTRAS_GROUND = PlaygroundListItemDetailFragment.class.getName() + ".EXTRAS.playground";
-	private static final String EXTRAS_LAT = PlaygroundListItemDetailFragment.class.getName() + ".EXTRAS.lat";
-	private static final String EXTRAS_LNG = PlaygroundListItemDetailFragment.class.getName() + ".EXTRAS.lng";
+public final class PlaygroundListItemDetailFragment extends AppFragment implements RatingManager.RatingUI {
 	/**
 	 * Main layout for this component.
 	 */
@@ -79,70 +63,7 @@ public final class PlaygroundListItemDetailFragment extends BaseFragment impleme
 	 */
 	private PlaygroundListItemDetailBinding mBinding;
 
-
-	//------------------------------------------------
-	//Subscribes, event-handlers
-	//------------------------------------------------
-
-	/**
-	 * Handler for {@link OpenRouteEvent}.
-	 *
-	 * @param e Event {@link OpenRouteEvent}.
-	 */
-	public void onEvent(OpenRouteEvent e) {
-		FragmentActivity activity = getActivity();
-		if (activity == null) {
-			return;
-		}
-		final Bundle arguments = getArguments();
-		NearRingManager mgr = NearRingManager.getInstance();
-		SyncPlayground ringFound = mgr.findInCache((Playground) arguments.getSerializable(EXTRAS_GROUND));
-		if (ringFound == null) {
-			AddToNearRingFragment.newInstance(activity, arguments.getDouble(EXTRAS_LAT), arguments.getDouble(EXTRAS_LNG), ((Playground) arguments.getSerializable(EXTRAS_GROUND)))
-			                     .show(getChildFragmentManager(), null);
-		} else {
-			EventBus.getDefault()
-			        .post(new PostOpenRouteEvent(false));
-		}
-	}
-
-	/**
-	 * Handler for {@link PostOpenRouteEvent}.
-	 *
-	 * @param e Event {@link PostOpenRouteEvent}.
-	 */
-	public void onEvent(PostOpenRouteEvent e) {
-		if (e.isFlag()) {
-			NearRingManager.getInstance()
-			               .addNearRing(((Playground) getArguments().getSerializable(EXTRAS_GROUND)), mBinding.ringIv, mBinding.playgroundDetailVg);
-		}
-
-		FragmentActivity activity =  getActivity();
-		if (activity == null) {
-			return;
-		}
-
-		Bundle arguments =  getArguments();
-		openRoute(activity, new LatLng(arguments.getDouble(EXTRAS_LAT), arguments.getDouble(EXTRAS_LNG)),
-		                ((Playground) arguments.getSerializable(EXTRAS_GROUND)).getPosition());
-	}
-
-	/**
-	 * Handler for {@link ShowLocationRatingEvent}.
-	 *
-	 * @param e Event {@link ShowLocationRatingEvent}.
-	 */
-	public void onEvent(ShowLocationRatingEvent e) {
-		if (!getUserVisibleHint()) {
-			return;
-		}
-		AppActivity activity = (AppActivity) getActivity();
-		if (activity != null) {
-			activity.showDialogFragment(RatingDialogFragment.newInstance(activity, e.getPlayground(), mBinding.getRating()), "rating");
-		}
-	}
-	//------------------------------------------------
-
+	private AppFragment.CommonUIDelegate mCommonUIDelegate = new AppFragment.CommonUIDelegate(this);
 
 
 	/**
@@ -187,10 +108,14 @@ public final class PlaygroundListItemDetailFragment extends BaseFragment impleme
 		mBinding.map.onResume();
 		mBinding.streetview.onResume();
 		super.onResume();
+		EventBus.getDefault()
+		        .register(mCommonUIDelegate);
 	}
 
 	@Override
 	public void onPause() {
+		EventBus.getDefault()
+		        .unregister(mCommonUIDelegate);
 		mBinding.map.onPause();
 		mBinding.streetview.onPause();
 		super.onPause();
@@ -364,7 +289,7 @@ public final class PlaygroundListItemDetailFragment extends BaseFragment impleme
 				                .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 					                @Override
 					                public boolean onMenuItemClick(MenuItem item) {
-						                openStreetView();
+						                mCommonUIDelegate.openStreetView(mBinding.getMatrix());
 						                return true;
 					                }
 				                });
@@ -373,25 +298,13 @@ public final class PlaygroundListItemDetailFragment extends BaseFragment impleme
 				                             .setOnClickListener(new OnClickListener() {
 					                             @Override
 					                             public void onClick(View v) {
-						                             openStreetView();
+						                             mCommonUIDelegate.openStreetView(mBinding.getMatrix());
 					                             }
 				                             });
 			}
 			mBinding.loadingImgPb.setVisibility(View.GONE);
 		}
 	};
-
-	private void openStreetView() {
-		Matrix matrix = mBinding.getMatrix();
-		Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
-		if (playground.getPosition() != null && matrix != null && matrix.getDestination() != null && matrix.getDestination()
-		                                                                                                   .size() > 0 && matrix.getDestination()
-		                                                                                                                        .get(0) != null) {
-			EventBus.getDefault()
-			        .post(new ShowStreetViewEvent(matrix.getDestination()
-			                                            .get(0), playground.getPosition()));
-		}
-	}
 
 
 	/**
@@ -412,30 +325,9 @@ public final class PlaygroundListItemDetailFragment extends BaseFragment impleme
 	private final OnMapReadyCallback mOnMapReadyCallback = new OnMapReadyCallback() {
 		@Override
 		public void onMapReady(GoogleMap googleMap) {
-			Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
-			googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(playground.getPosition(), 16));
-			MarkerOptions markerOptions = new MarkerOptions().position(playground.getPosition());
-			setPlaygroundIcon(App.Instance, playground, markerOptions);
-			googleMap.addMarker(markerOptions);
-			googleMap.setOnMapClickListener(mOnMapClickListener);
 			mBinding.loadingImgPb.setVisibility(View.GONE);
-		}
-	};
-
-
-	/**
-	 * Click on map.
-	 */
-	private final GoogleMap.OnMapClickListener mOnMapClickListener = new GoogleMap.OnMapClickListener() {
-		@Override
-		public void onMapClick(LatLng latLng) {
-			if (getResources().getBoolean(R.bool.is_small_screen)) {
-				Activity activity = getActivity();
-				if (activity == null) {
-					return;
-				}
-				Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
-				MapActivity.showInstance(activity, playground);
+			if (googleMap != null) {
+				mCommonUIDelegate.onMapReady(googleMap);
 			}
 		}
 	};
@@ -500,7 +392,7 @@ public final class PlaygroundListItemDetailFragment extends BaseFragment impleme
 
 		public void onRatingClicked(@SuppressWarnings("UnusedParameters") View view) {
 			EventBus.getDefault()
-			        .post(new ShowLocationRatingEvent(mGround));
+			        .post(new ShowLocationRatingEvent(mGround, mBinding.getRating()));
 		}
 
 		public void onSaveFavClicked(@SuppressWarnings("UnusedParameters") View view) {
@@ -556,11 +448,5 @@ public final class PlaygroundListItemDetailFragment extends BaseFragment impleme
 				}
 			});
 		}
-	}
-
-
-	@Override
-	protected BasicPrefs getPrefs() {
-		return Prefs.getInstance();
 	}
 }

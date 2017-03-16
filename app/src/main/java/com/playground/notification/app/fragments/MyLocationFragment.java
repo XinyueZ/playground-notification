@@ -35,6 +35,9 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+import static com.playground.notification.app.fragments.AppFragment.EXTRAS_GROUND;
+import static com.playground.notification.app.fragments.AppFragment.EXTRAS_LAT;
+import static com.playground.notification.app.fragments.AppFragment.EXTRAS_LNG;
 import static com.playground.notification.utils.Utils.setPlaygroundIcon;
 
 /**
@@ -43,9 +46,6 @@ import static com.playground.notification.utils.Utils.setPlaygroundIcon;
  * @author Xinyue Zhao
  */
 public final class MyLocationFragment extends AppCompatDialogFragment {
-	private static final String EXTRAS_LAT = MyLocationFragment.class.getName() + ".EXTRAS.lat";
-	private static final String EXTRAS_LNG = MyLocationFragment.class.getName() + ".EXTRAS.lng";
-	private static final String EXTRAS_GROUND = MyLocationFragment.class.getName() + ".EXTRAS.playground";
 	/**
 	 * Main layout for this component.
 	 */

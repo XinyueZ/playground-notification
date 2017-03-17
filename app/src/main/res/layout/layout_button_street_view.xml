@@ -4,15 +4,14 @@
                                                      android:layout_width="match_parent"
                                                      android:layout_height="wrap_content">
 
-    <Button
+    <com.playground.notification.ui.IconCenterButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/primary_color"
         android:drawableLeft="@drawable/ic_streetview"
         android:drawablePadding="@dimen/activity_horizontal_margin"
         android:drawableStart="@drawable/ic_streetview"
-        android:gravity="center"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:gravity="start|left|center_vertical"
         android:text="@string/action_street_view"
         android:textColor="@color/common_white"/>
 </com.playground.notification.ui.MaterialRippleLayout>

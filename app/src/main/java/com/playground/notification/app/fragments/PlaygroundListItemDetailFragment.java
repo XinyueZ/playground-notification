@@ -256,6 +256,10 @@ public final class PlaygroundListItemDetailFragment extends AppFragment implemen
 			showRatingSummaryOnLocation(playground, this);
 
 			setupGoogleTools();
+			if (playground.getPosition() == null) {
+				return;
+			}
+			mCommonUIDelegate.showWeather(mBinding.weatherLayout.weatherIconIv, mBinding.weatherLayout.weatherTv, playground.getPosition());
 		}
 	}
 

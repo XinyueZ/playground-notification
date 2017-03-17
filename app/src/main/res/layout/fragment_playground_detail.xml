@@ -114,6 +114,15 @@
                             android:id="@+id/streetview"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent" />
+
+
+                        <include
+                            android:id="@+id/weather_layout"
+                            layout="@layout/layout_playground_weather"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_margin="@dimen/common_padding"/>
                     </FrameLayout>
 
                     <com.playground.notification.ui.MaterialRippleLayout

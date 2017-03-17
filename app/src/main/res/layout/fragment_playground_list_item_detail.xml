@@ -110,6 +110,15 @@
                             app:uiZoomGestures="false">
                         </com.google.android.gms.maps.MapView>
 
+
+                        <include
+                            android:id="@+id/weather_layout"
+                            layout="@layout/layout_playground_weather"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_margin="@dimen/common_padding"/>
+
                     </FrameLayout>
 
 

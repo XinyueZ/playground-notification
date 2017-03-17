@@ -78,6 +78,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 	private final AppFragment.CommonUIDelegate mCommonUIDelegate = new AppFragment.CommonUIDelegate(this);
 
 	private StreetViewPanoramaLocation mStreetViewPanoramaLocation;
+
 	/**
 	 * New an instance of {@link PlaygroundDetailFragment}.
 	 *
@@ -274,6 +275,10 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 
 			//Preview
 			setGoogleMapOrStreetView();
+			if (playground.getPosition() == null) {
+				return;
+			}
+			mCommonUIDelegate.showWeather(mBinding.weatherLayout.weatherIconIv, mBinding.weatherLayout.weatherTv, playground.getPosition());
 		}
 	}
 

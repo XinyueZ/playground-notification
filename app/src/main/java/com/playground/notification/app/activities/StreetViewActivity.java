@@ -2,23 +2,18 @@ package com.playground.notification.app.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
-import android.support.v7.content.res.AppCompatResources;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.playground.notification.R;
-import com.playground.notification.app.App;
 import com.playground.notification.app.fragments.StreetViewFragment;
-import com.playground.notification.databinding.StreetViewBinding;
 
 
 /**
@@ -26,11 +21,10 @@ import com.playground.notification.databinding.StreetViewBinding;
  *
  * @author Xinyue Zhao
  */
-public final class StreetViewActivity extends AppActivity {
+public final class StreetViewActivity extends AppBarActivity {
 
 	private static final String EXTRAS_TITLE = StreetViewActivity.class.getName() + ".EXTRAS.";
 	private static final String EXTRAS_LOCATION = StreetViewActivity.class.getName() + ".EXTRAS.location";
-	private static final int LAYOUT = R.layout.activity_street_view;
 
 	/**
 	 * View's menu.
@@ -50,47 +44,30 @@ public final class StreetViewActivity extends AppActivity {
 		ActivityCompat.startActivity(cxt, intent, Bundle.EMPTY);
 	}
 
-
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		StreetViewBinding binding = DataBindingUtil.setContentView(this, LAYOUT);
-		//Init application basic elements.
-		setUpErrorHandling((ViewGroup) findViewById(R.id.error_content));
-		setSupportActionBar(binding.toolbar);
-		handleIntent(getIntent());
-	}
-
-
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
 		setIntent(intent);
-		handleIntent(getIntent());
+
+		updateUI(intent);
 	}
 
-	private void handleIntent(Intent intent) {
+	private void updateUI(Intent intent) {
 		String title = intent.getStringExtra(EXTRAS_TITLE);
 		LatLng location = intent.getParcelableExtra(EXTRAS_LOCATION);
-
 		showLocationStreetView(location);
-
-		final ActionBar actionBar = getSupportActionBar();
+		ActionBar actionBar = getSupportActionBar();
 		if (actionBar != null) {
-			actionBar.setHomeAsUpIndicator(AppCompatResources.getDrawable(App.Instance, R.drawable.ic_action_close));
-			actionBar.setDisplayHomeAsUpEnabled(true);
 			actionBar.setTitle(title);
 		}
 	}
 
 	private void showLocationStreetView(LatLng location) {
-		Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.street_view_fragment_container);
+		Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.appbar_content);
 		StreetViewFragment dialogFragment;
 		if (fragment == null) {
 			dialogFragment = StreetViewFragment.newInstance(getApplicationContext(), location);
-			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-			ft.replace(R.id.street_view_fragment_container, dialogFragment);
-			ft.commit();
+			setupFragment(dialogFragment);
 		} else {
 			dialogFragment = (StreetViewFragment) fragment;
 			dialogFragment.setStreetView(location);
@@ -107,14 +84,17 @@ public final class StreetViewActivity extends AppActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case android.R.id.home:
-				ActivityCompat.finishAfterTransition(this);
-				break;
 			case R.id.action_my_location:
 				LatLng location = getIntent().getParcelableExtra(EXTRAS_LOCATION);
 				showLocationStreetView(location);
 				break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	protected void setupContent(@NonNull FrameLayout contentLayout) {
+		Intent intent = getIntent();
+		updateUI(intent);
 	}
 }

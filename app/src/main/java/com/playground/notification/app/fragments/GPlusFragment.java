@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.content.res.AppCompatResources;
 import android.text.TextUtils;
@@ -72,6 +73,7 @@ public final class GPlusFragment extends AppFragment {
 				logout();
 				Activity activity = getActivity();
 				if (activity != null) {
+					ActivityCompat.finishAffinity(activity);
 					ConnectGoogleActivity.showInstance(getActivity());
 				}
 			}

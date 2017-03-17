@@ -131,7 +131,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:visibility="invisible"
-                            app:srcCompat="@drawable/ic_streetview"/>
+                            app:srcCompat="@drawable/ic_streetview_vec"/>
                     </com.playground.notification.ui.MaterialRippleLayout>
 
                     <com.pnikosis.materialishprogress.ProgressWheel

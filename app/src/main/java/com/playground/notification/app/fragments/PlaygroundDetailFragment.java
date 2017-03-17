@@ -75,7 +75,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 	private boolean mShowMap = false;
 	private BottomSheetBehavior mBehavior;
 
-	private AppFragment.CommonUIDelegate mCommonUIDelegate = new AppFragment.CommonUIDelegate(this);
+	private final AppFragment.CommonUIDelegate mCommonUIDelegate = new AppFragment.CommonUIDelegate(this);
 
 	private StreetViewPanoramaLocation mStreetViewPanoramaLocation;
 	/**
@@ -280,7 +280,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 	private void updateSwitchButton() {
 		mBinding.viewSwitchIbtn.setImageDrawable(AppCompatResources.getDrawable(App.Instance,
 		                                                                        mShowMap ?
-		                                                                        R.drawable.ic_streetview :
+		                                                                        R.drawable.ic_streetview_vec :
 		                                                                        R.drawable.ic_map));
 	}
 
@@ -437,7 +437,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 					              @Override
 					              public void success(Matrix matrix, Response response) {
 						              mBinding.setMatrix(matrix);
-						              mBinding.setHandler(new EventHandler(mLat, mLng, mGround, mBinding));
+						              mBinding.setHandler(EventHandler.this);
 						              mBinding.changingPb.setVisibility(View.GONE);
 					              }
 

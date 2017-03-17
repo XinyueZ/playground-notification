@@ -63,7 +63,7 @@ public final class PlaygroundListItemDetailFragment extends AppFragment implemen
 	 */
 	private PlaygroundListItemDetailBinding mBinding;
 
-	private AppFragment.CommonUIDelegate mCommonUIDelegate = new AppFragment.CommonUIDelegate(this);
+	private final AppFragment.CommonUIDelegate mCommonUIDelegate = new AppFragment.CommonUIDelegate(this);
 
 
 	/**
@@ -237,6 +237,8 @@ public final class PlaygroundListItemDetailFragment extends AppFragment implemen
 					              }
 				              });
 			} catch (ApiNotInitializedException e) {
+				EventBus.getDefault()
+				        .post(new BackPressedEvent());
 			}
 
 
@@ -375,7 +377,7 @@ public final class PlaygroundListItemDetailFragment extends AppFragment implemen
 					              @Override
 					              public void success(Matrix matrix, Response response) {
 						              mBinding.setMatrix(matrix);
-						              mBinding.setHandler(new EventHandler(mLat, mLng, mGround, mBinding));
+						              mBinding.setHandler(EventHandler.this);
 						              mBinding.changingPb.setVisibility(View.GONE);
 					              }
 

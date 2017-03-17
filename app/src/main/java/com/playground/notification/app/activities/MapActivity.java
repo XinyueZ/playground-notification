@@ -42,6 +42,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 
 import com.bumptech.glide.Glide;
 import com.chopping.application.LL;
@@ -120,6 +121,7 @@ import retrofit.client.Response;
 
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
 import static pub.devrel.easypermissions.AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE;
 
@@ -316,6 +318,8 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		if (!isSmall) {
 			mBinding.playGroundsListContainer.getLayoutParams().width = (int) App.Instance.getListItemWidth();
 			mBinding.playGroundsListContainer.requestLayout();
+			mBinding.geocodeLv.getLayoutParams().width = (int) App.Instance.getListItemWidth();
+			((FrameLayout.LayoutParams)mBinding.geocodeLv.getLayoutParams()).leftMargin = (int) App.Instance.getListItemWidth();
 		}
 	}
 

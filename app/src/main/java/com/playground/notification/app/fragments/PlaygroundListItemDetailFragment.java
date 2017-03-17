@@ -307,6 +307,8 @@ public final class PlaygroundListItemDetailFragment extends AppFragment implemen
 						                             mCommonUIDelegate.openStreetView(mBinding.getMatrix());
 					                             }
 				                             });
+
+				((ViewGroup.MarginLayoutParams)mBinding.weatherLayout.getRoot().getLayoutParams()).topMargin = com.chopping.utils.Utils.getActionBarHeight(App.Instance);
 			}
 			mBinding.loadingImgPb.setVisibility(View.GONE);
 		}

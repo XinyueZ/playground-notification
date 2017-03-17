@@ -131,7 +131,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="top|right|end"
-                        android:layout_marginTop="?attr/actionBarSize"
+                        android:layout_marginTop="@dimen/common_padding"
                         android:layout_marginStart="@dimen/common_padding"
                         android:layout_marginEnd="@dimen/common_padding"
                         android:layout_marginLeft="@dimen/common_padding"

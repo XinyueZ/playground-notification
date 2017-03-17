@@ -80,13 +80,6 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Title"
                     android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}"/>
 
-                <include
-                    android:id="@+id/weather_layout"
-                    layout="@layout/layout_playground_weather"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="top|right|end"
-                    android:layout_margin="@dimen/common_padding"  />
 
                 <FrameLayout
                     android:layout_width="wrap_content"
@@ -152,6 +145,13 @@
                         app:matProg_fillRadius="true"
                         app:matProg_progressIndeterminate="true"/>
 
+                    <include
+                        android:id="@+id/weather_layout"
+                        layout="@layout/layout_playground_weather"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top|right|end"
+                        android:layout_margin="@dimen/common_padding"/>
 
                 </FrameLayout>
 

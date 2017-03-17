@@ -111,13 +111,6 @@
                         </com.google.android.gms.maps.MapView>
 
 
-                        <include
-                            android:id="@+id/weather_layout"
-                            layout="@layout/layout_playground_weather"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_margin="@dimen/common_padding"/>
 
                     </FrameLayout>
 
@@ -130,6 +123,19 @@
                         app:matProg_barColor="@color/primary_dark_color"
                         app:matProg_fillRadius="true"
                         app:matProg_progressIndeterminate="true"/>
+
+
+                    <include
+                        android:id="@+id/weather_layout"
+                        layout="@layout/layout_playground_weather"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top|right|end"
+                        android:layout_marginTop="?attr/actionBarSize"
+                        android:layout_marginStart="@dimen/common_padding"
+                        android:layout_marginEnd="@dimen/common_padding"
+                        android:layout_marginLeft="@dimen/common_padding"
+                        android:layout_marginRight="@dimen/common_padding"/>
                 </FrameLayout>
 
 

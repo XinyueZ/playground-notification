@@ -246,6 +246,7 @@ abstract class AppFragment extends BaseFragment {
 				               new Callback<Weather>() {
 					               @Override
 					               public void success(Weather weather, Response response) {
+						               ((View) weatherTv.getParent()).setVisibility(View.VISIBLE);
 						               Prefs prefs = Prefs.getInstance();
 						               if (prefs.showWeatherBoard()) {
 							               List<WeatherDetail> details = weather.getDetails();

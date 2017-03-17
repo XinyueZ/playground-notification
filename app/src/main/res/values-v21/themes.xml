@@ -26,4 +26,7 @@
         <item name="android:colorAccent">@color/primary_accent</item>
     </style>
 
+    <style name="SettingsTheme" parent="SettingsThemeBase">
+        <item name="android:statusBarColor">@color/primary_dark_color</item>
+    </style>
 </resources>

@@ -110,6 +110,7 @@ public final class PlaygroundListItemDetailFragment extends AppFragment implemen
 		super.onResume();
 		EventBus.getDefault()
 		        .register(mCommonUIDelegate);
+		mCommonUIDelegate.updateWeatherView(mBinding.weatherLayout.getRoot());
 	}
 
 	@Override

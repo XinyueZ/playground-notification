@@ -123,6 +123,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 		super.onResume();
 		EventBus.getDefault()
 		        .register(mCommonUIDelegate);
+		mCommonUIDelegate.updateWeatherView(mBinding.weatherLayout.getRoot());
 	}
 
 	@Override

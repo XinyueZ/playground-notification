@@ -221,15 +221,27 @@ abstract class AppFragment extends BaseFragment {
 			googleMap.setOnMapClickListener(mOnMapClickListener);
 		}
 
+		void updateWeatherView(View weatherV) {
+			Prefs prefs = Prefs.getInstance();
+			if (!prefs.showWeatherBoard()) {
+				weatherV.setVisibility(View.GONE);
+			} else {
+				weatherV.setVisibility(View.VISIBLE);
+			}
+		}
 
-		 void showWeather(@NonNull final ImageView weatherIv, @NonNull final TextView weatherTv, @NonNull  LatLng location) {
+		void showWeather(@NonNull final ImageView weatherIv, @NonNull final TextView weatherTv, @NonNull LatLng location) {
+			Prefs prefs = Prefs.getInstance();
+			if (!prefs.showWeatherBoard()) {
+				((View) weatherTv.getParent()).setVisibility(View.GONE);
+				return;
+			}
 			if (mFragmentWeakReference.get() == null) {
 				return;
 			}
 			try {
 				String units = "metric";
-				switch (Prefs.getInstance()
-				             .getWeatherUnitsType()) {
+				switch (prefs.getWeatherUnitsType()) {
 					case "0":
 						units = "metric";
 						break;

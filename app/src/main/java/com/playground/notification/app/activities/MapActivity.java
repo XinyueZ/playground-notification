@@ -683,12 +683,16 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	 * Get weather status.
 	 */
 	private void askWeatherBoard(Location l) {
+		Prefs prefs = Prefs.getInstance();
+		if (!prefs.showWeatherBoard()) {
+			mBinding.boardVg.setVisibility(View.GONE);
+			return;
+		}
 		if (l != null) {
 			Location location = l;
 			try {
 				String units = "metric";
-				switch (Prefs.getInstance()
-				             .getWeatherUnitsType()) {
+				switch (prefs.getWeatherUnitsType()) {
 					case "0":
 						units = "metric";
 						break;
@@ -894,6 +898,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		App.Instance.setCurrentLocation(location);
 		LL.d("method: onLocationChanged -> mCurrentLocation changed");
 		movedToUpdatedLocation(location);
+		askWeatherBoard(location);
 	}
 
 	/**

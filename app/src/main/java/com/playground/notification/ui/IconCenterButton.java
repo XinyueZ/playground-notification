@@ -4,7 +4,7 @@ import android.content.Context;
 import android.support.v7.widget.AppCompatButton;
 import android.util.AttributeSet;
 
-import com.chopping.utils.DeviceUtils;
+import com.playground.notification.app.App;
 
 public final class IconCenterButton extends AppCompatButton {
 	public IconCenterButton(Context context) {
@@ -23,7 +23,6 @@ public final class IconCenterButton extends AppCompatButton {
 	}
 
 	private void init(Context context) {
-		DeviceUtils.ScreenSize screenSize = DeviceUtils.getScreenSize(context);
-		setPadding((int) (screenSize.Width / 3f), 0, 0, 0);
+		setPadding((int) (App.Instance.getListItemWidth() / 5f), 0, 0, 0);
 	}
 }

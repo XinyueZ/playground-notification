@@ -11,7 +11,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
-
+        <com.playground.notification.ui.WeatherLayout
+            android:id="@+id/weather_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|right|end"
+            android:layout_margin="@dimen/common_padding"/>
     </FrameLayout>
 
 

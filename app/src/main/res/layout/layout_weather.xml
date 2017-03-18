@@ -11,8 +11,7 @@
         android:paddingBottom="0dp"
         android:paddingLeft="@dimen/common_padding"
         android:paddingRight="@dimen/common_padding"
-        android:paddingTop="0dp"
-        android:visibility="gone">
+        android:paddingTop="0dp" >
 
         <ImageView
             android:id="@+id/weather_icon_iv"

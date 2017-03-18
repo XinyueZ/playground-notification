@@ -82,6 +82,7 @@
 
         <activity
             android:name=".app.activities.PlaygroundListActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_maps"/>
 
         <!--Include the AdActivity configChanges and theme. -->

@@ -14,6 +14,7 @@ import android.widget.FrameLayout;
 import com.google.android.gms.maps.model.LatLng;
 import com.playground.notification.R;
 import com.playground.notification.app.fragments.StreetViewFragment;
+import com.playground.notification.ui.WeatherLayout;
 
 
 /**
@@ -54,12 +55,13 @@ public final class StreetViewActivity extends AppBarActivity {
 
 	private void updateUI(Intent intent) {
 		String title = intent.getStringExtra(EXTRAS_TITLE);
-		LatLng location = intent.getParcelableExtra(EXTRAS_LOCATION);
-		showLocationStreetView(location);
+		LatLng latLng = intent.getParcelableExtra(EXTRAS_LOCATION);
+		showLocationStreetView(latLng);
 		ActionBar actionBar = getSupportActionBar();
 		if (actionBar != null) {
 			actionBar.setTitle(title);
 		}
+		getBinding().appbarContent.addView(new WeatherLayout(this).setWeather(latLng));
 	}
 
 	private void showLocationStreetView(LatLng location) {

@@ -9,20 +9,20 @@ import com.playground.notification.app.App;
 public final class IconCenterButton extends AppCompatButton {
 	public IconCenterButton(Context context) {
 		super(context);
-		init(context);
+		init();
 	}
 
 	public IconCenterButton(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		init(context);
+		init();
 	}
 
 	public IconCenterButton(Context context, AttributeSet attrs, int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
-		init(context);
+		init();
 	}
 
-	private void init(Context context) {
+	private void init() {
 		setPadding((int) (App.Instance.getListItemWidth() / 5f), 0, 0, 0);
 	}
 }

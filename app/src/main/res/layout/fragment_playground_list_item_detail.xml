@@ -47,7 +47,7 @@
         android:id="@+id/coordinator_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/grey_500"
+        android:background="@color/common_white"
         android:fitsSystemWindows="true"
         >
 
@@ -125,9 +125,8 @@
                         app:matProg_progressIndeterminate="true"/>
 
 
-                    <include
+                    <com.playground.notification.ui.WeatherLayout
                         android:id="@+id/weather_layout"
-                        layout="@layout/layout_playground_weather"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="top|right|end"

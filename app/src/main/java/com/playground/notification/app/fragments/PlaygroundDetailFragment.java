@@ -123,7 +123,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 		super.onResume();
 		EventBus.getDefault()
 		        .register(mCommonUIDelegate);
-		mCommonUIDelegate.updateWeatherView(mBinding.weatherLayout.getRoot());
+		mCommonUIDelegate.updateWeatherView(mBinding.weatherLayout);
 	}
 
 	@Override
@@ -166,7 +166,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 	private void initView() {
 		Bundle args = getArguments();
 		final Playground playground = (Playground) args.getSerializable(EXTRAS_GROUND);
-		if (playground != null) {
+		if (playground != null && playground.getPosition() != null) {
 			LL.d("Ground ID: " + playground.getId());
 
 			final double lat = args.getDouble(EXTRAS_LAT);
@@ -269,17 +269,10 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 				mBinding.ringIv.setImageResource(R.drawable.ic_geo_fence);
 			}
 
-
-			//Have you rated?
 			showPersonalRatingOnLocation(playground, this);
 			showRatingSummaryOnLocation(playground, this);
-
-			//Preview
 			setGoogleMapOrStreetView();
-			if (playground.getPosition() == null) {
-				return;
-			}
-			mCommonUIDelegate.showWeather(mBinding.weatherLayout.weatherIconIv, mBinding.weatherLayout.weatherTv, playground.getPosition());
+			mBinding.weatherLayout.setWeather(playground.getPosition());
 		}
 	}
 

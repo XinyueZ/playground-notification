@@ -110,7 +110,7 @@ public final class PlaygroundListItemDetailFragment extends AppFragment implemen
 		super.onResume();
 		EventBus.getDefault()
 		        .register(mCommonUIDelegate);
-		mCommonUIDelegate.updateWeatherView(mBinding.weatherLayout.getRoot());
+		mCommonUIDelegate.updateWeatherView(mBinding.weatherLayout);
 	}
 
 	@Override
@@ -158,7 +158,7 @@ public final class PlaygroundListItemDetailFragment extends AppFragment implemen
 
 		Bundle args = getArguments();
 		final Playground playground = (Playground) args.getSerializable(EXTRAS_GROUND);
-		if (playground != null) {
+		if (playground != null && playground.getPosition() != null) {
 			LL.d("Ground ID: " + playground.getId());
 
 			final double lat = args.getDouble(EXTRAS_LAT);
@@ -252,15 +252,10 @@ public final class PlaygroundListItemDetailFragment extends AppFragment implemen
 				mBinding.ringIv.setImageResource(R.drawable.ic_geo_fence);
 			}
 
-
 			showPersonalRatingOnLocation(playground, this);
 			showRatingSummaryOnLocation(playground, this);
-
 			setupGoogleTools();
-			if (playground.getPosition() == null) {
-				return;
-			}
-			mCommonUIDelegate.showWeather(mBinding.weatherLayout.weatherIconIv, mBinding.weatherLayout.weatherTv, playground.getPosition());
+			mBinding.weatherLayout.setWeather(playground.getPosition());
 		}
 	}
 
@@ -309,7 +304,7 @@ public final class PlaygroundListItemDetailFragment extends AppFragment implemen
 					                             }
 				                             });
 
-				((ViewGroup.MarginLayoutParams)mBinding.weatherLayout.getRoot().getLayoutParams()).topMargin = com.chopping.utils.Utils.getActionBarHeight(App.Instance);
+				((ViewGroup.MarginLayoutParams)mBinding.weatherLayout.getLayoutParams()).topMargin = com.chopping.utils.Utils.getActionBarHeight(App.Instance);
 			}
 			mBinding.loadingImgPb.setVisibility(View.GONE);
 		}

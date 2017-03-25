@@ -189,6 +189,7 @@ abstract class AppFragment extends BaseFragment {
 					}
 					Playground playground = (Playground) fragment.getArguments()
 					                                             .getSerializable(EXTRAS_GROUND);
+					Prefs.getInstance().setSelectedPlayground(playground.getPosition());
 					MapActivity.showInstance(activity, playground);
 				}
 			}

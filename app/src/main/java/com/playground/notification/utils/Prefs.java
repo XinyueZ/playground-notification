@@ -1,7 +1,8 @@
 package com.playground.notification.utils;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.chopping.application.BasicPrefs;
 import com.google.android.gms.maps.model.LatLng;
@@ -67,14 +68,19 @@ public final class Prefs extends BasicPrefs {
 	 * The weather-API host.
 	 */
 	private static final String KEY_WEATHER_API_HOST = "weather_api";
-	/**
-	 * API for streetview.
-	 */
-	private static final String KEY_STREET_VIEW = "street_view";
+
 	/**
 	 * Limit count for showing cluster on map.
 	 */
 	private static final String KEY_CLUSTER_LIMIT = "cluster_limit";
+	/**
+	 * Latitude of selected item.
+	 */
+	private static final String KEY_SELECT_PLAYGROUND_LAT = "key.selected.playground.lat";
+	/**
+	 * Longitude of selected item.
+	 */
+	private static final String KEY_SELECT_PLAYGROUND_LNG = "key.selected.playground.lng";
 
 	private static final String ADS = "ads";
 
@@ -362,23 +368,30 @@ public final class Prefs extends BasicPrefs {
 	}
 
 	/**
-	 * Get API to show streetview image.
-	 *
-	 * @param width    Image width.
-	 * @param height   Image height.
-	 * @param location Position to show on streetview.
-	 * @return A valid url to API.
-	 */
-	public String getApiStreetView(int width, int height, @NonNull LatLng location) {
-		String src = getString(KEY_STREET_VIEW, "http://maps.googleapis.com/maps/api/streetview?size=%dx%d&location=%f,%f");
-		return String.format(src, width, height, location.latitude, location.longitude);
-	}
-
-	/**
 	 * Map shows clusters, in order to show them, the map needs limit count if the clusters will be populated.
+	 *
 	 * @return Limit count for showing cluster on map.
 	 */
 	public int getClusterLimit() {
 		return getInt(KEY_CLUSTER_LIMIT, 50);
+	}
+
+	public void setSelectedPlayground(@Nullable LatLng latLng) {
+		if (latLng == null) {
+			setString(KEY_SELECT_PLAYGROUND_LAT, null);
+			setString(KEY_SELECT_PLAYGROUND_LNG, null);
+			return;
+		}
+		setString(KEY_SELECT_PLAYGROUND_LAT, latLng.latitude + "");
+		setString(KEY_SELECT_PLAYGROUND_LNG, latLng.longitude + "");
+	}
+
+	public
+	@Nullable
+	LatLng getSelectedPlayground() {
+		if (TextUtils.isEmpty(getString(KEY_SELECT_PLAYGROUND_LAT, null)) && TextUtils.isEmpty(getString(KEY_SELECT_PLAYGROUND_LNG, null))) {
+			return null;
+		}
+		return new LatLng(Double.valueOf(getString(KEY_SELECT_PLAYGROUND_LAT, null)), Double.valueOf(getString(KEY_SELECT_PLAYGROUND_LNG, null)));
 	}
 }

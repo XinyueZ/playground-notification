@@ -33,6 +33,7 @@ import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.sync.NearRingManager;
 import com.playground.notification.utils.Prefs;
 
+import static com.playground.notification.utils.Utils.getBitmapDescriptor;
 import static com.playground.notification.utils.Utils.setPlaygroundIcon;
 
 
@@ -72,6 +73,10 @@ final class PlaygroundClusterRenderer extends DefaultClusterRenderer<Playground>
 			                                        .strokeWidth(1)
 			                                        .strokeColor(Color.BLUE)
 			                                        .fillColor(ResourcesCompat.getColor(mContext.getResources(), R.color.common_blue_50, null)));
+		}
+
+		if(Prefs.getInstance().getSelectedPlayground() != null) {
+			mGoogleMap.addMarker(new MarkerOptions().position(Prefs.getInstance().getSelectedPlayground()).icon(getBitmapDescriptor(App.Instance, R.drawable.ic_balloon)));
 		}
 	}
 }

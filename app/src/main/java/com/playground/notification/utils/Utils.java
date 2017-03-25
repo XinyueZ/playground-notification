@@ -179,7 +179,7 @@ public final class Utils {
 	}
 
 
-	private static BitmapDescriptor getBitmapDescriptor(@NonNull Context cxt, int resId) {
+	public static BitmapDescriptor getBitmapDescriptor(@NonNull Context cxt, int resId) {
 		if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
 			return BitmapDescriptorFactory.fromResource(resId);
 		}

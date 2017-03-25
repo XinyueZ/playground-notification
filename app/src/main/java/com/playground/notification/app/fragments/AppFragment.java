@@ -184,6 +184,9 @@ abstract class AppFragment extends BaseFragment {
 					if (activity == null) {
 						return;
 					}
+					if(fragment instanceof DialogFragment) {
+						((DialogFragment)fragment).dismiss();
+					}
 					Playground playground = (Playground) fragment.getArguments()
 					                                             .getSerializable(EXTRAS_GROUND);
 					MapActivity.showInstance(activity, playground);

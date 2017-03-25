@@ -121,7 +121,6 @@ import retrofit.client.Response;
 
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
 import static pub.devrel.easypermissions.AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE;
 

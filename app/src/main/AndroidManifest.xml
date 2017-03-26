@@ -74,16 +74,17 @@
 
         <activity
             android:name=".app.activities.MyLocationListActivity"
-            android:label="@string/lbl_my_location_list"/>
+            android:label="@string/lbl_my_location_list"
+            android:theme="@style/MyLocationTheme"/>
 
 
         <activity
-            android:name=".app.activities.StreetViewActivity" />
+            android:name=".app.activities.StreetViewActivity"/>
 
         <activity
             android:name=".app.activities.PlaygroundListActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_maps"/>
+            android:label="@string/title_activity_maps"
+            android:screenOrientation="portrait"/>
 
         <!--Include the AdActivity configChanges and theme. -->
         <activity

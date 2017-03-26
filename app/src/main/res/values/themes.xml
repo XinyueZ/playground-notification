@@ -74,6 +74,7 @@
 
     <style name="SettingsTheme" parent="SettingsThemeBase"/>
 
+    <style name="MyLocationTheme" parent="AppTheme" />
 
     <style name="ActionModeCheckbox" parent="BaseTheme">
         <item name="android:colorAccent">@color/primary_color</item>

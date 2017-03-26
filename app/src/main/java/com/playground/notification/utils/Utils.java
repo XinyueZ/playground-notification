@@ -198,13 +198,31 @@ public final class Utils {
 		LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
 		MyLocationManager myLocMgr = MyLocationManager.getInstance();
 		if (playground instanceof MyLocation || (myLocMgr.isInit() && myLocMgr.isCached(playground))) {
-			options.icon(getBitmapDescriptor(cxt, R.drawable.ic_saved_ground));
+			LatLng selectedPlayground = Prefs.getInstance()
+			                                       .getSelectedPlayground();
+			if (selectedPlayground != null && selectedPlayground.equals(playground.getPosition())) {
+				options.icon(getBitmapDescriptor(cxt, R.drawable.ic_balloon));
+			} else {
+				options.icon(getBitmapDescriptor(cxt, R.drawable.ic_saved_ground));
+			}
 		} else {
 			FavoriteManager favMgr = FavoriteManager.getInstance();
 			if (favMgr.isInit() && favMgr.isCached(playground)) {
-				options.icon(getBitmapDescriptor(cxt, R.drawable.ic_favorited));
+				LatLng selectedPlayground = Prefs.getInstance()
+				                                 .getSelectedPlayground();
+				if (selectedPlayground != null && selectedPlayground.equals(playground.getPosition())) {
+					options.icon(getBitmapDescriptor(cxt, R.drawable.ic_balloon));
+				} else {
+					options.icon(getBitmapDescriptor(cxt, R.drawable.ic_favorited));
+				}
 			} else {
-				com.playground.notification.utils.Utils.changeMarkerIcon(options, currentLatLng, playground.getPosition());
+				LatLng selectedPlayground = Prefs.getInstance()
+				                                 .getSelectedPlayground();
+				if (selectedPlayground != null && selectedPlayground.equals(playground.getPosition())) {
+					options.icon(getBitmapDescriptor(cxt, R.drawable.ic_balloon));
+				} else {
+					com.playground.notification.utils.Utils.changeMarkerIcon(options, currentLatLng, playground.getPosition());
+				}
 			}
 		}
 	}

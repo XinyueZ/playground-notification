@@ -73,6 +73,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.view.ViewHelper;
@@ -108,6 +110,7 @@ import com.playground.notification.sync.RatingManager;
 import com.playground.notification.utils.Prefs;
 import com.readystatesoftware.viewbadger.BadgeView;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -122,6 +125,7 @@ import retrofit.client.Response;
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
+import static com.playground.notification.utils.Utils.getBitmapDescriptor;
 import static pub.devrel.easypermissions.AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE;
 
 
@@ -231,11 +235,8 @@ public final class MapActivity extends AppActivity implements LocationListener,
 			return;
 		}
 
-		if (mMap != null) {
-			mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(e.getPlayground()
-			                                                      .getPosition(), 18));
-		}
 		mOpeningPlayground = e;
+		MapActivity.showInstance(this, e.getPlayground());
 	}
 	//------------------------------------------------
 
@@ -294,6 +295,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		MapsInitializer.initialize(App.Instance);
+		Prefs.getInstance().setSelectedPlayground(null);
 
 		//Init data-binding.
 		mBinding = DataBindingUtil.setContentView(this, LAYOUT);
@@ -318,7 +320,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 			mBinding.playGroundsListContainer.getLayoutParams().width = (int) App.Instance.getListItemWidth();
 			mBinding.playGroundsListContainer.requestLayout();
 			mBinding.geocodeLv.getLayoutParams().width = (int) App.Instance.getListItemWidth();
-			((FrameLayout.LayoutParams)mBinding.geocodeLv.getLayoutParams()).leftMargin = (int) App.Instance.getListItemWidth();
+			((FrameLayout.LayoutParams) mBinding.geocodeLv.getLayoutParams()).leftMargin = (int) App.Instance.getListItemWidth();
 		}
 	}
 
@@ -365,11 +367,20 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
+		if (mMap == null) {
+			return;
+		}
 		setIntent(intent);
 		if (!TextUtils.equals(intent.getAction(), Intent.ACTION_SEARCH)) {
 			if (intent.getSerializableExtra(EXTRAS_GROUND) != null) {
 				Playground playground = (Playground) intent.getSerializableExtra(EXTRAS_GROUND);
 				mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(playground.getPosition(), 18));
+				Prefs.getInstance().setSelectedPlayground(playground.getPosition());
+				boolean isSmall = getResources().getBoolean(R.bool.is_small_screen);
+				if(!isSmall) {
+					mMap.clear();
+					mPlaygroundClusterManager = PlaygroundClusterManager.showAvailablePlaygrounds(MapActivity.this, mMap, mAvailablePlaygroundList);
+				}
 			}
 		} else {
 			mKeyword = intent.getStringExtra(SearchManager.QUERY);
@@ -1461,5 +1472,18 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		super.setupCommonUIDelegate(commonUIDelegate);
 		commonUIDelegate.setDrawerLayout(mBinding.drawerLayout);
 		commonUIDelegate.setNavigationView(mBinding.navView);
+	}
+
+	@Override
+	protected boolean shouldDoBackPressed() {
+		boolean should = super.shouldDoBackPressed();
+		final Prefs prefs = Prefs.getInstance();
+		LatLng latLng = prefs.getSelectedPlayground();
+		if (latLng != null) {
+			prefs.setSelectedPlayground(null);
+			mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
+			should = false;
+		}
+		return should;
 	}
 }

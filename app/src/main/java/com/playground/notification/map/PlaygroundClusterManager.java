@@ -39,6 +39,7 @@ public final class PlaygroundClusterManager extends ClusterManager<Playground> i
 		super(host.getApplicationContext(), map, new MarkerManager(map));
 		map.setOnMarkerClickListener(this);
 		setRenderer(new PlaygroundClusterRenderer(host.getApplicationContext(), map, this));
+		getRenderer().setAnimation(true);
 		setOnClusterItemClickListener(this);
 	}
 

@@ -213,10 +213,9 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	private @Nullable PlaygroundListFragment mPlaygroundListFragment;
 
 	/**
-	 * {@link OpenPlaygroundEvent} means here a flag that a detail of  {@link Playground} will being opened.
+	 * {@link #mShouldIgnoreLoadingFeeds} flags {@code true} when feeds should not load feeds.
 	 */
-	private OpenPlaygroundEvent mOpeningPlayground;
-
+	private boolean mShouldIgnoreLoadingFeeds =  true;
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -235,7 +234,6 @@ public final class MapActivity extends AppActivity implements LocationListener,
 			return;
 		}
 
-		mOpeningPlayground = e;
 		MapActivity.showInstance(this, e.getPlayground());
 	}
 	//------------------------------------------------
@@ -376,11 +374,10 @@ public final class MapActivity extends AppActivity implements LocationListener,
 				Playground playground = (Playground) intent.getSerializableExtra(EXTRAS_GROUND);
 				mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(playground.getPosition(), 18));
 				Prefs.getInstance().setSelectedPlayground(playground.getPosition());
-				boolean isSmall = getResources().getBoolean(R.bool.is_small_screen);
-				if(!isSmall) {
-					mMap.clear();
-					mPlaygroundClusterManager = PlaygroundClusterManager.showAvailablePlaygrounds(MapActivity.this, mMap, mAvailablePlaygroundList);
-				}
+
+				mMap.clear();
+				mPlaygroundClusterManager = PlaygroundClusterManager.showAvailablePlaygrounds(MapActivity.this, mMap, mAvailablePlaygroundList);
+				mShouldIgnoreLoadingFeeds = false;
 			}
 		} else {
 			mKeyword = intent.getStringExtra(SearchManager.QUERY);
@@ -1044,8 +1041,9 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
 			@Override
 			public void onCameraIdle() {
-				if (mOpeningPlayground != null) {
-					mOpeningPlayground = null;
+				if (!mShouldIgnoreLoadingFeeds){
+					LL.d("Ignore loading new feeds.");
+					mShouldIgnoreLoadingFeeds = true;
 					return;
 				}
 				mForcedToLoad = true;

@@ -403,7 +403,7 @@ public abstract class AppActivity extends BaseActivity {
 			if (mActivityWeakReference == null || mActivityWeakReference.get() == null || mNavigationView == null || mDrawerLayout == null || mAppListView == null) {
 				return false;
 			}
-			Activity activity = mActivityWeakReference.get();
+			mActivityWeakReference.get();
 			if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
 				mDrawerLayout.closeDrawer(GravityCompat.START);
 				return true;

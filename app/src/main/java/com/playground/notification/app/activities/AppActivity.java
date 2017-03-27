@@ -16,8 +16,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
+import android.view.MenuItem;
 
 import com.chopping.activities.BaseActivity;
 import com.chopping.application.BasicPrefs;
@@ -25,6 +27,7 @@ import com.chopping.bus.CloseDrawerEvent;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.playground.notification.R;
+import com.playground.notification.app.App;
 import com.playground.notification.app.fragments.AboutDialogFragment.EulaConfirmationDialog;
 import com.playground.notification.bus.BackPressedEvent;
 import com.playground.notification.bus.EULAConfirmedEvent;
@@ -100,11 +103,12 @@ public abstract class AppActivity extends BaseActivity {
 
 	@Override
 	protected void onResume() {
-		super.onResume();
-		checkPlayService();
 		if (needCommonUIDelegate() && mCommonUIDelegate == null) {
 			setupCommonUIDelegate(mCommonUIDelegate = new CommonUIDelegate());
 		}
+		super.onResume();
+		checkPlayService();
+
 		if (mCommonUIDelegate != null) {
 			EventBus.getDefault()
 			        .register(mCommonUIDelegate);
@@ -399,5 +403,52 @@ public abstract class AppActivity extends BaseActivity {
 		public void setActivityWeakReference(@NonNull Activity activity) {
 			mActivityWeakReference = new WeakReference<Activity>(activity);
 		}
+
+		NavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener = new NavigationView.OnNavigationItemSelectedListener() {
+			@Override
+			public boolean onNavigationItemSelected(MenuItem menuItem) {
+				if (mActivityWeakReference == null || mActivityWeakReference.get() == null) {
+					return false;
+				}
+				Activity activity = mActivityWeakReference.get();
+				mDrawerLayout.closeDrawer(GravityCompat.START);
+				switch (menuItem.getItemId()) {
+					case R.id.action_favorite:
+						FavoriteManager favoriteManager = FavoriteManager.getInstance();
+						if (favoriteManager.getCachedList()
+						                   .size() > 0) {
+							PlaygroundListActivity.showInstance(activity, favoriteManager.getCachedList());
+						}
+						break;
+					case R.id.action_near_ring:
+						NearRingManager nearRingManager = NearRingManager.getInstance();
+						if (nearRingManager.getCachedList()
+						                   .size() > 0) {
+							PlaygroundListActivity.showInstance(activity, nearRingManager.getCachedList());
+						}
+						break;
+					case R.id.action_my_location_list:
+						MyLocationManager myLocationManager = MyLocationManager.getInstance();
+						if (myLocationManager.getCachedList()
+						                     .size() > 0) {
+							MyLocationListActivity.showInstance(activity);
+						}
+						break;
+					case R.id.action_settings:
+						SettingsActivity.showInstance(activity);
+						break;
+					case R.id.action_more_apps:
+						mDrawerLayout.openDrawer(GravityCompat.END);
+						break;
+					case R.id.action_radar:
+						com.playground.notification.utils.Utils.openExternalBrowser(activity, "http://" + App.Instance.getString(R.string.support_spielplatz_radar));
+						break;
+					case R.id.action_weather:
+						com.playground.notification.utils.Utils.openExternalBrowser(activity, "http://" + App.Instance.getString(R.string.support_openweathermap));
+						break;
+				}
+				return true;
+			}
+		};
 	}
 }

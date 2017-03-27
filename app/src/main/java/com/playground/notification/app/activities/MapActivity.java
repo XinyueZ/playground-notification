@@ -812,7 +812,6 @@ public final class MapActivity extends AppActivity implements LocationListener,
 			@Override
 			public void onMapReady(GoogleMap googleMap) {
 				mMap = googleMap;
-				initDrawerContent();
 				setUpMap();
 				mapSettings();
 
@@ -1386,67 +1385,6 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	}
 
 
-	/**
-	 * Set-up of navi-bar left.
-	 */
-	private void initDrawerContent() {
-		mBinding.navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-			@Override
-			public boolean onNavigationItemSelected(MenuItem menuItem) {
-				mBinding.drawerLayout.closeDrawer(Gravity.LEFT);
-
-				if (mMap != null) {
-					switch (menuItem.getItemId()) {
-						case R.id.action_favorite:
-							FavoriteManager favoriteManager = FavoriteManager.getInstance();
-							if (favoriteManager.getCachedList()
-							                   .size() > 0) {
-								if (!getResources().getBoolean(R.bool.is_small_screen)) {
-									menuItem.setCheckable(true);
-									refreshPlaygroundList(favoriteManager.getCachedList());
-								} else {
-									PlaygroundListActivity.showInstance(MapActivity.this, favoriteManager.getCachedList());
-								}
-							}
-							break;
-						case R.id.action_near_ring:
-							NearRingManager nearRingManager = NearRingManager.getInstance();
-							if (nearRingManager.getCachedList()
-							                   .size() > 0) {
-								if (!getResources().getBoolean(R.bool.is_small_screen)) {
-									menuItem.setCheckable(true);
-									refreshPlaygroundList(nearRingManager.getCachedList());
-								} else {
-									PlaygroundListActivity.showInstance(MapActivity.this, nearRingManager.getCachedList());
-								}
-							}
-							break;
-						case R.id.action_my_location_list:
-							MyLocationManager myLocationManager = MyLocationManager.getInstance();
-							if (myLocationManager.getCachedList()
-							                     .size() > 0) {
-								MyLocationListActivity.showInstance(MapActivity.this);
-							}
-							break;
-						case R.id.action_settings:
-							SettingsActivity.showInstance(MapActivity.this);
-							break;
-						case R.id.action_more_apps:
-							mBinding.drawerLayout.openDrawer(GravityCompat.END);
-							break;
-						case R.id.action_radar:
-							com.playground.notification.utils.Utils.openExternalBrowser(MapActivity.this, "http://" + getString(R.string.support_spielplatz_radar));
-							break;
-						case R.id.action_weather:
-							com.playground.notification.utils.Utils.openExternalBrowser(MapActivity.this, "http://" + getString(R.string.support_openweathermap));
-							break;
-					}
-				}
-				return true;
-			}
-		});
-	}
-
 
 	/**
 	 * Reset the UI status of searchview.
@@ -1472,6 +1410,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		super.setupCommonUIDelegate(commonUIDelegate);
 		commonUIDelegate.setDrawerLayout(mBinding.drawerLayout);
 		commonUIDelegate.setNavigationView(mBinding.navView);
+		mBinding.navView.setNavigationItemSelectedListener(commonUIDelegate.onNavigationItemSelectedListener);
 	}
 
 	@Override

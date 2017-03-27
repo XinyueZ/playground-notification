@@ -67,7 +67,6 @@ public abstract class AppBarActivity extends AppActivity {
 		mBinding = DataBindingUtil.setContentView(this, LAYOUT);
 		setupMain();
 		initDrawer();
-		initDrawerContent();
 		setupContent(mBinding.appbarContent);
 	}
 
@@ -215,61 +214,12 @@ public abstract class AppBarActivity extends AppActivity {
 		             .init();
 	}
 
-	/**
-	 * Set-up of navi-bar left.
-	 */
-	private void initDrawerContent() {
-		mBinding.navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-			@Override
-			public boolean onNavigationItemSelected(MenuItem menuItem) {
-				mBinding.drawerLayout.closeDrawer(GravityCompat.START);
-				switch (menuItem.getItemId()) {
-					case R.id.action_favorite:
-						FavoriteManager favoriteManager = FavoriteManager.getInstance();
-						if (favoriteManager.getCachedList()
-						                   .size() > 0) {
-							menuItem.setCheckable(true);
-							PlaygroundListActivity.showInstance(AppBarActivity.this, favoriteManager.getCachedList());
-						}
-						break;
-					case R.id.action_near_ring:
-						NearRingManager nearRingManager = NearRingManager.getInstance();
-						if (nearRingManager.getCachedList()
-						                   .size() > 0) {
-
-							menuItem.setCheckable(true);
-							PlaygroundListActivity.showInstance(AppBarActivity.this, nearRingManager.getCachedList());
-						}
-						break;
-					case R.id.action_my_location_list:
-						MyLocationManager myLocationManager = MyLocationManager.getInstance();
-						if (myLocationManager.getCachedList()
-						                     .size() > 0) {
-							MyLocationListActivity.showInstance(AppBarActivity.this);
-						}
-						break;
-					case R.id.action_settings:
-						SettingsActivity.showInstance(AppBarActivity.this);
-						break;
-					case R.id.action_more_apps:
-						mBinding.drawerLayout.openDrawer(GravityCompat.END);
-						break;
-					case R.id.action_radar:
-						com.playground.notification.utils.Utils.openExternalBrowser(AppBarActivity.this, "http://" + getString(R.string.support_spielplatz_radar));
-						break;
-					case R.id.action_weather:
-						com.playground.notification.utils.Utils.openExternalBrowser(AppBarActivity.this, "http://" + getString(R.string.support_openweathermap));
-						break;
-				}
-				return true;
-			}
-		});
-	}
 
 	@Override
 	protected void setupCommonUIDelegate(@NonNull CommonUIDelegate commonUIDelegate) {
 		super.setupCommonUIDelegate(commonUIDelegate);
 		commonUIDelegate.setDrawerLayout(mBinding.drawerLayout);
 		commonUIDelegate.setNavigationView(mBinding.navView);
+		mBinding.navView.setNavigationItemSelectedListener(commonUIDelegate.onNavigationItemSelectedListener);
 	}
 }

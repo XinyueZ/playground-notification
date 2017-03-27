@@ -215,7 +215,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	/**
 	 * {@link #mShouldIgnoreLoadingFeeds} flags {@code true} when feeds should not load feeds.
 	 */
-	private boolean mShouldIgnoreLoadingFeeds =  true;
+	private boolean mShouldIgnoreLoadingFeeds = true;
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -293,7 +293,8 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		MapsInitializer.initialize(App.Instance);
-		Prefs.getInstance().setSelectedPlayground(null);
+		Prefs.getInstance()
+		     .setSelectedPlayground(null);
 
 		//Init data-binding.
 		mBinding = DataBindingUtil.setContentView(this, LAYOUT);
@@ -373,7 +374,8 @@ public final class MapActivity extends AppActivity implements LocationListener,
 			if (intent.getSerializableExtra(EXTRAS_GROUND) != null) {
 				Playground playground = (Playground) intent.getSerializableExtra(EXTRAS_GROUND);
 				mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(playground.getPosition(), 18));
-				Prefs.getInstance().setSelectedPlayground(playground.getPosition());
+				Prefs.getInstance()
+				     .setSelectedPlayground(playground.getPosition());
 
 				mMap.clear();
 				mPlaygroundClusterManager = PlaygroundClusterManager.showAvailablePlaygrounds(MapActivity.this, mMap, mAvailablePlaygroundList);
@@ -565,11 +567,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 			if (mShowcaseMyLocationV != null) {
 				closeShowcaseMyLocation();
 			} else {
-				if (mBinding.drawerLayout.isDrawerOpen(mBinding.navView)) {
-					mBinding.drawerLayout.closeDrawer(mBinding.navView);
-				} else {
-					super.onBackPressed();
-				}
+				super.onBackPressed();
 			}
 		}
 	}
@@ -611,14 +609,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	 * Callback for available using of application.
 	 */
 	private void onYouCanUseApp() {
-		FavoriteManager.getInstance()
-		               .init();
-		NearRingManager.getInstance()
-		               .init();
-		MyLocationManager.getInstance()
-		                 .init();
-		RatingManager.getInstance()
-		             .init();
+		initManagers();
 		LL.d("onYouCanUseApp");
 		requirePermissions();
 		askWeatherBoard(App.Instance.getCurrentLocation());
@@ -1041,7 +1032,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
 			@Override
 			public void onCameraIdle() {
-				if (!mShouldIgnoreLoadingFeeds){
+				if (!mShouldIgnoreLoadingFeeds) {
 					LL.d("Ignore loading new feeds.");
 					mShouldIgnoreLoadingFeeds = true;
 					return;
@@ -1298,15 +1289,6 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		}
 	}
 
-	/**
-	 * Show all external applications links.
-	 */
-	private void showAppList() {
-		getSupportFragmentManager().beginTransaction()
-		                           .replace(R.id.app_list_fl, AppListImpFragment.newInstance(this))
-		                           .commit();
-	}
-
 
 	/**
 	 * Update current position on the map.
@@ -1383,7 +1365,6 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	}
 
 
-
 	/**
 	 * Reset the UI status of searchview.
 	 */
@@ -1408,6 +1389,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		super.setupCommonUIDelegate(commonUIDelegate);
 		commonUIDelegate.setDrawerLayout(mBinding.drawerLayout);
 		commonUIDelegate.setNavigationView(mBinding.navView);
+		commonUIDelegate.setAppListView(mBinding.appListFl);
 		mBinding.navView.setNavigationItemSelectedListener(commonUIDelegate.onNavigationItemSelectedListener);
 	}
 

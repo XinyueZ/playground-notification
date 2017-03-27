@@ -6,13 +6,10 @@ import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -24,7 +21,7 @@ import com.playground.notification.databinding.AppBarLayoutBinding;
 import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.MyLocationManager;
 import com.playground.notification.sync.NearRingManager;
-import com.playground.notification.sync.RatingManager;
+import com.playground.notification.utils.Prefs;
 import com.playground.notification.utils.Utils;
 
 
@@ -148,48 +145,10 @@ public abstract class AppBarActivity extends AppActivity {
 	}
 
 
-	protected void addViewToCoordinatorLayout(@NonNull View addView) {
-		mBinding.errorContent.addView(addView);
-	}
-
 	protected AppBarLayoutBinding getBinding() {
 		return mBinding;
 	}
 
-	protected void showShortSnackbar(@StringRes int message, @StringRes int buttonLabel, @NonNull View.OnClickListener clickListener) {
-		Snackbar.make(mBinding.errorContent, message, Snackbar.LENGTH_SHORT)
-		        .setAction(buttonLabel, clickListener)
-		        .show();
-	}
-
-	protected void showShortSnackbar(@StringRes int message) {
-		Snackbar.make(mBinding.errorContent, message, Snackbar.LENGTH_SHORT)
-		        .show();
-	}
-
-
-	protected void showLongSnackbar(@StringRes int message, @StringRes int buttonLabel, @NonNull View.OnClickListener clickListener) {
-		Snackbar.make(mBinding.errorContent, message, Snackbar.LENGTH_LONG)
-		        .setAction(buttonLabel, clickListener)
-		        .show();
-	}
-
-	protected void showLongSnackbar(@StringRes int message) {
-		Snackbar.make(mBinding.errorContent, message, Snackbar.LENGTH_LONG)
-		        .show();
-	}
-
-
-	protected void showIndefiniteSnackbar(@StringRes int message, @StringRes int buttonLabel, @NonNull View.OnClickListener clickListener) {
-		Snackbar.make(mBinding.errorContent, message, Snackbar.LENGTH_INDEFINITE)
-		        .setAction(buttonLabel, clickListener)
-		        .show();
-	}
-
-	protected void showIndefiniteSnackbar(@StringRes int message) {
-		Snackbar.make(mBinding.errorContent, message, Snackbar.LENGTH_LONG)
-		        .show();
-	}
 
 	@Override
 	protected void onAppConfigIgnored() {
@@ -204,14 +163,11 @@ public abstract class AppBarActivity extends AppActivity {
 	}
 
 	private void configFinished() {
-		FavoriteManager.getInstance()
-		               .init();
-		NearRingManager.getInstance()
-		               .init();
-		MyLocationManager.getInstance()
-		                 .init();
-		RatingManager.getInstance()
-		             .init();
+		initManagers();
+		if (!TextUtils.isEmpty(Prefs.getInstance()
+		                            .getApiHost())) {
+			showAppList();
+		}
 	}
 
 
@@ -220,6 +176,7 @@ public abstract class AppBarActivity extends AppActivity {
 		super.setupCommonUIDelegate(commonUIDelegate);
 		commonUIDelegate.setDrawerLayout(mBinding.drawerLayout);
 		commonUIDelegate.setNavigationView(mBinding.navView);
+		commonUIDelegate.setAppListView(mBinding.appListFl);
 		mBinding.navView.setNavigationItemSelectedListener(commonUIDelegate.onNavigationItemSelectedListener);
 	}
 }

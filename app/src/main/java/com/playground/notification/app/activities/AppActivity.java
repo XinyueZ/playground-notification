@@ -1,5 +1,6 @@
 package com.playground.notification.app.activities;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.content.ActivityNotFoundException;
@@ -7,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,15 +20,17 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.chopping.activities.BaseActivity;
 import com.chopping.application.BasicPrefs;
 import com.chopping.bus.CloseDrawerEvent;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.playground.notification.R;
 import com.playground.notification.app.App;
 import com.playground.notification.app.fragments.AboutDialogFragment.EulaConfirmationDialog;
+import com.playground.notification.app.fragments.AppListImpFragment;
 import com.playground.notification.bus.BackPressedEvent;
 import com.playground.notification.bus.EULAConfirmedEvent;
 import com.playground.notification.bus.EULARejectEvent;
@@ -81,7 +83,6 @@ public abstract class AppActivity extends BaseActivity {
 	public void showDialogFragment(DialogFragment _dlgFrg, String _tagName) {
 		try {
 			if (_dlgFrg != null) {
-				DialogFragment dialogFragment = _dlgFrg;
 				FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 				// Ensure that there's only one dialog to the user.
 				Fragment prev = getSupportFragmentManager().findFragmentByTag("dlg");
@@ -90,20 +91,20 @@ public abstract class AppActivity extends BaseActivity {
 				}
 				try {
 					if (TextUtils.isEmpty(_tagName)) {
-						dialogFragment.show(ft, "dlg");
+						_dlgFrg.show(ft, "dlg");
 					} else {
-						dialogFragment.show(ft, _tagName);
+						_dlgFrg.show(ft, _tagName);
 					}
-				} catch (Exception e) {
+				} catch (Exception ignored) {
 				}
 			}
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 	}
 
 	@Override
 	protected void onResume() {
-		if (needCommonUIDelegate() && mCommonUIDelegate == null) {
+		if (mCommonUIDelegate == null) {
 			setupCommonUIDelegate(mCommonUIDelegate = new CommonUIDelegate());
 		}
 		super.onResume();
@@ -128,8 +129,9 @@ public abstract class AppActivity extends BaseActivity {
 	 * To confirm whether the validation of the Play-service of Google Inc.
 	 */
 	private void checkPlayService() {
-		final int isFound = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-		if (isFound == ConnectionResult.SUCCESS) {//Ignore update.
+		int resultCode = GoogleApiAvailability.getInstance()
+		                                      .isGooglePlayServicesAvailable(this);
+		if (resultCode == ConnectionResult.SUCCESS) {//Ignore update.
 			//The "End User License Agreement" must be confirmed before you use this application.
 			if (!Prefs.getInstance()
 			          .isEULAOnceConfirmed()) {
@@ -167,14 +169,10 @@ public abstract class AppActivity extends BaseActivity {
 	/**
 	 * Calculate height of actionbar.
 	 */
-	protected void calcAppBarHeight() {
+	private void calcAppBarHeight() {
 		int[] abSzAttr;
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			abSzAttr = new int[] { android.R.attr.actionBarSize };
-		} else {
-			abSzAttr = new int[] { R.attr.actionBarSize };
-		}
-		TypedArray a = obtainStyledAttributes(abSzAttr);
+		abSzAttr = new int[] { android.R.attr.actionBarSize };
+		@SuppressLint("Recycle") TypedArray a = obtainStyledAttributes(abSzAttr);
 		mAppBarHeight = a.getDimensionPixelSize(0, -1);
 	}
 
@@ -190,19 +188,11 @@ public abstract class AppActivity extends BaseActivity {
 		return Prefs.getInstance();
 	}
 
-	/**
-	 * {@link #needCommonUIDelegate()} tells {@link AppActivity} whether to use common logical on some shared UIs.
-	 *
-	 * @return {@code false} if don't has same common logical.
-	 */
-	protected boolean needCommonUIDelegate() {
-		return true;
-	}
 
 	/**
 	 * {@link #setupCommonUIDelegate(CommonUIDelegate)} to setup different shared UI elements.
 	 *
-	 * @param commonUIDelegate A new created {@link CommonUIDelegate} will be setup. Ignore to override this if {@link #needCommonUIDelegate()} returns {@code false}.
+	 * @param commonUIDelegate A new created {@link CommonUIDelegate} will be setup.
 	 */
 	protected void setupCommonUIDelegate(@NonNull CommonUIDelegate commonUIDelegate) {
 		commonUIDelegate.setActivityWeakReference(this);
@@ -225,7 +215,7 @@ public abstract class AppActivity extends BaseActivity {
 
 	@Override
 	public void onBackPressed() {
-		if (shouldDoBackPressed()) {
+		if (shouldDoBackPressed() && !mCommonUIDelegate.onBackPressed()) {
 			super.onBackPressed();
 		}
 	}
@@ -240,6 +230,7 @@ public abstract class AppActivity extends BaseActivity {
 		private @Nullable DrawerLayout mDrawerLayout;
 		private @Nullable NavigationView mNavigationView;
 		private @Nullable WeakReference<Activity> mActivityWeakReference;
+		private @Nullable View mAppListView;
 
 		private boolean mItemSelected;
 
@@ -252,7 +243,7 @@ public abstract class AppActivity extends BaseActivity {
 		 *
 		 * @param e Event {@link com.chopping.bus.CloseDrawerEvent}.
 		 */
-		public void onEvent(CloseDrawerEvent e) {
+		public void onEvent(@SuppressWarnings("UnusedParameters") CloseDrawerEvent e) {
 			if (mDrawerLayout != null) {
 				mDrawerLayout.closeDrawers();
 			}
@@ -264,7 +255,7 @@ public abstract class AppActivity extends BaseActivity {
 		 *
 		 * @param e Event {@link FavoriteListLoadingSuccessEvent}.
 		 */
-		public void onEvent(FavoriteListLoadingSuccessEvent e) {
+		public void onEvent(@SuppressWarnings("UnusedParameters") FavoriteListLoadingSuccessEvent e) {
 			if (mNavigationView != null) {
 				com.playground.notification.utils.Utils.updateDrawerMenuItem(mNavigationView, R.id.action_favorite, R.string.action_favorite, FavoriteManager.getInstance());
 			}
@@ -275,7 +266,7 @@ public abstract class AppActivity extends BaseActivity {
 		 *
 		 * @param e Event {@link NearRingListLoadingSuccessEvent}.
 		 */
-		public void onEvent(NearRingListLoadingSuccessEvent e) {
+		public void onEvent(@SuppressWarnings("UnusedParameters") NearRingListLoadingSuccessEvent e) {
 			if (mNavigationView != null) {
 				com.playground.notification.utils.Utils.updateDrawerMenuItem(mNavigationView, R.id.action_near_ring, R.string.action_near_ring, NearRingManager.getInstance());
 			}
@@ -286,7 +277,7 @@ public abstract class AppActivity extends BaseActivity {
 		 *
 		 * @param e Event {@link MyLocationLoadingSuccessEvent}.
 		 */
-		public void onEvent(MyLocationLoadingSuccessEvent e) {
+		public void onEvent(@SuppressWarnings("UnusedParameters") MyLocationLoadingSuccessEvent e) {
 			if (mNavigationView != null) {
 				com.playground.notification.utils.Utils.updateDrawerMenuItem(mNavigationView, R.id.action_my_location_list, R.string.action_my_location_list, MyLocationManager.getInstance());
 			}
@@ -310,7 +301,7 @@ public abstract class AppActivity extends BaseActivity {
 		 *
 		 * @param e Event {@link  EULARejectEvent}.
 		 */
-		public void onEvent(EULARejectEvent e) {
+		public void onEvent(@SuppressWarnings("UnusedParameters") EULARejectEvent e) {
 			if (mActivityWeakReference != null && mActivityWeakReference.get() != null) {
 				ActivityCompat.finishAffinity(mActivityWeakReference.get());
 			}
@@ -321,7 +312,7 @@ public abstract class AppActivity extends BaseActivity {
 		 *
 		 * @param e Event {@link  EULAConfirmedEvent}.
 		 */
-		public void onEvent(EULAConfirmedEvent e) {
+		public void onEvent(@SuppressWarnings("UnusedParameters") EULAConfirmedEvent e) {
 			if (mActivityWeakReference != null && mActivityWeakReference.get() != null) {
 				ConnectGoogleActivity.showInstance(mActivityWeakReference.get());
 			}
@@ -333,7 +324,7 @@ public abstract class AppActivity extends BaseActivity {
 		 *
 		 * @param e Event {@link FavoriteListLoadingErrorEvent}.
 		 */
-		public void onEvent(FavoriteListLoadingErrorEvent e) {
+		public void onEvent(@SuppressWarnings("UnusedParameters") FavoriteListLoadingErrorEvent e) {
 			FavoriteManager.getInstance()
 			               .init();
 		}
@@ -343,7 +334,7 @@ public abstract class AppActivity extends BaseActivity {
 		 *
 		 * @param e Event {@link NearRingListLoadingErrorEvent}.
 		 */
-		public void onEvent(NearRingListLoadingErrorEvent e) {
+		public void onEvent(@SuppressWarnings("UnusedParameters") NearRingListLoadingErrorEvent e) {
 			NearRingManager.getInstance()
 			               .init();
 		}
@@ -353,7 +344,7 @@ public abstract class AppActivity extends BaseActivity {
 		 *
 		 * @param e Event {@link MyLocationLoadingErrorEvent}.
 		 */
-		public void onEvent(MyLocationLoadingErrorEvent e) {
+		public void onEvent(@SuppressWarnings("UnusedParameters") MyLocationLoadingErrorEvent e) {
 			MyLocationManager.getInstance()
 			                 .init();
 		}
@@ -364,7 +355,7 @@ public abstract class AppActivity extends BaseActivity {
 		 *
 		 * @param e Event {@link RatingOnLocationsLoadingErrorEvent}.
 		 */
-		public void onEvent(RatingOnLocationsLoadingErrorEvent e) {
+		public void onEvent(@SuppressWarnings("UnusedParameters") RatingOnLocationsLoadingErrorEvent e) {
 			RatingManager.getInstance()
 			             .init();
 		}
@@ -375,7 +366,7 @@ public abstract class AppActivity extends BaseActivity {
 		 *
 		 * @param e Event {@link ListDetailShownEvent}.
 		 */
-		public void onEvent(ListDetailShownEvent e) {
+		public void onEvent(@SuppressWarnings("UnusedParameters") ListDetailShownEvent e) {
 			mItemSelected = true;
 		}
 
@@ -385,29 +376,48 @@ public abstract class AppActivity extends BaseActivity {
 		 *
 		 * @param e Event {@link ListDetailClosedEvent}.
 		 */
-		public void onEvent(ListDetailClosedEvent e) {
+		public void onEvent(@SuppressWarnings("UnusedParameters") ListDetailClosedEvent e) {
 			mItemSelected = false;
 		}
 
 		//------------------------------------------------
 
 
-		protected void setDrawerLayout(@NonNull DrawerLayout drawerLayout) {
+		void setDrawerLayout(@NonNull DrawerLayout drawerLayout) {
 			mDrawerLayout = drawerLayout;
 		}
 
-		protected void setNavigationView(@NonNull NavigationView navigationView) {
+		void setNavigationView(@NonNull NavigationView navigationView) {
 			mNavigationView = navigationView;
 		}
 
-		public void setActivityWeakReference(@NonNull Activity activity) {
-			mActivityWeakReference = new WeakReference<Activity>(activity);
+		void setActivityWeakReference(@NonNull Activity activity) {
+			mActivityWeakReference = new WeakReference<>(activity);
+		}
+
+		public void setAppListView(@Nullable View appListView) {
+			mAppListView = appListView;
+		}
+
+		boolean onBackPressed() {
+			if (mActivityWeakReference == null || mActivityWeakReference.get() == null || mNavigationView == null || mDrawerLayout == null || mAppListView == null) {
+				return false;
+			}
+			Activity activity = mActivityWeakReference.get();
+			if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+				mDrawerLayout.closeDrawer(GravityCompat.START);
+				return true;
+			} else if (mDrawerLayout.isDrawerOpen(GravityCompat.END)) {
+				mDrawerLayout.closeDrawer(GravityCompat.END);
+				return true;
+			}
+			return false;
 		}
 
 		NavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener = new NavigationView.OnNavigationItemSelectedListener() {
 			@Override
-			public boolean onNavigationItemSelected(MenuItem menuItem) {
-				if (mActivityWeakReference == null || mActivityWeakReference.get() == null) {
+			public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+				if (mActivityWeakReference == null || mActivityWeakReference.get() == null || mDrawerLayout == null) {
 					return false;
 				}
 				Activity activity = mActivityWeakReference.get();
@@ -450,5 +460,25 @@ public abstract class AppActivity extends BaseActivity {
 				return true;
 			}
 		};
+	}
+
+	protected void initManagers() {
+		FavoriteManager.getInstance()
+		               .init();
+		NearRingManager.getInstance()
+		               .init();
+		MyLocationManager.getInstance()
+		                 .init();
+		RatingManager.getInstance()
+		             .init();
+	}
+
+	/**
+	 * Show all external applications links.
+	 */
+	protected void showAppList() {
+		getSupportFragmentManager().beginTransaction()
+		                           .replace(R.id.app_list_fl, AppListImpFragment.newInstance(this))
+		                           .commit();
 	}
 }

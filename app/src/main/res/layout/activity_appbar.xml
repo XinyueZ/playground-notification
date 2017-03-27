@@ -49,6 +49,22 @@
             app:itemTextColor="@color/primary_accent"
             app:menu="@menu/drawer_view"/>
 
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:background="@color/common_white"
+            android:fitsSystemWindows="true">
+
+
+            <FrameLayout
+                android:id="@+id/app_list_fl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+
+        </ScrollView>
+
     </android.support.v4.widget.DrawerLayout>
 
 </layout>

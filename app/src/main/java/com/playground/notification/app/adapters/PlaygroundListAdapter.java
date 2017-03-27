@@ -172,14 +172,14 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 		}
 
 		private void onBindViewHolder() {
-			final ViewGroup.LayoutParams layoutParams = mBinding.itemMapRecyclerview.getLayoutParams();
+			final ViewGroup.LayoutParams layoutParams = mBinding.itemMapview.getLayoutParams();
 			layoutParams.width = (int) App.Instance.getListItemWidth();
 			layoutParams.height = (int) App.Instance.getListItemHeight();
 
-			mBinding.itemMapRecyclerview.onCreate(null);
-			mBinding.itemMapRecyclerview.onStart();
-			mBinding.itemMapRecyclerview.onResume();
-			mBinding.itemMapRecyclerview.getMapAsync(this);
+			mBinding.itemMapview.onCreate(null);
+			mBinding.itemMapview.onStart();
+			mBinding.itemMapview.onResume();
+			mBinding.itemMapview.getMapAsync(this);
 
 			mBinding.executePendingBindings();
 		}
@@ -273,9 +273,9 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 				mGoogleMap.clear();
 				mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NONE);
 
-				mBinding.itemMapRecyclerview.onPause();
-				mBinding.itemMapRecyclerview.onStop();
-				mBinding.itemMapRecyclerview.onDestroy();
+				mBinding.itemMapview.onPause();
+				mBinding.itemMapview.onStop();
+				mBinding.itemMapview.onDestroy();
 			}
 			mBinding.locationRb.setRating(0f);
 			mBinding.loadingPb.setVisibility(View.VISIBLE);

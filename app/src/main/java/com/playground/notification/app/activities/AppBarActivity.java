@@ -181,6 +181,12 @@ public abstract class AppBarActivity extends AppActivity {
 		commonUIDelegate.setDrawerLayout(mBinding.drawerLayout);
 		commonUIDelegate.setNavigationView(mBinding.navView);
 		commonUIDelegate.setAppListView(mBinding.appListFl);
-		mBinding.navView.setNavigationItemSelectedListener(commonUIDelegate.onNavigationItemSelectedListener);
+	}
+
+	@Override
+	public void onBackPressed() {
+		Prefs.getInstance()
+		     .setCurrentSelectedMenuItem(MENU_ITEM_OTHERS);
+		super.onBackPressed();
 	}
 }

@@ -6,6 +6,9 @@ import android.text.TextUtils;
 
 import com.chopping.application.BasicPrefs;
 import com.google.android.gms.maps.model.LatLng;
+import com.playground.notification.app.activities.AppActivity;
+
+import static com.playground.notification.app.activities.AppActivity.MENU_ITEM_OTHERS;
 
 /**
  * Store app and device information.
@@ -81,6 +84,10 @@ public final class Prefs extends BasicPrefs {
 	 * Longitude of selected item.
 	 */
 	private static final String KEY_SELECT_PLAYGROUND_LNG = "key.selected.playground.lng";
+	/**
+	 * Selected  menu-item.
+	 */
+	private static final String KEY_CURRENT_MENU_ITEM = "kex.current.menu.item";
 
 	private static final String ADS = "ads";
 
@@ -98,6 +105,7 @@ public final class Prefs extends BasicPrefs {
 
 	public static final String KEY_SHOWCASE_MY_LOCATION = "showcase.my.location";
 	public static final String KEY_SHOWCASE_NEAR_RING = "showcase.near.ring";
+
 
 	/**
 	 * The Instance.
@@ -393,5 +401,23 @@ public final class Prefs extends BasicPrefs {
 			return null;
 		}
 		return new LatLng(Double.valueOf(getString(KEY_SELECT_PLAYGROUND_LAT, null)), Double.valueOf(getString(KEY_SELECT_PLAYGROUND_LNG, null)));
+	}
+
+	/**
+	 * Mark current selected  menu-item,  see {@link AppActivity}.
+	 *
+	 * @param currentSelectedMenuItem , see {@link  AppActivity#MENU_ITEM_OTHERS},{@link  AppActivity#MENU_ITEM_FAVORITE},{@link  AppActivity#MENU_ITEM_NEAR_RING}
+	 */
+	public void setCurrentSelectedMenuItem(int currentSelectedMenuItem) {
+		setInt(KEY_CURRENT_MENU_ITEM, currentSelectedMenuItem);
+	}
+
+	/**
+	 * Get marked current selected  menu-item,  see {@link AppActivity}.
+	 *
+	 * @return see {@link  AppActivity#MENU_ITEM_OTHERS},{@link  AppActivity#MENU_ITEM_FAVORITE},{@link  AppActivity#MENU_ITEM_NEAR_RING}
+	 */
+	public int getCurrentSelectedMenuItem() {
+		return getInt(KEY_CURRENT_MENU_ITEM, MENU_ITEM_OTHERS);
 	}
 }

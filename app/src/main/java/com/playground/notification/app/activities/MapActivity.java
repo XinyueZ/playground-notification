@@ -565,6 +565,8 @@ public final class MapActivity extends AppActivity implements LocationListener,
 
 	@Override
 	public void onBackPressed() {
+		Prefs.getInstance()
+		     .setCurrentSelectedMenuItem(MENU_ITEM_OTHERS);
 		if (shouldDoBackPressed()) {
 			if (mShowcaseMyLocationV != null) {
 				closeShowcaseMyLocation();
@@ -915,6 +917,8 @@ public final class MapActivity extends AppActivity implements LocationListener,
 
 	@Override
 	protected void onDestroy() {
+		Prefs.getInstance()
+		     .setSelectedPlayground(null);
 		stopLocationUpdates();
 		if (mMap != null) {
 			mMap.clear();
@@ -1043,6 +1047,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 				populateGrounds();
 			}
 		});
+
 	}
 
 	/**
@@ -1104,6 +1109,15 @@ public final class MapActivity extends AppActivity implements LocationListener,
 							}
 							mPlaygroundClusterManager = PlaygroundClusterManager.showAvailablePlaygrounds(MapActivity.this, mMap, mAvailablePlaygroundList);
 							if (!getResources().getBoolean(R.bool.is_small_screen)) {
+								final Prefs prefs = Prefs.getInstance();
+								if (prefs.getCurrentSelectedMenuItem() != MENU_ITEM_OTHERS) {
+									prefs.setCurrentSelectedMenuItem(MENU_ITEM_OTHERS);
+									Menu menu = mBinding.navView.getMenu();
+									MenuItem itemFav = menu.findItem(R.id.action_favorite);
+									MenuItem itemNearRing = menu.findItem(R.id.action_near_ring);
+									itemFav.setChecked(false);
+									itemNearRing.setChecked(false);
+								}
 								refreshPlaygroundList(mAvailablePlaygroundList);
 							} else {
 								updateBadgeTextOnAppBar();
@@ -1132,7 +1146,9 @@ public final class MapActivity extends AppActivity implements LocationListener,
 			mPlaygroundListFragment = (PlaygroundListFragment) (getSupportFragmentManager().findFragmentById(R.id.play_grounds_list));
 			mMap.setOnCameraMoveStartedListener(mPlaygroundListFragment);
 		}
-		mPlaygroundListFragment.refresh(list);
+		if (mPlaygroundListFragment != null) {
+			mPlaygroundListFragment.refresh(list);
+		}
 	}
 
 
@@ -1143,7 +1159,9 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		if (menuLocationList == null) {
 			return;
 		}
-
+		if (mBadgeView == null) {
+			return;
+		}
 		if (mAvailablePlaygroundList == null || mAvailablePlaygroundList.size() <= 0) {
 			mBadgeView.hide(true);
 			return;
@@ -1392,7 +1410,6 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		commonUIDelegate.setDrawerLayout(mBinding.drawerLayout);
 		commonUIDelegate.setNavigationView(mBinding.navView);
 		commonUIDelegate.setAppListView(mBinding.appListFl);
-		mBinding.navView.setNavigationItemSelectedListener(commonUIDelegate.onNavigationItemSelectedListener);
 	}
 
 	@Override

@@ -41,7 +41,7 @@ public abstract class AppBarActivity extends AppActivity {
 	 *
 	 * @param e Event {@link ListDetailShownEvent}.
 	 */
-	public void onEvent(ListDetailShownEvent e) {
+	public void onEvent(@SuppressWarnings("UnusedParameters") ListDetailShownEvent e) {
 		mBinding.appbar.appbarLayout.setExpanded(true);
 		dismissToolbar();
 	}
@@ -52,7 +52,7 @@ public abstract class AppBarActivity extends AppActivity {
 	 *
 	 * @param e Event {@link ListDetailClosedEvent}.
 	 */
-	public void onEvent(ListDetailClosedEvent e) {
+	public void onEvent(@SuppressWarnings("UnusedParameters") ListDetailClosedEvent e) {
 		showToolbar();
 	}
 
@@ -125,10 +125,7 @@ public abstract class AppBarActivity extends AppActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (mDrawerToggle != null && mDrawerToggle.onOptionsItemSelected(item)) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
+		return mDrawerToggle != null && mDrawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
 	}
 
 	protected abstract void setupContent(@NonNull FrameLayout contentLayout);

@@ -43,6 +43,7 @@ import com.playground.notification.bus.MyLocationLoadingSuccessEvent;
 import com.playground.notification.bus.NearRingListLoadingErrorEvent;
 import com.playground.notification.bus.NearRingListLoadingSuccessEvent;
 import com.playground.notification.bus.RatingOnLocationsLoadingErrorEvent;
+import com.playground.notification.bus.RefreshListEvent;
 import com.playground.notification.bus.ShowStreetViewEvent;
 import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.MyLocationManager;
@@ -427,14 +428,24 @@ public abstract class AppActivity extends BaseActivity {
 						FavoriteManager favoriteManager = FavoriteManager.getInstance();
 						if (favoriteManager.getCachedList()
 						                   .size() > 0) {
-							PlaygroundListActivity.showInstance(activity, favoriteManager.getCachedList());
+							if (!App.Instance.getResources()
+							                 .getBoolean(R.bool.is_small_screen)) {
+								EventBus.getDefault().post(new RefreshListEvent(favoriteManager.getCachedList()));
+							} else {
+								PlaygroundListActivity.showInstance(activity, favoriteManager.getCachedList());
+							}
 						}
 						break;
 					case R.id.action_near_ring:
 						NearRingManager nearRingManager = NearRingManager.getInstance();
 						if (nearRingManager.getCachedList()
 						                   .size() > 0) {
-							PlaygroundListActivity.showInstance(activity, nearRingManager.getCachedList());
+							if (!App.Instance.getResources()
+							                 .getBoolean(R.bool.is_small_screen)) {
+								EventBus.getDefault().post(new RefreshListEvent(nearRingManager.getCachedList()));
+							} else {
+								PlaygroundListActivity.showInstance(activity, nearRingManager.getCachedList());
+							}
 						}
 						break;
 					case R.id.action_my_location_list:

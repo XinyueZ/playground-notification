@@ -17,6 +17,7 @@
 package com.playground.notification.map;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -43,7 +44,7 @@ public final class PlaygroundClusterManager extends ClusterManager<Playground> i
 		setOnClusterItemClickListener(this);
 	}
 
-	public static PlaygroundClusterManager showAvailablePlaygrounds(@NonNull FragmentActivity host, @NonNull GoogleMap googleMap, @NonNull List<Playground> playgroundList) {
+	public static PlaygroundClusterManager showAvailablePlaygrounds(@NonNull FragmentActivity host, @NonNull GoogleMap googleMap, @Nullable List<Playground> playgroundList) {
 		PlaygroundClusterManager ret = new PlaygroundClusterManager(host, googleMap);
 		ret.addItems(playgroundList);
 		return ret;

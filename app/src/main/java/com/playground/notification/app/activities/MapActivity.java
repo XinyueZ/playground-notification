@@ -105,6 +105,8 @@ import com.playground.notification.utils.Prefs;
 import com.readystatesoftware.viewbadger.BadgeView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -122,7 +124,7 @@ import static pub.devrel.easypermissions.AppSettingsDialog.DEFAULT_SETTINGS_REQ_
 
 
 public final class MapActivity extends AppActivity implements LocationListener,
-                                                              EasyPermissions.PermissionCallbacks {
+                                                              EasyPermissions.PermissionCallbacks  {
 	public static final String EXTRAS_GROUND = MapActivity.class.getName() + ".EXTRAS.ground";
 
 	private static final int REQ = 0x98;
@@ -378,7 +380,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 				mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(playground.getPosition(), 18));
 				Prefs.getInstance()
 				     .setSelectedPlayground(playground.getPosition());
-
+				deselectMenuItems();
 				mMap.clear();
 				mPlaygroundClusterManager = PlaygroundClusterManager.showAvailablePlaygrounds(MapActivity.this, mMap, mAvailablePlaygroundList);
 				mShouldIgnoreLoadingFeeds = false;
@@ -1109,15 +1111,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 							}
 							mPlaygroundClusterManager = PlaygroundClusterManager.showAvailablePlaygrounds(MapActivity.this, mMap, mAvailablePlaygroundList);
 							if (!getResources().getBoolean(R.bool.is_small_screen)) {
-								final Prefs prefs = Prefs.getInstance();
-								if (prefs.getCurrentSelectedMenuItem() != MENU_ITEM_OTHERS) {
-									prefs.setCurrentSelectedMenuItem(MENU_ITEM_OTHERS);
-									Menu menu = mBinding.navView.getMenu();
-									MenuItem itemFav = menu.findItem(R.id.action_favorite);
-									MenuItem itemNearRing = menu.findItem(R.id.action_near_ring);
-									itemFav.setChecked(false);
-									itemNearRing.setChecked(false);
-								}
+								deselectMenuItems();
 								refreshPlaygroundList(mAvailablePlaygroundList);
 							} else {
 								updateBadgeTextOnAppBar();

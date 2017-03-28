@@ -63,8 +63,8 @@ import de.greenrobot.event.EventBus;
  */
 public abstract class AppActivity extends BaseActivity {
 	public static final int MENU_ITEM_OTHERS = -1;
-	public static final int MENU_ITEM_FAVORITE = 0;
-	public static final int MENU_ITEM_NEAR_RING = 1;
+	private static final int MENU_ITEM_FAVORITE = 0;
+	private static final int MENU_ITEM_NEAR_RING = 1;
 
 	/**
 	 * Height of App-bar.
@@ -72,7 +72,7 @@ public abstract class AppActivity extends BaseActivity {
 	private int mAppBarHeight;
 
 
-	private CommonUIDelegate mCommonUIDelegate;
+	private @Nullable CommonUIDelegate mCommonUIDelegate;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -213,7 +213,7 @@ public abstract class AppActivity extends BaseActivity {
 	 * @return {@code true} It's allowed.
 	 */
 	protected boolean shouldDoBackPressed() {
-		if (mCommonUIDelegate.mItemSelected) {
+		if (mCommonUIDelegate != null && mCommonUIDelegate.mItemSelected) {
 			EventBus.getDefault()
 			        .post(new BackPressedEvent());
 			return false;
@@ -224,7 +224,7 @@ public abstract class AppActivity extends BaseActivity {
 
 	@Override
 	public void onBackPressed() {
-		if (shouldDoBackPressed() && !mCommonUIDelegate.onBackPressed()) {
+		if (shouldDoBackPressed() && mCommonUIDelegate != null && !mCommonUIDelegate.onBackPressed()) {
 			super.onBackPressed();
 		}
 	}
@@ -404,7 +404,7 @@ public abstract class AppActivity extends BaseActivity {
 			mActivityWeakReference = new WeakReference<>(activity);
 		}
 
-		public void setAppListView(@Nullable View appListView) {
+		void setAppListView(@Nullable View appListView) {
 			mAppListView = appListView;
 		}
 
@@ -423,10 +423,25 @@ public abstract class AppActivity extends BaseActivity {
 			return false;
 		}
 
-		private NavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener = new NavigationView.OnNavigationItemSelectedListener() {
+		void deselectMenuItems() {
+			if (mNavigationView == null) {
+				return;
+			}
+			Prefs prefs = Prefs.getInstance();
+			if (prefs.getCurrentSelectedMenuItem() != MENU_ITEM_OTHERS) {
+				prefs.setCurrentSelectedMenuItem(MENU_ITEM_OTHERS);
+				Menu menu = mNavigationView.getMenu();
+				MenuItem itemFav = menu.findItem(R.id.action_favorite);
+				MenuItem itemNearRing = menu.findItem(R.id.action_near_ring);
+				itemFav.setChecked(false);
+				itemNearRing.setChecked(false);
+			}
+		}
+
+		private final NavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener = new NavigationView.OnNavigationItemSelectedListener() {
 			@Override
 			public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-				if (mActivityWeakReference == null || mActivityWeakReference.get() == null || mDrawerLayout == null) {
+				if (mActivityWeakReference == null || mActivityWeakReference.get() == null || mDrawerLayout == null || mNavigationView == null) {
 					return false;
 				}
 				final Menu menu = mNavigationView.getMenu();
@@ -536,5 +551,11 @@ public abstract class AppActivity extends BaseActivity {
 		getSupportFragmentManager().beginTransaction()
 		                           .replace(R.id.app_list_fl, AppListImpFragment.newInstance(this))
 		                           .commit();
+	}
+
+	protected void deselectMenuItems() {
+		if (mCommonUIDelegate != null) {
+			mCommonUIDelegate.deselectMenuItems();
+		}
 	}
 }

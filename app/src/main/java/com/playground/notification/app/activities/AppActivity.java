@@ -252,6 +252,7 @@ public abstract class AppActivity extends BaseActivity {
 		 *
 		 * @param e Event {@link com.chopping.bus.CloseDrawerEvent}.
 		 */
+		@SuppressWarnings("unused")
 		public void onEvent(@SuppressWarnings("UnusedParameters") CloseDrawerEvent e) {
 			if (mDrawerLayout != null) {
 				mDrawerLayout.closeDrawers();
@@ -264,6 +265,7 @@ public abstract class AppActivity extends BaseActivity {
 		 *
 		 * @param e Event {@link FavoriteListLoadingSuccessEvent}.
 		 */
+		@SuppressWarnings("unused")
 		public void onEvent(@SuppressWarnings("UnusedParameters") FavoriteListLoadingSuccessEvent e) {
 			if (mNavigationView != null) {
 				com.playground.notification.utils.Utils.updateDrawerMenuItem(mNavigationView, R.id.action_favorite, R.string.action_favorite, FavoriteManager.getInstance());
@@ -275,6 +277,7 @@ public abstract class AppActivity extends BaseActivity {
 		 *
 		 * @param e Event {@link NearRingListLoadingSuccessEvent}.
 		 */
+		@SuppressWarnings("unused")
 		public void onEvent(@SuppressWarnings("UnusedParameters") NearRingListLoadingSuccessEvent e) {
 			if (mNavigationView != null) {
 				com.playground.notification.utils.Utils.updateDrawerMenuItem(mNavigationView, R.id.action_near_ring, R.string.action_near_ring, NearRingManager.getInstance());
@@ -286,6 +289,7 @@ public abstract class AppActivity extends BaseActivity {
 		 *
 		 * @param e Event {@link MyLocationLoadingSuccessEvent}.
 		 */
+		@SuppressWarnings("unused")
 		public void onEvent(@SuppressWarnings("UnusedParameters") MyLocationLoadingSuccessEvent e) {
 			if (mNavigationView != null) {
 				com.playground.notification.utils.Utils.updateDrawerMenuItem(mNavigationView, R.id.action_my_location_list, R.string.action_my_location_list, MyLocationManager.getInstance());
@@ -298,6 +302,7 @@ public abstract class AppActivity extends BaseActivity {
 		 *
 		 * @param e Event {@link ShowStreetViewEvent}.
 		 */
+		@SuppressWarnings("unused")
 		public void onEvent(ShowStreetViewEvent e) {
 			if (mActivityWeakReference != null && mActivityWeakReference.get() != null) {
 				StreetViewActivity.showInstance(mActivityWeakReference.get(), e.getTitle(), e.getLocation());
@@ -310,6 +315,7 @@ public abstract class AppActivity extends BaseActivity {
 		 *
 		 * @param e Event {@link  EULARejectEvent}.
 		 */
+		@SuppressWarnings("unused")
 		public void onEvent(@SuppressWarnings("UnusedParameters") EULARejectEvent e) {
 			if (mActivityWeakReference != null && mActivityWeakReference.get() != null) {
 				ActivityCompat.finishAffinity(mActivityWeakReference.get());
@@ -321,6 +327,7 @@ public abstract class AppActivity extends BaseActivity {
 		 *
 		 * @param e Event {@link  EULAConfirmedEvent}.
 		 */
+		@SuppressWarnings("unused")
 		public void onEvent(@SuppressWarnings("UnusedParameters") EULAConfirmedEvent e) {
 			if (mActivityWeakReference != null && mActivityWeakReference.get() != null) {
 				ConnectGoogleActivity.showInstance(mActivityWeakReference.get());
@@ -333,6 +340,7 @@ public abstract class AppActivity extends BaseActivity {
 		 *
 		 * @param e Event {@link FavoriteListLoadingErrorEvent}.
 		 */
+		@SuppressWarnings("unused")
 		public void onEvent(@SuppressWarnings("UnusedParameters") FavoriteListLoadingErrorEvent e) {
 			FavoriteManager.getInstance()
 			               .init();
@@ -343,6 +351,7 @@ public abstract class AppActivity extends BaseActivity {
 		 *
 		 * @param e Event {@link NearRingListLoadingErrorEvent}.
 		 */
+		@SuppressWarnings("unused")
 		public void onEvent(@SuppressWarnings("UnusedParameters") NearRingListLoadingErrorEvent e) {
 			NearRingManager.getInstance()
 			               .init();
@@ -353,6 +362,7 @@ public abstract class AppActivity extends BaseActivity {
 		 *
 		 * @param e Event {@link MyLocationLoadingErrorEvent}.
 		 */
+		@SuppressWarnings("unused")
 		public void onEvent(@SuppressWarnings("UnusedParameters") MyLocationLoadingErrorEvent e) {
 			MyLocationManager.getInstance()
 			                 .init();
@@ -364,6 +374,7 @@ public abstract class AppActivity extends BaseActivity {
 		 *
 		 * @param e Event {@link RatingOnLocationsLoadingErrorEvent}.
 		 */
+		@SuppressWarnings("unused")
 		public void onEvent(@SuppressWarnings("UnusedParameters") RatingOnLocationsLoadingErrorEvent e) {
 			RatingManager.getInstance()
 			             .init();
@@ -375,6 +386,7 @@ public abstract class AppActivity extends BaseActivity {
 		 *
 		 * @param e Event {@link ListDetailShownEvent}.
 		 */
+		@SuppressWarnings("unused")
 		public void onEvent(@SuppressWarnings("UnusedParameters") ListDetailShownEvent e) {
 			mItemSelected = true;
 		}
@@ -385,6 +397,7 @@ public abstract class AppActivity extends BaseActivity {
 		 *
 		 * @param e Event {@link ListDetailClosedEvent}.
 		 */
+		@SuppressWarnings("unused")
 		public void onEvent(@SuppressWarnings("UnusedParameters") ListDetailClosedEvent e) {
 			mItemSelected = false;
 		}
@@ -408,7 +421,7 @@ public abstract class AppActivity extends BaseActivity {
 			mAppListView = appListView;
 		}
 
-		boolean onBackPressed() {
+		private boolean onBackPressed() {
 			if (mActivityWeakReference == null || mActivityWeakReference.get() == null || mNavigationView == null || mDrawerLayout == null || mAppListView == null) {
 				return false;
 			}
@@ -423,7 +436,7 @@ public abstract class AppActivity extends BaseActivity {
 			return false;
 		}
 
-		void deselectMenuItems() {
+		private void deselectMenuItems() {
 			if (mNavigationView == null) {
 				return;
 			}
@@ -507,7 +520,7 @@ public abstract class AppActivity extends BaseActivity {
 			}
 		};
 
-		void initNavigationAndDrawer() {
+		private void initNavigationAndDrawer() {
 			if (mNavigationView == null) {
 				return;
 			}

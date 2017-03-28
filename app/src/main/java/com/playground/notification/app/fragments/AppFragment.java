@@ -54,7 +54,7 @@ abstract class AppFragment extends BaseFragment {
 
 
 	protected static final class CommonUIDelegate {
-		private @NonNull WeakReference<Fragment> mFragmentWeakReference;
+		private @NonNull final WeakReference<Fragment> mFragmentWeakReference;
 
 
 		CommonUIDelegate(@NonNull Fragment fragment) {
@@ -71,7 +71,8 @@ abstract class AppFragment extends BaseFragment {
 		 *
 		 * @param e Event {@link OpenRouteEvent}.
 		 */
-		public void onEvent(OpenRouteEvent e) {
+		@SuppressWarnings("unused")
+		public void onEvent(@SuppressWarnings("UnusedParameters") OpenRouteEvent e) {
 			if (mFragmentWeakReference.get() == null) {
 				return;
 			}
@@ -97,6 +98,7 @@ abstract class AppFragment extends BaseFragment {
 		 *
 		 * @param e Event {@link PostOpenRouteEvent}.
 		 */
+		@SuppressWarnings("unused")
 		public void onEvent(PostOpenRouteEvent e) {
 			if (mFragmentWeakReference.get() == null) {
 				return;
@@ -130,7 +132,11 @@ abstract class AppFragment extends BaseFragment {
 			}
 
 			Bundle arguments = fragment.getArguments();
-			openRoute(activity, new LatLng(arguments.getDouble(EXTRAS_LAT), arguments.getDouble(EXTRAS_LNG)), ((Playground) arguments.getSerializable(EXTRAS_GROUND)).getPosition());
+			Playground playground = (Playground) arguments.getSerializable(EXTRAS_GROUND);
+			if (playground == null) {
+				return;
+			}
+			openRoute(activity, new LatLng(arguments.getDouble(EXTRAS_LAT), arguments.getDouble(EXTRAS_LNG)), playground.getPosition());
 		}
 
 		/**
@@ -138,6 +144,7 @@ abstract class AppFragment extends BaseFragment {
 		 *
 		 * @param e Event {@link com.playground.notification.bus.ShowLocationRatingEvent}.
 		 */
+		@SuppressWarnings("unused")
 		public void onEvent(ShowLocationRatingEvent e) {
 			if (mFragmentWeakReference.get() == null) {
 				return;
@@ -162,9 +169,10 @@ abstract class AppFragment extends BaseFragment {
 			Fragment fragment = mFragmentWeakReference.get();
 			Playground playground = (Playground) fragment.getArguments()
 			                                             .getSerializable(EXTRAS_GROUND);
-			if (playground.getPosition() != null && matrix != null && matrix.getDestination() != null && matrix.getDestination()
-			                                                                                                   .size() > 0 && matrix.getDestination()
-			                                                                                                                        .get(0) != null) {
+			if (playground != null && playground.getPosition() != null && matrix != null && matrix.getDestination() != null && matrix.getDestination()
+			                                                                                                                         .size() > 0 && matrix.getDestination()
+
+			                                                                                                                                              .get(0) != null) {
 				EventBus.getDefault()
 				        .post(new ShowStreetViewEvent(matrix.getDestination()
 				                                            .get(0), playground.getPosition()));

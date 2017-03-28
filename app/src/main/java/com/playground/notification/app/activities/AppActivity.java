@@ -437,9 +437,10 @@ public abstract class AppActivity extends BaseActivity {
 		}
 
 		private void deselectMenuItems() {
-			if (mNavigationView == null) {
+			if (mActivityWeakReference == null || mActivityWeakReference.get() == null || mNavigationView == null){
 				return;
 			}
+			Activity activity = mActivityWeakReference.get();
 			Prefs prefs = Prefs.getInstance();
 			if (prefs.getCurrentSelectedMenuItem() != MENU_ITEM_OTHERS) {
 				prefs.setCurrentSelectedMenuItem(MENU_ITEM_OTHERS);
@@ -448,6 +449,7 @@ public abstract class AppActivity extends BaseActivity {
 				MenuItem itemNearRing = menu.findItem(R.id.action_near_ring);
 				itemFav.setChecked(false);
 				itemNearRing.setChecked(false);
+				activity.setTitle(App.Instance.getString(R.string.title_activity_maps));
 			}
 		}
 
@@ -457,11 +459,11 @@ public abstract class AppActivity extends BaseActivity {
 				if (mActivityWeakReference == null || mActivityWeakReference.get() == null || mDrawerLayout == null || mNavigationView == null) {
 					return false;
 				}
+				Activity activity = mActivityWeakReference.get();
 				final Menu menu = mNavigationView.getMenu();
 				final MenuItem itemFav = menu.findItem(R.id.action_favorite);
 				final MenuItem itemNearRing = menu.findItem(R.id.action_near_ring);
 				final Prefs prefs = Prefs.getInstance();
-				Activity activity = mActivityWeakReference.get();
 				mDrawerLayout.closeDrawer(GravityCompat.START);
 				switch (menuItem.getItemId()) {
 					case R.id.action_favorite:
@@ -475,6 +477,10 @@ public abstract class AppActivity extends BaseActivity {
 							                 .getBoolean(R.bool.is_small_screen)) {
 								EventBus.getDefault()
 								        .post(new RefreshListEvent(favoriteManager.getCachedList()));
+								activity.setTitle(App.Instance.getString(R.string.action_favorite,
+								                                         FavoriteManager.getInstance()
+								                                                        .getCachedList()
+								                                                        .size()));
 							} else {
 								PlaygroundListActivity.showInstance(activity, favoriteManager.getCachedList());
 							}
@@ -491,6 +497,10 @@ public abstract class AppActivity extends BaseActivity {
 							                 .getBoolean(R.bool.is_small_screen)) {
 								EventBus.getDefault()
 								        .post(new RefreshListEvent(nearRingManager.getCachedList()));
+								activity.setTitle(App.Instance.getString(R.string.action_near_ring,
+								                                         NearRingManager.getInstance()
+								                                                        .getCachedList()
+								                                                        .size()));
 							} else {
 								PlaygroundListActivity.showInstance(activity, nearRingManager.getCachedList());
 							}
@@ -521,25 +531,35 @@ public abstract class AppActivity extends BaseActivity {
 		};
 
 		private void initNavigationAndDrawer() {
-			if (mNavigationView == null) {
+			if (mActivityWeakReference == null || mActivityWeakReference.get() == null || mNavigationView == null) {
 				return;
 			}
-			final Menu menu = mNavigationView.getMenu();
-			final MenuItem itemFav = menu.findItem(R.id.action_favorite);
-			final MenuItem itemNearRing = menu.findItem(R.id.action_near_ring);
+			Activity activity = mActivityWeakReference.get();
+			Menu menu = mNavigationView.getMenu();
+			MenuItem itemFav = menu.findItem(R.id.action_favorite);
+			MenuItem itemNearRing = menu.findItem(R.id.action_near_ring);
 			switch (Prefs.getInstance()
 			             .getCurrentSelectedMenuItem()) {
 				case AppActivity.MENU_ITEM_FAVORITE:
 					itemFav.setChecked(true);
 					itemNearRing.setChecked(false);
+					activity.setTitle(App.Instance.getString(R.string.action_favorite,
+					                                         FavoriteManager.getInstance()
+					                                                        .getCachedList()
+					                                                        .size()));
 					break;
 				case AppActivity.MENU_ITEM_NEAR_RING:
 					itemFav.setChecked(false);
 					itemNearRing.setChecked(true);
+					activity.setTitle(App.Instance.getString(R.string.action_near_ring,
+					                                         NearRingManager.getInstance()
+					                                                        .getCachedList()
+					                                                        .size()));
 					break;
 				default:
 					itemFav.setChecked(false);
 					itemNearRing.setChecked(false);
+					activity.setTitle(App.Instance.getString(R.string.title_activity_maps));
 					break;
 			}
 			mNavigationView.setNavigationItemSelectedListener(onNavigationItemSelectedListener);

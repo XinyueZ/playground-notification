@@ -140,25 +140,7 @@ public final class Utils {
 		return val;
 	}
 
-	public static boolean streetViewBitmapHasRealContent(@NonNull Bitmap bitmap) {
-		if (bitmap == null || bitmap.isRecycled()) {
-			return false;
-		}
 
-		int color = bitmap.getPixel(0, 0);
-		for (int i = 0;
-				i < bitmap.getWidth();
-				i++) {
-
-			int compareColor = bitmap.getPixel(i, 0);
-			if (compareColor != color) {
-				return true;
-			}
-
-		}
-		return false;
-
-	}
 
 
 	/**

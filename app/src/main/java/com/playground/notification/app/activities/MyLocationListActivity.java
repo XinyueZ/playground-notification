@@ -28,6 +28,7 @@ import com.playground.notification.bus.SelectItemEvent;
 import com.playground.notification.bus.StartActionModeEvent;
 import com.playground.notification.databinding.MyLocationListBinding;
 import com.playground.notification.ds.sync.MyLocation;
+import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.MyLocationManager;
 import com.playground.notification.utils.Prefs;
 
@@ -173,12 +174,17 @@ public final class MyLocationListActivity extends AppActivity {
 
 		//App-bar.
 		setSupportActionBar(mBinding.toolbar);
-		mBinding.toolbar.setTitle(R.string.lbl_my_location_list);
 		ActionBar actionBar = getSupportActionBar();
 		if (actionBar != null) {
 			actionBar.setDisplayHomeAsUpEnabled(true);
 			actionBar.setDefaultDisplayHomeAsUpEnabled(true);
 		}
+
+		setTitle(App.Instance.getString(R.string.action_my_location_list,
+		                                MyLocationManager.getInstance()
+		                                                 .getCachedList()
+		                                                 .size()));
+
 		mBinding.listRv.setLayoutManager(new GridLayoutManager(this, GRID_COL_COUNT));
 		if (MyLocationManager.getInstance()
 		                     .getCachedList()

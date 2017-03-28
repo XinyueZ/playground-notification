@@ -54,7 +54,7 @@ abstract class AppFragment extends BaseFragment {
 
 
 	protected static final class CommonUIDelegate {
-		private @Nullable WeakReference<Fragment> mFragmentWeakReference;
+		private @NonNull WeakReference<Fragment> mFragmentWeakReference;
 
 
 		CommonUIDelegate(@NonNull Fragment fragment) {
@@ -174,9 +174,15 @@ abstract class AppFragment extends BaseFragment {
 		final GoogleMap.OnMapClickListener mOnMapClickListener = new GoogleMap.OnMapClickListener() {
 			@Override
 			public void onMapClick(LatLng latLng) {
+				if (!App.Instance.getResources()
+				                 .getBoolean(R.bool.is_small_screen)) {
+					return;
+				}
+
 				if (mFragmentWeakReference.get() == null) {
 					return;
 				}
+
 				Fragment fragment = mFragmentWeakReference.get();
 				if (App.Instance.getResources()
 				                .getBoolean(R.bool.is_small_screen)) {
@@ -184,8 +190,8 @@ abstract class AppFragment extends BaseFragment {
 					if (activity == null) {
 						return;
 					}
-					if(fragment instanceof DialogFragment) {
-						((DialogFragment)fragment).dismiss();
+					if (fragment instanceof DialogFragment) {
+						((DialogFragment) fragment).dismiss();
 					}
 					Playground playground = (Playground) fragment.getArguments()
 					                                             .getSerializable(EXTRAS_GROUND);

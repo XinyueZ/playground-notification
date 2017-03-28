@@ -1413,7 +1413,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		LatLng latLng = prefs.getSelectedPlayground();
 		if (latLng != null) {
 			prefs.setSelectedPlayground(null);
-			mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
+			mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
 			should = false;
 		}
 		return should;

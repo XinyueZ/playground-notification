@@ -24,6 +24,7 @@
         android:label="@string/application_name"
         android:largeHeap="true"
         android:theme="@style/AppTheme"
+        android:fullBackupContent="@xml/backup_config"
         tools:replace="android:label">
         <meta-data
             android:name="com.google.android.gms.version"

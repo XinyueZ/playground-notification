@@ -105,8 +105,6 @@ import com.playground.notification.utils.Prefs;
 import com.readystatesoftware.viewbadger.BadgeView;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -123,7 +121,6 @@ import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
 import static android.support.v4.content.PermissionChecker.PERMISSION_GRANTED;
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
-import static com.playground.notification.utils.Utils.isLocationPermissionGranted;
 import static pub.devrel.easypermissions.AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE;
 
 

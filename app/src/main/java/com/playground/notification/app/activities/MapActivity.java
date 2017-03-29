@@ -117,9 +117,13 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
+import static android.support.v4.content.PermissionChecker.PERMISSION_GRANTED;
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
+import static com.playground.notification.utils.Utils.isLocationPermissionGranted;
 import static pub.devrel.easypermissions.AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE;
 
 
@@ -838,6 +842,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 					                                                            .addConnectionCallbacks(new ConnectionCallbacks() {
 						                                                            @Override
 						                                                            public void onConnected(Bundle bundle) {
+							                                                            if(ActivityCompat.checkSelfPermission(App.Instance, ACCESS_FINE_LOCATION) != PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(App.Instance, ACCESS_COARSE_LOCATION) != PERMISSION_GRANTED) return;
 							                                                            Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 							                                                            App.Instance.setCurrentLocation(location);
 							                                                            startLocationUpdate();
@@ -894,6 +899,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	 * Locating begin.
 	 */
 	private void startLocationUpdate() {
+		if(ActivityCompat.checkSelfPermission(App.Instance, ACCESS_FINE_LOCATION) != PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(App.Instance, ACCESS_COARSE_LOCATION) != PERMISSION_GRANTED) return;
 		if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
 			FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
 		}
@@ -1012,8 +1018,9 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	 * This should only be called once and when we are sure that {@link #mMap} is not null.
 	 */
 	private void setUpMap() {
-		mMap.setMyLocationEnabled(true);
-
+		if(ActivityCompat.checkSelfPermission(App.Instance, ACCESS_FINE_LOCATION) == PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(App.Instance, ACCESS_COARSE_LOCATION) == PERMISSION_GRANTED) {
+			mMap.setMyLocationEnabled(true);
+		}
 		mMap.setIndoorEnabled(true);
 		mMap.setBuildingsEnabled(true);
 

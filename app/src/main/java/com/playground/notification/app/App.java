@@ -42,7 +42,7 @@ import com.chopping.utils.DeviceUtils;
 import com.chopping.utils.DeviceUtils.ScreenSize;
 import com.crashlytics.android.Crashlytics;
 import com.playground.notification.R;
-import com.playground.notification.app.noactivities.TickerService;
+import com.playground.notification.app.noactivities.AppGuardService;
 import com.playground.notification.utils.Prefs;
 import com.tinyurl4j.Api;
 
@@ -166,7 +166,7 @@ public final class App extends MultiDexApplication {
 	 * A background service that will looking for time to notify user for some weather condition.
 	 */
 	private void startAppGuardService() {
-		App.Instance.startService(new Intent(App.Instance, TickerService.class));
+		App.Instance.startService(new Intent(App.Instance, AppGuardService.class));
 	}
 
 	/**

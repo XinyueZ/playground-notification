@@ -1,71 +1,91 @@
 package com.playground.notification.app.noactivities;
 
-
-import android.app.IntentService;
-import android.content.Context;
+import android.app.Notification;
+import android.app.Service;
 import android.content.Intent;
-import android.support.annotation.NonNull;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
 
-import com.playground.notification.utils.Prefs;
+import com.evernote.android.job.Job;
+import com.evernote.android.job.JobCreator;
+import com.evernote.android.job.JobManager;
+import com.playground.notification.R;
+import com.playground.notification.utils.NotifyUtils;
 
-import java.util.Calendar;
 
-public final class AppGuardService extends IntentService {
-	private static final String TAG = "AppGuardService";
+public class AppGuardService extends Service {
+	private static final int ONGOING_NOTIFICATION_ID = 0x57;
+	private boolean mReg = false;
+	private int mJobId;
+	private @Nullable JobManager mJobManager;
 
-
-	public AppGuardService() {
-		super( TAG );
+	@Override
+	public IBinder onBind(Intent intent) {
+		return null;
 	}
 
 	@Override
-	protected void onHandleIntent( Intent intent ) {
-		Intent service = null;
-		Prefs  prefs   = Prefs.getInstance();
-		if( prefs.isEULAOnceConfirmed() ) {
-			Calendar calendar = Calendar.getInstance();
-			int      hour     = calendar.get( Calendar.HOUR_OF_DAY );
-			int      min      = calendar.get( Calendar.MINUTE );
-			int      month    = calendar.get( Calendar.MONTH );
-			int      day      = calendar.get( Calendar.DAY_OF_WEEK );
-			if( prefs.notificationWeekendCall() && ( day == Calendar.SATURDAY || day == Calendar.SUNDAY ) ) {
-				if( ( hour == 9 && min == 30 ) ||
-					( hour == 12 && min == 0 ) ||
-					( hour == 14 && min == 30 ) ) {
-					service = initService( this, true );
-				}
-			}
-			if( prefs.notificationWarmTips() ) {
-				if( month >= Calendar.NOVEMBER && month <= Calendar.FEBRUARY ) {
-					//Fall ~ Winter
-					if( ( hour == 15 && min == 0 ) || ( hour == 15 && min == 15 ) ) {
-						service = initService( this, false );
-					}
-				} else if( month >= Calendar.MARCH && month <= Calendar.MAY ) {
-					//Spring
-					if( ( hour == 15 && min == 30 ) || ( hour == 16 && min == 0 ) ) {
-						service = initService( this, false );
-					}
-				} else if( month >= Calendar.JUNE && month <= Calendar.OCTOBER ) {
-					//Summer
-					if( ( hour == 15 && min == 40 ) || ( hour == 16 && min == 0 ) ) {
-						service = initService( this, false );
-					}
-				}
-			}
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		if (!mReg) {
+			Notification notification = NotifyUtils.buildNotifyWithoutBigImage(this,
+			                                                                   ONGOING_NOTIFICATION_ID,
+			                                                                   getString(R.string.application_name),
+			                                                                   getString(R.string.lbl_notify_content),
+			                                                                   R.drawable.ic_balloon,
+			                                                                   NotifyUtils.getAppHome(this),
+			                                                                   false);
+			startForeground(ONGOING_NOTIFICATION_ID, notification);
+			mReg = true;
+		}
 
-			if( service != null ) {
-				startService( service );
-			}
+		if (mJobManager == null) {
+			prepareScheduleJob();
+			mJobId = NotifyUserJob.scheduleJob();
+		}
+		return START_STICKY;
+	}
+
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		mReg = false;
+		if (mJobManager != null) {
+			mJobManager.cancel(mJobId);
+			mJobManager.removeJobCreator(mJobCreator);
+			mJobManager = null;
 		}
 	}
 
 
-	@NonNull
-	private Intent initService( Context context, boolean isWeekend ) {
-		Intent service;
-		service = new Intent( context, NotifyUserService.class );
-		service.putExtra( NotifyUserService.EXTRAS_WEEKEND, isWeekend );
-		return service;
+	/**
+	 * Ready for a job that runs background automatically.
+	 * See.
+	 * <a href="https://github.com/evernote/android-job">android-job</a>
+	 */
+	private void prepareScheduleJob() {
+		try {
+			mJobManager = JobManager.instance();
+		} catch (IllegalStateException e) {
+			mJobManager = JobManager.create(this);
+		}
+		mJobManager.addJobCreator(mJobCreator);
 	}
+
+	/**
+	 * Factory of a job that runs background automatically.
+	 * See.
+	 * <a href="https://github.com/evernote/android-job">android-job</a>
+	 */
+	private final JobCreator mJobCreator = new JobCreator() {
+		@Override
+		public Job create(String tag) {
+			switch (tag) {
+				case NotifyUserJob.TAG:
+					return new NotifyUserJob(AppGuardService.this);
+				default:
+					return null;
+			}
+		}
+	};
 }

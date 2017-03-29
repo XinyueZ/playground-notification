@@ -119,18 +119,8 @@
             android:name="io.fabric.ApiKey"
             android:value="0bf5835ac1569fe382ff64839c0be3d3ed9396b9"/>
 
-
         <service
             android:name=".app.noactivities.AppGuardService"
-            android:enabled="true"
-            android:exported="true"/>
-        <service
-            android:name=".app.noactivities.NotifyUserService"
-            android:enabled="true"
-            android:exported="false">
-        </service>
-        <service
-            android:name=".app.noactivities.TickerService"
             android:enabled="true"
             android:exported="true"/>
 

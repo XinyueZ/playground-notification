@@ -1,6 +1,7 @@
 package com.playground.notification.utils;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
@@ -105,6 +106,8 @@ public final class Prefs extends BasicPrefs {
 
 	public static final String KEY_SHOWCASE_MY_LOCATION = "showcase.my.location";
 	public static final String KEY_SHOWCASE_NEAR_RING = "showcase.near.ring";
+
+	private static final String KEY_GEOCODED_LOCATION = "key.geocoded.location.";
 
 
 	/**
@@ -419,5 +422,17 @@ public final class Prefs extends BasicPrefs {
 	 */
 	public int getCurrentSelectedMenuItem() {
 		return getInt(KEY_CURRENT_MENU_ITEM, MENU_ITEM_OTHERS);
+	}
+
+	public void setGeocodedLocation(@NonNull LatLng latLng, @NonNull String addressText) {
+		setString(KEY_GEOCODED_LOCATION + latLng.toString(), addressText);
+	}
+
+	public boolean isGeocoded(@NonNull LatLng latLng) {
+		return !TextUtils.isEmpty(getGeocodedLocation(latLng));
+	}
+
+	public String getGeocodedLocation(@NonNull LatLng latLng) {
+		return getString(KEY_GEOCODED_LOCATION + latLng.toString(), null);
 	}
 }

@@ -85,18 +85,30 @@
                             android:layout_marginLeft="2dp"
                             android:layout_marginStart="2dp">
 
-                            <View
-                                android:layout_width="150dp"
-                                android:layout_height="10dp"
-                                android:layout_gravity="center"
-                                android:background="@drawable/round_gray_rectangle"
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:orientation="vertical"
                                 android:visibility="@{!TextUtils.isEmpty(address) ? View.GONE : View.VISIBLE}"
-                                tools:visibility="visible"/>
+                                tools:visibility="visible">
+
+                                <View
+                                    android:layout_width="150dp"
+                                    android:layout_height="5dp"
+                                    android:background="@drawable/round_gray_rectangle"/>
+
+                                <View
+                                    android:layout_width="100dp"
+                                    android:layout_height="5dp"
+                                    android:layout_marginTop="3dp"
+                                    android:background="@drawable/round_gray_rectangle"/>
+                            </LinearLayout>
 
                             <TextView
                                 android:id="@+id/address_tv"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
+                                android:layout_height="match_parent"
                                 android:gravity="start|left|center_vertical"
                                 android:text="@{address}"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Small"

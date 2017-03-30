@@ -27,6 +27,7 @@ import com.playground.notification.bus.SelectedPinOpenEvent;
 import com.playground.notification.databinding.ItemPlaygroundBinding;
 import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ds.sync.Rating;
+import com.playground.notification.utils.Prefs;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -225,34 +226,45 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 			mBinding.loadingPb.setVisibility(View.GONE);
 		}
 
-		private void setAddress(Playground playground) {
+		private void setAddress(final Playground playground) {
 			Observable.just(playground.getPosition())
 			          .subscribeOn(Schedulers.newThread())
-			          .map(new Function<LatLng, Address>() {
+			          .map(new Function<LatLng, AddressLatLng>() {
 				          @Override
-				          public Address apply(LatLng latLng) throws Exception {
-					          try {
-						          List<Address> fromLocation = GEOCODER.getFromLocation(latLng.latitude, latLng.longitude, 1);
-						          if (fromLocation == null || fromLocation.size() <= 0) {
-							          return new Address(Locale.getDefault());
-						          } else {
-							          return fromLocation.get(0);
+				          public AddressLatLng apply(LatLng latLng) throws Exception {
+					          Prefs prefs = Prefs.getInstance();
+					          if (prefs.isGeocoded(latLng)) {
+						          Address address = new Address(Locale.getDefault());
+						          address.setAddressLine(0, prefs.getGeocodedLocation(latLng));
+						          address.setAddressLine(1, null);
+						          return new AddressLatLng(address, latLng);
+					          } else {
+						          try {
+							          List<Address> fromLocation = GEOCODER.getFromLocation(latLng.latitude, latLng.longitude, 1);
+							          if (fromLocation == null || fromLocation.size() <= 0) {
+								          return new AddressLatLng(new Address(Locale.getDefault()), latLng);
+							          } else {
+								          return new AddressLatLng(fromLocation.get(0), latLng);
+							          }
+						          } catch (IOException e) {
+							          return new AddressLatLng(new Address(Locale.getDefault()), latLng);
 						          }
-					          } catch (IOException e) {
-						          return new Address(Locale.getDefault());
 					          }
 				          }
 			          })
 			          .observeOn(AndroidSchedulers.mainThread())
-			          .subscribe(new Consumer<Address>() {
+			          .subscribe(new Consumer<AddressLatLng>() {
 				          @Override
-				          public void accept(Address address) throws Exception {
+				          public void accept(AddressLatLng addressLatLng) throws Exception {
+					          Address address = addressLatLng.getAddress();
 					          if (address.getAddressLine(0) == null) {
 						          mBinding.setAddress(null);
 					          } else {
 						          mBinding.setAddress(address.getAddressLine(0) + (TextUtils.isEmpty(address.getAddressLine(1)) ?
 						                                                           "" :
 						                                                           "\n" + address.getAddressLine(1)));
+						          Prefs.getInstance()
+						               .setGeocodedLocation(addressLatLng.getLatLng(), mBinding.getAddress());
 					          }
 				          }
 			          });
@@ -289,6 +301,24 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 		@Override
 		public void setRating(float rate) {
 			mBinding.locationRb.setRating(rate);
+		}
+	}
+
+	private static final class AddressLatLng {
+		private final Address mAddress;
+		private final LatLng mLatLng;
+
+		private AddressLatLng(Address address, LatLng latLng) {
+			mAddress = address;
+			mLatLng = latLng;
+		}
+
+		private Address getAddress() {
+			return mAddress;
+		}
+
+		private LatLng getLatLng() {
+			return mLatLng;
 		}
 	}
 }

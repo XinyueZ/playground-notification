@@ -215,6 +215,9 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	 */
 	private boolean mShouldIgnoreLoadingFeeds;
 
+	/**
+	 * Mark for selection on a pin.
+	 */
 	private PinSelectedEvent mPinSelectedEvent;
 
 	//------------------------------------------------

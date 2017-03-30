@@ -10,10 +10,11 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.chopping.application.LL;
 
 /**
  * Created by Xinyue Zhao
@@ -144,14 +145,14 @@ public final class IBBackgroundRecyclerView extends RecyclerView implements IBBa
 	@Override
 	public void scrollTo(int x, int y) {
 		if (mTerminated) {
-			Log.d(TAG, "mTerminated: " + mTerminated);
+			LL.d("mTerminated: " + mTerminated);
 			return;
 		}
 		if (mSelectedOffset == 0) {
-			Log.d(TAG, "mSelectedOffset: " + mSelectedOffset);
+			LL.d("mSelectedOffset: " + mSelectedOffset);
 			return;
 		}
-		Log.d(TAG, "mSelectedOffset: " + mSelectedOffset + " height: " + getHeight() + " scrollTo Y: " + y);
+		LL.d("mSelectedOffset: " + mSelectedOffset + " height: " + getHeight() + " scrollTo Y: " + y);
 		float offset;
 		if (!mInboxExpanded) {
 			//Expand
@@ -164,7 +165,7 @@ public final class IBBackgroundRecyclerView extends RecyclerView implements IBBa
 					mCallback.onOpen(this);
 				}
 			}
-			Log.d(TAG, "factor: " + factor + ", step:" + mStep);
+			LL.d("factor: " + factor + ", step:" + mStep);
 		} else {
 			//Close
 			offset = mSelectedOffset == 0 ?
@@ -179,9 +180,9 @@ public final class IBBackgroundRecyclerView extends RecyclerView implements IBBa
 					mCallback.onClose(this);
 				}
 			}
-			Log.d(TAG, "step:" + mStep);
+			LL.d("step:" + mStep);
 		}
-		Log.d(TAG, "offset: " + (int) offset + ", mInboxExpanded: " + mInboxExpanded);
+		LL.d("offset: " + (int) offset + ", mInboxExpanded: " + mInboxExpanded);
 		((LinearLayoutManager) getLayoutManager()).scrollToPositionWithOffset(mSelectedPosition, (int) offset);
 	}
 

@@ -150,8 +150,16 @@ public final class PlaygroundListItemDetailFragment extends AppFragment implemen
 		mBinding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				EventBus.getDefault()
-				        .post(new BackPressedEvent());
+				mBinding.coordinatorLayoutContainer.hide(0, 0 );
+				mBinding.coordinatorLayoutContainer.setAnimatorListenerAdapter(new AnimatorListenerAdapter() {
+					@Override
+					public void onAnimationEnd(Animator animation) {
+						super.onAnimationEnd(animation);
+						mBinding.coordinatorLayoutContainer.setAnimatorListenerAdapter(null);
+						EventBus.getDefault()
+						        .post(new BackPressedEvent());
+					}
+				});
 			}
 		});
 
@@ -231,7 +239,7 @@ public final class PlaygroundListItemDetailFragment extends AppFragment implemen
 						              mBinding.setMode(method);
 						              mBinding.setHandler(new EventHandler(lat, lng, playground, mBinding));
 
-						              mBinding.coordinatorLayoutContainer.show();
+						              mBinding.coordinatorLayoutContainer.show(0, 0);
 					              }
 
 					              @Override

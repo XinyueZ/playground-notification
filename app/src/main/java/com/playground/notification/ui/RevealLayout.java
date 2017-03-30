@@ -29,6 +29,7 @@ public final class RevealLayout extends FrameLayout {
 	private Animator mAnimator;
 	private static final int     DEFAULT_DURATION = 600;
 	private              boolean mIsContentShown  = true;
+	private AnimatorListenerAdapter mAnimatorListenerAdapter;
 
 	public RevealLayout( Context context ) {
 		this( context, null );
@@ -167,6 +168,9 @@ public final class RevealLayout extends FrameLayout {
 			@Override
 			public void onAnimationEnd( Animator animation ) {
 				super.onAnimationEnd( animation );
+				if(mAnimatorListenerAdapter != null) {
+					mAnimatorListenerAdapter.onAnimationEnd(animation);
+				}
 				mIsContentShown = false;
 			}
 		} );
@@ -210,4 +214,7 @@ public final class RevealLayout extends FrameLayout {
 		}
 	}
 
+	public void setAnimatorListenerAdapter(AnimatorListenerAdapter animatorListenerAdapter) {
+		mAnimatorListenerAdapter = animatorListenerAdapter;
+	}
 }

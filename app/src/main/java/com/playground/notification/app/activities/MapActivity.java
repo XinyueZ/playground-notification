@@ -41,7 +41,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 
-import com.bumptech.glide.Glide;
 import com.chopping.application.LL;
 import com.chopping.utils.Utils;
 import com.google.android.gms.ads.AdListener;
@@ -67,7 +66,6 @@ import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.nineoldandroids.animation.Animator;
@@ -96,8 +94,6 @@ import com.playground.notification.ds.google.Geometry;
 import com.playground.notification.ds.grounds.Playground;
 import com.playground.notification.ds.grounds.Playgrounds;
 import com.playground.notification.ds.grounds.Request;
-import com.playground.notification.ds.weather.Weather;
-import com.playground.notification.ds.weather.WeatherDetail;
 import com.playground.notification.geofence.GeofenceManagerService;
 import com.playground.notification.map.PlaygroundClusterManager;
 import com.playground.notification.sync.FavoriteManager;
@@ -108,7 +104,6 @@ import com.readystatesoftware.viewbadger.BadgeView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import de.greenrobot.event.EventBus;
 import pub.devrel.easypermissions.AfterPermissionGranted;
@@ -128,7 +123,7 @@ import static pub.devrel.easypermissions.AppSettingsDialog.DEFAULT_SETTINGS_REQ_
 
 
 public final class MapActivity extends AppActivity implements LocationListener,
-                                                              EasyPermissions.PermissionCallbacks  {
+                                                              EasyPermissions.PermissionCallbacks {
 	public static final String EXTRAS_GROUND = MapActivity.class.getName() + ".EXTRAS.ground";
 
 	private static final int REQ = 0x98;
@@ -223,6 +218,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
+
 	/**
 	 * Handler for {@link PinSelectedEvent}.
 	 *
@@ -325,7 +321,6 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		setUpErrorHandling((ViewGroup) findViewById(R.id.error_content));
 
 		initDrawer();
-		initBoard();
 		initAddMyLocation();
 		initPlaygroundsListIfNeeds();
 		//For search and suggestions.
@@ -709,111 +704,13 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	/**
 	 * Get weather status.
 	 */
-	private void askWeatherBoard(Location l) {
-		Prefs prefs = Prefs.getInstance();
-		if (!prefs.showWeatherBoard()) {
-			mBinding.boardVg.setVisibility(View.GONE);
+	private void askWeatherBoard(@Nullable Location l) {
+		if (l == null) {
 			return;
 		}
-		if (l != null) {
-			Location location = l;
-			try {
-				String units = "metric";
-				switch (prefs.getWeatherUnitsType()) {
-					case "0":
-						units = "metric";
-						break;
-					case "1":
-						units = "imperial";
-						break;
-				}
-				Api.getWeather(location.getLatitude(),
-				               location.getLongitude(),
-				               Locale.getDefault()
-				                     .getLanguage(),
-				               units,
-				               App.Instance.getWeatherKey(),
-				               new Callback<Weather>() {
-					               @Override
-					               public void success(Weather weather, Response response) {
-						               Prefs prefs = Prefs.getInstance();
-						               if (prefs.showWeatherBoard()) {
-							               List<WeatherDetail> details = weather.getDetails();
-							               if (details != null && details.size() > 0) {
-								               WeatherDetail weatherDetail = details.get(0);
-								               if (weatherDetail != null) {
-									               mBinding.boardVg.setVisibility(View.VISIBLE);
-									               int units = R.string.lbl_c;
-									               switch (prefs.getWeatherUnitsType()) {
-										               case "0":
-											               units = R.string.lbl_c;
-											               break;
-										               case "1":
-											               units = R.string.lbl_f;
-											               break;
-									               }
-									               String temp = weather.getTemperature() != null ?
-									                             getString(units,
-									                                       weather.getTemperature()
-									                                              .getValue()) :
-									                             getString(units, 0f);
-									               String weatherDesc = String.format("%s", temp);
-									               if (!TextUtils.isEmpty(weatherDesc)) {
-										               mBinding.boardTv.setText(weatherDesc);
-									               }
-									               String url = !TextUtils.isEmpty(weatherDetail.getIcon()) ?
-									                            prefs.getWeatherIconUrl(weatherDetail.getIcon()) :
-									                            prefs.getWeatherIconUrl("50d");
-									               Glide.with(App.Instance)
-									                    .load(url)
-									                    .into(mBinding.boardIconIv);
-
-									               ViewPropertyAnimator animator = ViewPropertyAnimator.animate(mBinding.boardVg);
-									               float x = ViewHelper.getX(mBinding.boardVg);
-									               float y = ViewHelper.getY(mBinding.boardVg);
-									               ViewHelper.setPivotX(mBinding.boardVg, x / 2);
-									               ViewHelper.setPivotY(mBinding.boardVg, y / 2);
-									               animator.rotation(-5f)
-									                       .setDuration(500)
-									                       .start();
-								               }
-							               }
-						               }
-					               }
-
-					               @Override
-					               public void failure(RetrofitError error) {
-
-					               }
-				               });
-			} catch (ApiNotInitializedException e) {
-				//Ignore this request.
-			}
-		}
+		mBinding.weatherLayout.setWeather(l);
 	}
 
-	/**
-	 * Initialize information board.
-	 */
-	private void initBoard() {
-		mBinding.boardVg.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-
-				ViewPropertyAnimator animator = ViewPropertyAnimator.animate(mBinding.boardVg);
-				animator.rotation(5f)
-				        .setDuration(500)
-				        .setListener(new AnimatorListenerAdapter() {
-					        @Override
-					        public void onAnimationEnd(Animator animation) {
-						        super.onAnimationEnd(animation);
-						        mBinding.boardVg.setVisibility(View.GONE);
-					        }
-				        })
-				        .start();
-			}
-		});
-	}
 
 	/**
 	 * Initialize all map infrastructures, location request etc.
@@ -857,7 +754,13 @@ public final class MapActivity extends AppActivity implements LocationListener,
 					                                                            .addConnectionCallbacks(new ConnectionCallbacks() {
 						                                                            @Override
 						                                                            public void onConnected(Bundle bundle) {
-							                                                            if(ActivityCompat.checkSelfPermission(App.Instance, ACCESS_FINE_LOCATION) != PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(App.Instance, ACCESS_COARSE_LOCATION) != PERMISSION_GRANTED) return;
+							                                                            if (ActivityCompat.checkSelfPermission(App.Instance,
+							                                                                                                   ACCESS_FINE_LOCATION) != PERMISSION_GRANTED && ActivityCompat
+									                                                            .checkSelfPermission(
+									                                                            App.Instance,
+									                                                            ACCESS_COARSE_LOCATION) != PERMISSION_GRANTED) {
+								                                                            return;
+							                                                            }
 							                                                            Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 							                                                            App.Instance.setCurrentLocation(location);
 							                                                            startLocationUpdate();
@@ -914,7 +817,10 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	 * Locating begin.
 	 */
 	private void startLocationUpdate() {
-		if(ActivityCompat.checkSelfPermission(App.Instance, ACCESS_FINE_LOCATION) != PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(App.Instance, ACCESS_COARSE_LOCATION) != PERMISSION_GRANTED) return;
+		if (ActivityCompat.checkSelfPermission(App.Instance, ACCESS_FINE_LOCATION) != PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(App.Instance,
+		                                                                                                                                       ACCESS_COARSE_LOCATION) != PERMISSION_GRANTED) {
+			return;
+		}
 		if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
 			FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
 		}
@@ -1033,12 +939,13 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	 * This should only be called once and when we are sure that {@link #mMap} is not null.
 	 */
 	private void setUpMap() {
-		if(ActivityCompat.checkSelfPermission(App.Instance, ACCESS_FINE_LOCATION) == PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(App.Instance, ACCESS_COARSE_LOCATION) == PERMISSION_GRANTED) {
+		if (ActivityCompat.checkSelfPermission(App.Instance, ACCESS_FINE_LOCATION) == PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(App.Instance,
+		                                                                                                                                       ACCESS_COARSE_LOCATION) == PERMISSION_GRANTED) {
 			mMap.setMyLocationEnabled(true);
 		}
 		mMap.setIndoorEnabled(true);
 		mMap.setBuildingsEnabled(false);
-  
+
 		boolean isSmall = getResources().getBoolean(R.bool.is_small_screen);
 		mMap.setPadding(!isSmall ?
 		                (int) App.Instance.getListItemWidth() + getResources().getDimensionPixelSize(R.dimen.list_padding_left) :
@@ -1054,9 +961,10 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
 			@Override
 			public void onCameraIdle() {
-				if(mPinSelectedEvent != null) {
+				if (mPinSelectedEvent != null) {
 					LL.d("Ignore loading new feeds for pin");
-					EventBus.getDefault().post(new SelectedPinOpenEvent(mPinSelectedEvent.getPlayground()));
+					EventBus.getDefault()
+					        .post(new SelectedPinOpenEvent(mPinSelectedEvent.getPlayground()));
 					mPinSelectedEvent = null;
 					return;
 				}

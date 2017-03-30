@@ -43,45 +43,6 @@
                 style="@style/ActionBar_ToolBar"/>
 
 
-            <FrameLayout
-                android:id="@+id/board_vg"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="48dp" >
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:background="@color/common_transparent"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/ic_board"/>
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="75dp"
-                    android:layout_gravity="center_horizontal|bottom"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:id="@+id/board_icon_iv"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="center_horizontal"
-                        android:background="@color/common_transparent"/>
-
-                    <TextView
-                        android:id="@+id/board_tv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal|bottom"
-                        android:layout_marginBottom="20dp"
-                        android:gravity="center_horizontal"
-                        android:text="@string/action_go"/>
-
-                </FrameLayout>
-            </FrameLayout>
 
             <com.pnikosis.materialishprogress.ProgressWheel
                 android:id="@+id/load_pin_pb"
@@ -166,6 +127,13 @@
                 android:layout_gravity="bottom"
                 android:layout_marginTop="?attr/actionBarSize"
                 android:visibility="gone"/>
+
+            <com.playground.notification.ui.WeatherLayout
+                android:id="@+id/weather_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="?attr/actionBarSize"
+                android:layout_gravity="start|left|top" />
         </FrameLayout>
 
 

@@ -5,7 +5,6 @@
 
     <string name="action_search">Suche</string>
     <string name="action_share">Teile</string>
-    <string name="action_go">Gehe?</string>
     <string name="action_favorite">Favoritenliste(%1$d)</string>
     <string name="action_near_ring">Near-Rings(%1$d)</string>
     <string name="action_settings">Einstellungen</string>

@@ -8,5 +8,5 @@
     <dimen name="common_elevation">5dp</dimen>
     <dimen name="common_high_elevation">10dp</dimen>
     <dimen name="drag_close_distance">15dp</dimen>
-    <dimen name="list_padding_left">90dp</dimen>
+    <dimen name="list_padding_left">95dp</dimen>
 </resources>

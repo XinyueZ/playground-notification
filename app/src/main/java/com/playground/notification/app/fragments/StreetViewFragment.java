@@ -59,8 +59,8 @@ public final class StreetViewFragment extends AppFragment implements OnStreetVie
 	@Override
 	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		LatLng location = getArguments().getParcelable(EXTRAS_LOCATION);
-		mBinding.weatherLayout.setWeather(location);
+		LatLng latLng = getArguments().getParcelable(EXTRAS_LOCATION);
+		mBinding.weatherLayout.setWeather(latLng);
 	}
 
 	/**

@@ -1,12 +1,12 @@
 package com.playground.notification.ui;
 
 import android.content.Context;
+import android.location.Location;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.bumptech.glide.Glide;
@@ -50,7 +50,7 @@ public final class WeatherLayout extends FrameLayout {
 		mLayoutWeatherBinding = LayoutWeatherBinding.inflate(inflater, this, true);
 	}
 
-	public WeatherLayout setWeather(@NonNull LatLng latLng) {
+	public WeatherLayout setWeather(double latitude, double longitude) {
 		Prefs prefs = Prefs.getInstance();
 		if (!prefs.showWeatherBoard()) {
 			setVisibility(View.GONE);
@@ -66,8 +66,8 @@ public final class WeatherLayout extends FrameLayout {
 					units = "imperial";
 					break;
 			}
-			Api.getWeather(latLng.latitude,
-			               latLng.longitude,
+			Api.getWeather(latitude,
+			               longitude,
 			               Locale.getDefault()
 			                     .getLanguage(),
 			               units,
@@ -120,5 +120,13 @@ public final class WeatherLayout extends FrameLayout {
 			//Ignore this request.
 		}
 		return this;
+	}
+
+	public WeatherLayout setWeather(@NonNull LatLng latLng) {
+		return setWeather(latLng.latitude, latLng.longitude);
+	}
+
+	public WeatherLayout setWeather(@NonNull Location l) {
+		return setWeather(l.getLatitude(), l.getLongitude());
 	}
 }

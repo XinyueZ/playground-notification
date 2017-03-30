@@ -1034,16 +1034,8 @@ public final class MapActivity extends AppActivity implements LocationListener,
 			mMap.setMyLocationEnabled(true);
 		}
 		mMap.setIndoorEnabled(true);
-		mMap.setBuildingsEnabled(true);
-
-		UiSettings uiSettings = mMap.getUiSettings();
-		//		uiSettings.setZoomControlsEnabled(true);
-		uiSettings.setMyLocationButtonEnabled(true);
-		uiSettings.setIndoorLevelPickerEnabled(true);
-		uiSettings.setCompassEnabled(true);
-		uiSettings.setAllGesturesEnabled(true);
-
-
+		mMap.setBuildingsEnabled(false);
+  
 		boolean isSmall = getResources().getBoolean(R.bool.is_small_screen);
 		mMap.setPadding(!isSmall ?
 		                (int) App.Instance.getListItemWidth() + getResources().getDimensionPixelSize(R.dimen.list_padding_left) :

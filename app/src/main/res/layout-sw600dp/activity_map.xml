@@ -66,10 +66,10 @@
                 android:id="@+id/load_pin_pb"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:layout_gravity="start"
-                android:layout_marginTop="?attr/actionBarSize"
+                android:layout_gravity="center_horizontal|bottom"
                 android:visibility="gone"
                 app:matProg_barColor="@color/primary_dark_color"
+                app:matProg_barWidth="3dp"
                 app:matProg_fillRadius="true"
                 app:matProg_progressIndeterminate="true"/>
 

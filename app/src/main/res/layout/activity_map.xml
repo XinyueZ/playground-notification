@@ -25,7 +25,7 @@
                 android:layout_height="match_parent"
                 app:uiCompass="false"
                 app:uiRotateGestures="false"
-                app:uiTiltGestures="false" />
+                app:uiTiltGestures="false"/>
 
 
             <ImageButton
@@ -43,15 +43,14 @@
                 style="@style/ActionBar_ToolBar"/>
 
 
-
             <com.pnikosis.materialishprogress.ProgressWheel
                 android:id="@+id/load_pin_pb"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:layout_gravity="start"
-                android:layout_marginTop="?attr/actionBarSize"
+                android:layout_gravity="center_horizontal|bottom"
                 android:visibility="gone"
                 app:matProg_barColor="@color/primary_dark_color"
+                app:matProg_barWidth="3dp"
                 app:matProg_fillRadius="true"
                 app:matProg_progressIndeterminate="true"/>
 
@@ -64,9 +63,9 @@
                 android:layout_gravity="end|bottom"
                 android:clickable="true"
                 android:src="@drawable/ic_add"
-                app:useCompatPadding="true"
                 app:backgroundTint="@color/primary_dark_color"
-                app:rippleColor="@color/primary_color"/>
+                app:rippleColor="@color/primary_color"
+                app:useCompatPadding="true"/>
 
             <com.playground.notification.ui.RevealLayout
                 android:id="@+id/add_pane_v"
@@ -99,8 +98,8 @@
                         style="@style/MaterialRippleLayout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
                         android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:paddingBottom="5dp"
                         android:paddingLeft="5dp"
@@ -132,8 +131,8 @@
                 android:id="@+id/weather_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="?attr/actionBarSize"
-                android:layout_gravity="start|left|top" />
+                android:layout_gravity="start|left|top"
+                android:layout_marginTop="?attr/actionBarSize"/>
         </FrameLayout>
 
 

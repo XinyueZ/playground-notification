@@ -84,7 +84,9 @@ import com.playground.notification.app.fragments.MyLocationFragment;
 import com.playground.notification.app.fragments.PlaygroundDetailFragment;
 import com.playground.notification.app.fragments.PlaygroundListFragment;
 import com.playground.notification.bus.OpenPlaygroundEvent;
+import com.playground.notification.bus.PinSelectedEvent;
 import com.playground.notification.bus.RefreshListEvent;
+import com.playground.notification.bus.SelectedPinOpenEvent;
 import com.playground.notification.databinding.MainBinding;
 import com.playground.notification.ds.google.Geobound;
 import com.playground.notification.ds.google.Geocode;
@@ -108,6 +110,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import de.greenrobot.event.EventBus;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -210,10 +213,22 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	/**
 	 * {@link #mShouldIgnoreLoadingFeeds} flags {@code true} when feeds should not load feeds.
 	 */
-	private boolean mShouldIgnoreLoadingFeeds = true;
+	private boolean mShouldIgnoreLoadingFeeds;
+
+	private PinSelectedEvent mPinSelectedEvent;
+
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
+	/**
+	 * Handler for {@link PinSelectedEvent}.
+	 *
+	 * @param e Event {@link PinSelectedEvent}.
+	 */
+	@SuppressWarnings("unused")
+	public void onEvent(PinSelectedEvent e) {
+		mPinSelectedEvent = e;
+	}
 
 	/**
 	 * Handler for {@link OpenPlaygroundEvent}.
@@ -384,7 +399,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 				deselectMenuItems();
 				mMap.clear();
 				mPlaygroundClusterManager = PlaygroundClusterManager.showAvailablePlaygrounds(MapActivity.this, mMap, mAvailablePlaygroundList);
-				mShouldIgnoreLoadingFeeds = false;
+				mShouldIgnoreLoadingFeeds = true;
 			}
 		} else {
 			mKeyword = intent.getStringExtra(SearchManager.QUERY);
@@ -1044,9 +1059,16 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
 			@Override
 			public void onCameraIdle() {
-				if (!mShouldIgnoreLoadingFeeds) {
+				if(mPinSelectedEvent != null) {
+					LL.d("Ignore loading new feeds for pin");
+					EventBus.getDefault().post(new SelectedPinOpenEvent(mPinSelectedEvent.getPlayground()));
+					mPinSelectedEvent = null;
+					return;
+				}
+
+				if (mShouldIgnoreLoadingFeeds) {
 					LL.d("Ignore loading new feeds.");
-					mShouldIgnoreLoadingFeeds = true;
+					mShouldIgnoreLoadingFeeds = false;
 					return;
 				}
 				mForcedToLoad = true;

@@ -56,7 +56,7 @@ public final class PlaygroundClusterManager extends ClusterManager<Playground> i
 		if (!App.Instance.getResources()
 		                 .getBoolean(R.bool.is_small_screen)) {
 			EventBus.getDefault().post(new PinSelectedEvent(playground));
-			return true;
+			return false;
 		}
 		EventBus.getDefault().post(new OpenPlaygroundEvent(playground));
 		return true;

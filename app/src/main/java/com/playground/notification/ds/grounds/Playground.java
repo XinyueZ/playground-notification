@@ -62,11 +62,11 @@ public class Playground extends BmobObject implements ClusterItem {
 
 	@Override
 	public String getTitle() {
-		return "[" + mLatitude + "," + mLongitude + "]";
+		return  null;
 	}
 
 	@Override
 	public String getSnippet() {
-		return "[" + mLatitude + "," + mLongitude + "]";
+		return null;
 	}
 }

@@ -525,9 +525,15 @@ public final class MapActivity extends AppActivity implements LocationListener,
 					        .show();
 					return true;
 				}
-				final LatLng center = mMap.getProjection()
-				                          .getVisibleRegion().latLngBounds.getCenter();
-				showDialogFragment(MyLocationFragment.newInstance(App.Instance, location.getLatitude(), location.getLongitude(), new Playground(center.latitude, center.longitude)), null);
+				try {
+					final LatLng center = mMap.getProjection()
+					                          .getVisibleRegion().latLngBounds.getCenter();
+					showDialogFragment(MyLocationFragment.newInstance(App.Instance, location.getLatitude(), location.getLongitude(), new Playground(center.latitude, center.longitude)), null);
+				} catch (Exception e) {
+					LL.e("Cannot get center point to create my-location. " + (!TextUtils.isEmpty(e.getMessage()) ?
+					                                                          e.getMessage() :
+					                                                          ""));
+				}
 				return true;
 			}
 		});

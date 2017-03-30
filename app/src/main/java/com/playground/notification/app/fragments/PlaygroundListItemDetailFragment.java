@@ -230,6 +230,8 @@ public final class PlaygroundListItemDetailFragment extends AppFragment implemen
 						              mBinding.setMatrix(matrix);
 						              mBinding.setMode(method);
 						              mBinding.setHandler(new EventHandler(lat, lng, playground, mBinding));
+
+						              mBinding.coordinatorLayoutContainer.show();
 					              }
 
 					              @Override

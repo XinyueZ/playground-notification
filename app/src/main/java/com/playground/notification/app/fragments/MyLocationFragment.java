@@ -31,6 +31,7 @@ import com.playground.notification.utils.Utils;
 import java.io.Serializable;
 import java.util.Locale;
 
+import de.greenrobot.event.EventBus;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -55,6 +56,7 @@ public final class MyLocationFragment extends AppCompatDialogFragment {
 	 */
 	private MyLocationBinding mBinding;
 
+	private final AppFragment.CommonUIDelegate mCommonUIDelegate = new AppFragment.CommonUIDelegate(this);
 	/**
 	 * New an instance of {@link MyLocationFragment}.
 	 *
@@ -108,11 +110,15 @@ public final class MyLocationFragment extends AppCompatDialogFragment {
 	public void onResume() {
 		mBinding.map.onResume();
 		super.onResume();
+		EventBus.getDefault()
+		        .register(mCommonUIDelegate);
 	}
 
 	@Override
 	public void onPause() {
 		mBinding.map.onPause();
+		EventBus.getDefault()
+		        .unregister(mCommonUIDelegate);
 		super.onPause();
 	}
 
@@ -199,12 +205,7 @@ public final class MyLocationFragment extends AppCompatDialogFragment {
 				dismiss();
 			}
 
-			if(getResources().getBoolean(R.bool.is_small_screen)) {
-				mBinding.map.getLayoutParams().width = (int) App.Instance.getListItemWidth();
-			}
 			mBinding.map.getLayoutParams().height = (int) App.Instance.getListItemHeight();
-
-			mBinding.loadingPb.setVisibility(View.VISIBLE);
 			mBinding.map.getMapAsync(mOnMapReadyCallback);
 		}
 	}
@@ -215,14 +216,8 @@ public final class MyLocationFragment extends AppCompatDialogFragment {
 	private final OnMapReadyCallback mOnMapReadyCallback = new OnMapReadyCallback() {
 		@Override
 		public void onMapReady(GoogleMap googleMap) {
-			Playground playground = (Playground) getArguments().getSerializable(EXTRAS_GROUND);
-			googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(playground.getPosition(), 16));
-			MarkerOptions markerOptions = new MarkerOptions().position(playground.getPosition());
-			setPlaygroundIcon(App.Instance, playground, markerOptions);
-			googleMap.addMarker(markerOptions);
+			mCommonUIDelegate.onMapReady(googleMap);
 			googleMap.setOnMapClickListener(mOnMapClickListener);
-			mBinding.map.setVisibility(View.VISIBLE);
-			mBinding.loadingPb.setVisibility(View.GONE);
 		}
 	};
 

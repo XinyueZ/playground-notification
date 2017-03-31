@@ -219,11 +219,12 @@ abstract class AppFragment extends BaseFragment {
 			if (playground == null || playground.getPosition() == null) {
 				return;
 			}
-			googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(playground.getPosition(), 16));
+			googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(playground.getPosition(), 18));
 			MarkerOptions markerOptions = new MarkerOptions().position(playground.getPosition());
 			setPlaygroundIcon(App.Instance, playground, markerOptions);
 			googleMap.addMarker(markerOptions);
 			googleMap.setOnMapClickListener(mOnMapClickListener);
+			googleMap.getUiSettings().setMapToolbarEnabled(false);
 		}
 
 		void updateWeatherView(View weatherV) {

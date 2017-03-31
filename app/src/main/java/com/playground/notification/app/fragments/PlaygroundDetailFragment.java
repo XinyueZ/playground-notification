@@ -361,7 +361,6 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 			mBinding.streetview.setVisibility(View.INVISIBLE);
 			mBinding.map.setVisibility(View.VISIBLE);
 
-
 			if (googleMap != null) {
 				mCommonUIDelegate.onMapReady(googleMap);
 			}

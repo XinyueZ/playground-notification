@@ -34,296 +34,326 @@
 
     </data>
 
-    <RelativeLayout
+
+    <ScrollView
         android:id="@+id/my_location_vg"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/common_white">
+        android:layout_height="wrap_content">
 
-        <ScrollView
-            android:id="@+id/info_vg"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:orientation="vertical"
+            >
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/common_padding"
+                android:inputType="textMultiLine|textNoSuggestions"
+                android:lines="3"
+                android:maxLines="3"
+                android:minLines="3"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:text="@{matrix.destination.get(0)}"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:visibility="@{matrix==null ? View.GONE : View.VISIBLE}"/>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:layout_marginBottom="@dimen/common_padding"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:background="@drawable/round_gray_rectangle"
+                android:visibility="@{matrix!=null ? View.GONE : View.VISIBLE}"/>
+
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/map"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:cameraZoom="16"
+                app:liteMode="true"
+                app:mapType="normal"
+                app:uiCompass="false"
+                app:uiRotateGestures="false"
+                app:uiScrollGestures="false"
+                app:uiTiltGestures="false"
+                app:uiZoomControls="false"
+                app:uiZoomGestures="false">
+            </com.google.android.gms.maps.MapView>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
+                android:layout_marginBottom="@dimen/common_padding"
+                android:layout_marginTop="@dimen/common_padding"
+                android:checkedButton="@+id/ic_walking_rb"
                 android:orientation="vertical"
-                >
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin">
 
-
-                <TextView
-                    android:id="@+id/location_tv"
+                <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/common_padding"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:paddingRight="@dimen/activity_horizontal_margin"
-                    android:paddingTop="@dimen/activity_vertical_margin"
-                    android:inputType="textMultiLine|textNoSuggestions"
-                    android:lines="3"
-                    android:maxLines="3"
-                    android:minLines="3"
-                    android:text="@{matrix.destination.get(0)}"
+                    android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}">
+
+                    <RadioButton
+                        android:id="@+id/ic_walking_rb"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:button="@drawable/ic_walking"
+                        android:onClick="@{handler.onModeSelected}"
+                        android:tag="walking"
+                        android:text="@{@string/lbl_walking}"/>
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|end"
+                        android:checked="true"
+                        android:clickable="false"
+                        android:theme="@style/CheckboxTheme"
+                        android:visibility='@{mode.equals("walking") ? View.VISIBLE : View.INVISIBLE}'/>
+                </FrameLayout>
+
+                <View
+                    android:layout_width="150dp"
+                    android:layout_height="10dp"
+                    android:layout_marginBottom="@dimen/common_padding"
+                    android:background="@drawable/round_gray_rectangle"
+                    android:visibility="@{matrix!=null ? View.GONE : View.VISIBLE}"/>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/common_padding"
+                    android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}">
+
+                    <RadioButton
+                        android:id="@+id/ic_driving_rb"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:button="@drawable/ic_driving"
+                        android:onClick="@{handler.onModeSelected}"
+                        android:tag="driving"
+                        android:text="@{@string/lbl_driving}"/>
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|right"
+                        android:checked="true"
+                        android:clickable="false"
+                        android:theme="@style/CheckboxTheme"
+                        android:visibility='@{mode.equals("driving") ? View.VISIBLE : View.INVISIBLE}'/>
+                </FrameLayout>
+
+                <View
+                    android:layout_width="150dp"
+                    android:layout_height="10dp"
+                    android:layout_marginBottom="@dimen/common_padding"
+                    android:background="@drawable/round_gray_rectangle"
+                    android:visibility="@{matrix!=null ? View.GONE : View.VISIBLE}"/>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/common_padding"
+                    android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}">
+
+                    <RadioButton
+                        android:id="@+id/ic_bicycling_rb"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:button="@drawable/ic_bicycling"
+                        android:onClick="@{handler.onModeSelected}"
+                        android:tag="bicycling"
+                        android:text="@{@string/lbl_bicycling}"/>
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|right"
+                        android:checked="true"
+                        android:clickable="false"
+                        android:theme="@style/CheckboxTheme"
+                        android:visibility='@{mode.equals("bicycling") ? View.VISIBLE : View.INVISIBLE}'/>
+                </FrameLayout>
+
+                <View
+                    android:layout_width="150dp"
+                    android:layout_height="10dp"
+                    android:layout_marginBottom="@dimen/common_padding"
+                    android:background="@drawable/round_gray_rectangle"
+                    android:visibility="@{matrix!=null ? View.GONE : View.VISIBLE}"/>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}">
+
+                    <RadioButton
+                        android:id="@+id/ic_transit_rb"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:button="@drawable/ic_transit"
+                        android:onClick="@{handler.onModeSelected}"
+                        android:tag="transit"
+                        android:text="@{@string/lbl_transit}"/>
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|right"
+                        android:checked="true"
+                        android:clickable="false"
+                        android:theme="@style/CheckboxTheme"
+                        android:visibility='@{mode.equals("transit") ? View.VISIBLE : View.INVISIBLE}'/>
+                </FrameLayout>
+
+                <View
+                    android:layout_width="150dp"
+                    android:layout_height="10dp"
+                    android:layout_marginBottom="@dimen/common_padding"
+                    android:background="@drawable/round_gray_rectangle"
+                    android:visibility="@{matrix!=null ? View.GONE : View.VISIBLE}"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/common_padding"
+                android:layout_marginTop="@dimen/common_padding"
+                android:orientation="horizontal"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin">
+
+                <View
+                    android:layout_width="200dp"
+                    android:layout_height="10dp"
+                    android:background="@drawable/round_gray_rectangle"
+                    android:visibility="@{matrix==null ? View.VISIBLE : View.GONE}"/>
+
+                <TextView
+                    android:id="@+id/duration_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/common_padding"
+                    android:layout_marginRight="@dimen/common_padding"
+                    android:text="@{matrix.rows.get(0).elements.get(0).duration.text}"
                     android:textAppearance="@style/TextAppearance.AppCompat.Title"
                     android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}"/>
 
-                <com.google.android.gms.maps.MapView
-                    android:id="@+id/map"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="invisible"
-                    app:cameraZoom="16"
-                    app:liteMode="true"
-                    app:mapType="normal"
-                    app:uiCompass="false"
-                    app:uiRotateGestures="false"
-                    app:uiScrollGestures="false"
-                    app:uiTiltGestures="false"
-                    app:uiZoomControls="false"
-                    app:uiZoomGestures="false">
-                </com.google.android.gms.maps.MapView>
-
-                <LinearLayout
-                    android:id="@+id/travel_vg"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:paddingRight="@dimen/activity_horizontal_margin"
-                    android:paddingTop="@dimen/activity_vertical_margin"
+                    android:text=","
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                    android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}"/>
+
+                <TextView
+                    android:id="@+id/distance_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/common_padding"
-                    android:layout_marginTop="@dimen/common_padding"
-                    android:checkedButton="@+id/ic_walking_rb"
-                    android:orientation="vertical"
-                    android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}">
+                    android:text="@{matrix.rows.get(0).elements.get(0).distance.text}"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                    android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}"/>
 
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/common_padding">
+                <com.pnikosis.materialishprogress.ProgressWheel
+                    android:id="@+id/changing_pb"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center_vertical"
+                    android:visibility="gone"
+                    app:matProg_barColor="@color/primary_dark_color"
+                    app:matProg_barWidth="3dp"
+                    app:matProg_fillRadius="true"
+                    app:matProg_progressIndeterminate="true"/>
+            </LinearLayout>
 
-                        <RadioButton
-                            android:id="@+id/ic_walking_rb"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:button="@drawable/ic_walking"
-                            android:onClick="@{handler.onModeSelected}"
-                            android:tag="walking"
-                            android:text="@{@string/lbl_walking}"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}">
 
-                        <CheckBox
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical|end"
-                            android:checked="true"
-                            android:clickable="false"
-                            android:theme="@style/CheckboxTheme"
-                            android:visibility='@{mode.equals("walking") ? View.VISIBLE : View.INVISIBLE}'/>
-                    </FrameLayout>
-
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/common_padding">
-
-                        <RadioButton
-                            android:id="@+id/ic_driving_rb"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:button="@drawable/ic_driving"
-                            android:onClick="@{handler.onModeSelected}"
-                            android:tag="driving"
-                            android:text="@{@string/lbl_driving}"/>
-
-                        <CheckBox
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical|right"
-                            android:checked="true"
-                            android:clickable="false"
-                            android:theme="@style/CheckboxTheme"
-                            android:visibility='@{mode.equals("driving") ? View.VISIBLE : View.INVISIBLE}'/>
-                    </FrameLayout>
-
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/common_padding">
-
-                        <RadioButton
-                            android:id="@+id/ic_bicycling_rb"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:button="@drawable/ic_bicycling"
-                            android:onClick="@{handler.onModeSelected}"
-                            android:tag="bicycling"
-                            android:text="@{@string/lbl_bicycling}"/>
-
-                        <CheckBox
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical|right"
-                            android:checked="true"
-                            android:clickable="false"
-                            android:theme="@style/CheckboxTheme"
-                            android:visibility='@{mode.equals("bicycling") ? View.VISIBLE : View.INVISIBLE}'/>
-                    </FrameLayout>
-
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <RadioButton
-                            android:id="@+id/ic_transit_rb"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:button="@drawable/ic_transit"
-                            android:onClick="@{handler.onModeSelected}"
-                            android:tag="transit"
-                            android:text="@{@string/lbl_transit}"/>
-
-                        <CheckBox
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical|right"
-                            android:checked="true"
-                            android:clickable="false"
-                            android:theme="@style/CheckboxTheme"
-                            android:visibility='@{mode.equals("transit") ? View.VISIBLE : View.INVISIBLE}'/>
-                    </FrameLayout>
-                </LinearLayout>
-
-                <LinearLayout
+                <EditText
+                    android:id="@+id/my_location_name_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:paddingRight="@dimen/activity_horizontal_margin"
-                    android:paddingTop="@dimen/activity_vertical_margin"
-                    android:layout_marginBottom="@dimen/common_padding"
-                    android:layout_marginTop="@dimen/common_padding"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/duration_tv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/common_padding"
-                        android:layout_marginRight="@dimen/common_padding"
-                        android:text="@{matrix.rows.get(0).elements.get(0).duration.text}"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                        android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text=","
-                        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                        android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}"/>
-
-                    <TextView
-                        android:id="@+id/distance_tv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/common_padding"
-                        android:text="@{matrix.rows.get(0).elements.get(0).distance.text}"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                        android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}"/>
-                </LinearLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:paddingBottom="@dimen/activity_vertical_margin"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:paddingRight="@dimen/activity_horizontal_margin"
-                    android:paddingTop="@dimen/activity_vertical_margin"
-                    android:layout_height="wrap_content"
-                    android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}">
-
-                    <EditText
-                        android:id="@+id/my_location_name_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_toLeftOf="@+id/save_my_location_btn"
-                        android:hint="@string/lbl_name"
-                        android:inputType="textNoSuggestions"
-                        android:lines="1"
-                        android:maxLines="1"
-                        android:minLines="1"/>
-
-                    <com.playground.notification.ui.MaterialRippleLayout
-                        android:id="@+id/save_my_location_btn"
-                        style="@style/MaterialRippleLayout"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:onClick="@{handler.onSaveMyLocationClicked}"
-                        android:paddingBottom="5dp"
-                        android:paddingLeft="5dp"
-                        android:paddingRight="5dp"
-                        android:paddingTop="5dp">
-
-                        <ImageView
-                            android:id="@+id/save_my_location_iv"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:background="@color/common_transparent"
-                            android:src="@drawable/ic_save"/>
-                    </com.playground.notification.ui.MaterialRippleLayout>
-                </RelativeLayout>
-
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/save_my_location_btn"
+                    android:hint="@string/lbl_name"
+                    android:inputType="textNoSuggestions"
+                    android:lines="1"
+                    android:maxLines="1"
+                    android:minLines="1"/>
 
                 <com.playground.notification.ui.MaterialRippleLayout
-                    android:id="@+id/share_ground_btn"
+                    android:id="@+id/save_my_location_btn"
                     style="@style/MaterialRippleLayout"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical|end"
-                    android:layout_marginTop="5dp"
-                    android:onClick="@{handler.onShareGround}"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:onClick="@{handler.onSaveMyLocationClicked}"
                     android:paddingBottom="5dp"
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
-                    android:paddingTop="5dp"
-                    android:visibility="gone">
+                    android:paddingTop="5dp">
 
                     <ImageView
-                        android:id="@+id/share_ground_iv"
+                        android:id="@+id/save_my_location_iv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
+                        android:layout_gravity="center_vertical"
                         android:background="@color/common_transparent"
-                        android:src="@drawable/ic_share_ground"/>
+                        android:src="@drawable/ic_save"/>
                 </com.playground.notification.ui.MaterialRippleLayout>
-            </LinearLayout>
+            </RelativeLayout>
 
 
-        </ScrollView>
+            <com.playground.notification.ui.MaterialRippleLayout
+                android:id="@+id/share_ground_btn"
+                style="@style/MaterialRippleLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|end"
+                android:layout_marginTop="5dp"
+                android:onClick="@{handler.onShareGround}"
+                android:paddingBottom="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="5dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/share_ground_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@color/common_transparent"
+                    android:src="@drawable/ic_share_ground"/>
+            </com.playground.notification.ui.MaterialRippleLayout>
+        </LinearLayout>
 
 
-        <com.pnikosis.materialishprogress.ProgressWheel
-            android:id="@+id/changing_pb"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:visibility="gone"
-            app:matProg_barColor="@color/primary_dark_color"
-            app:matProg_fillRadius="true"
-            app:matProg_progressIndeterminate="true"/>
+    </ScrollView>
 
-
-        <com.pnikosis.materialishprogress.ProgressWheel
-            android:id="@+id/loading_pb"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_centerInParent="true"
-            android:visibility="@{matrix!=null ? View.GONE : View.VISIBLE}"
-            app:matProg_barColor="@color/primary_dark_color"
-            app:matProg_fillRadius="true"
-            app:matProg_progressIndeterminate="true"/>
-    </RelativeLayout>
 </layout>

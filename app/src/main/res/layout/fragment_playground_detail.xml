@@ -46,8 +46,7 @@
     <RelativeLayout
         android:id="@+id/playground_detail_vg"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/common_white">
+        android:layout_height="match_parent" >
 
         <com.playground.notification.ui.ib.appcompat.IBCompatNestedScrollView
             android:id="@id/ib_compat_nested_scrollview"
@@ -65,7 +64,6 @@
 
 
                 <TextView
-                    android:id="@+id/location_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/common_padding"

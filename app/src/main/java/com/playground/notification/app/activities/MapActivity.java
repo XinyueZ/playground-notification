@@ -951,6 +951,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		}
 		mMap.setIndoorEnabled(true);
 		mMap.setBuildingsEnabled(false);
+		mMap.getUiSettings().setMapToolbarEnabled(false);
 
 		boolean isSmall = getResources().getBoolean(R.bool.is_small_screen);
 		mMap.setPadding(!isSmall ?

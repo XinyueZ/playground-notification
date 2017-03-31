@@ -312,7 +312,7 @@
                             <View
                                 android:layout_width="150dp"
                                 android:layout_height="10dp"
-                                android:layout_marginBottom="15dp"
+                                android:layout_marginBottom="20dp"
                                 android:background="@drawable/round_gray_rectangle"
                                 android:visibility="@{matrix!=null ? View.GONE : View.VISIBLE}"/>
 
@@ -344,7 +344,7 @@
                             <View
                                 android:layout_width="150dp"
                                 android:layout_height="10dp"
-                                android:layout_marginBottom="15dp"
+                                android:layout_marginBottom="20dp"
                                 android:background="@drawable/round_gray_rectangle"
                                 android:visibility="@{matrix!=null ? View.GONE : View.VISIBLE}"/>
 
@@ -376,7 +376,7 @@
                             <View
                                 android:layout_width="150dp"
                                 android:layout_height="10dp"
-                                android:layout_marginBottom="15dp"
+                                android:layout_marginBottom="20dp"
                                 android:background="@drawable/round_gray_rectangle"
                                 android:visibility="@{matrix!=null ? View.GONE : View.VISIBLE}"/>
 
@@ -407,7 +407,7 @@
                             <View
                                 android:layout_width="150dp"
                                 android:layout_height="10dp"
-                                android:layout_marginBottom="15dp"
+                                android:layout_marginBottom="20dp"
                                 android:background="@drawable/round_gray_rectangle"
                                 android:visibility="@{matrix!=null ? View.GONE : View.VISIBLE}"/>
                         </LinearLayout>

@@ -121,14 +121,6 @@
 
                 </LinearLayout>
 
-                <com.pnikosis.materialishprogress.ProgressWheel
-                    android:id="@+id/loading_pb"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_gravity="center"
-                    app:matProg_barColor="@color/primary_dark_color"
-                    app:matProg_fillRadius="true"
-                    app:matProg_progressIndeterminate="true"/>
             </FrameLayout>
         </com.playground.notification.ui.MaterialRippleLayout>
     </android.support.v7.widget.CardView>

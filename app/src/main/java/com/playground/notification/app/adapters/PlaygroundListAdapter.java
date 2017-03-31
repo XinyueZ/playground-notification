@@ -223,7 +223,6 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 				}
 			});
 			mBinding.itemBarFl.setSelected(getAdapterPosition() == mPlaygroundListAdapter.mLastSelectedPosition);
-			mBinding.loadingPb.setVisibility(View.GONE);
 		}
 
 		private void setAddress(final Playground playground) {
@@ -290,7 +289,6 @@ public final class PlaygroundListAdapter extends RecyclerView.Adapter<Playground
 				mBinding.itemMapview.onDestroy();
 			}
 			mBinding.locationRb.setRating(0f);
-			mBinding.loadingPb.setVisibility(View.VISIBLE);
 			mBinding.itemBarFl.setSelected(false);
 		}
 

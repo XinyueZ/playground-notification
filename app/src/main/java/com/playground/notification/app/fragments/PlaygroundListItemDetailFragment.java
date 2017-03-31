@@ -283,7 +283,6 @@ public final class PlaygroundListItemDetailFragment extends AppFragment implemen
 	private void setupGoogleTools() {
 		mBinding.locationContainer.getLayoutParams().width = (int) App.Instance.getListItemWidth() * 2;
 		mBinding.locationContainer.getLayoutParams().height = (int) App.Instance.getListItemHeight() * 2;
-		mBinding.loadingImgPb.setVisibility(View.VISIBLE);
 		mBinding.map.getMapAsync(mOnMapReadyCallback);
 		mBinding.streetview.getStreetViewPanoramaAsync(mOnStreetViewPanoramaReadyCallback);
 	}
@@ -316,7 +315,6 @@ public final class PlaygroundListItemDetailFragment extends AppFragment implemen
 
 				((ViewGroup.MarginLayoutParams)mBinding.weatherLayout.getLayoutParams()).topMargin = com.chopping.utils.Utils.getActionBarHeight(App.Instance);
 			}
-			mBinding.loadingImgPb.setVisibility(View.GONE);
 		}
 	};
 
@@ -339,7 +337,6 @@ public final class PlaygroundListItemDetailFragment extends AppFragment implemen
 	private final OnMapReadyCallback mOnMapReadyCallback = new OnMapReadyCallback() {
 		@Override
 		public void onMapReady(GoogleMap googleMap) {
-			mBinding.loadingImgPb.setVisibility(View.GONE);
 			if (googleMap != null) {
 				mCommonUIDelegate.onMapReady(googleMap);
 			}

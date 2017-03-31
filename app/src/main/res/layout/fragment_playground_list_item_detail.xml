@@ -47,14 +47,13 @@
         android:id="@+id/coordinator_layout_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/primary_color"
+        android:background="@color/yellow"
         android:fitsSystemWindows="true">
 
         <android.support.design.widget.CoordinatorLayout
             android:id="@+id/coordinator_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/common_white"
             android:fitsSystemWindows="true"
             >
 
@@ -121,16 +120,6 @@
                         </FrameLayout>
 
 
-                        <com.pnikosis.materialishprogress.ProgressWheel
-                            android:id="@+id/loading_img_pb"
-                            android:layout_width="25dp"
-                            android:layout_height="25dp"
-                            android:layout_gravity="center"
-                            app:matProg_barColor="@color/primary_dark_color"
-                            app:matProg_fillRadius="true"
-                            app:matProg_progressIndeterminate="true"/>
-
-
                         <com.playground.notification.ui.WeatherLayout
                             android:id="@+id/weather_layout"
                             android:layout_width="wrap_content"
@@ -141,6 +130,7 @@
                             android:layout_marginRight="@dimen/common_padding"
                             android:layout_marginStart="@dimen/common_padding"
                             android:layout_marginTop="@dimen/common_padding"/>
+
                     </FrameLayout>
 
 
@@ -283,7 +273,6 @@
                         </LinearLayout>
 
                         <LinearLayout
-                            android:id="@+id/travel_vg"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="@dimen/common_padding"
@@ -293,12 +282,13 @@
                             android:paddingLeft="@dimen/activity_horizontal_margin"
                             android:paddingRight="@dimen/activity_horizontal_margin"
                             android:paddingTop="@dimen/activity_vertical_margin"
-                            android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}">
+                            >
 
                             <FrameLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="@dimen/common_padding">
+                                android:layout_marginBottom="@dimen/common_padding"
+                                android:visibility="@{matrix==null ? View.GONE : View.VISIBLE}">
 
                                 <RadioButton
                                     android:id="@+id/ic_walking_rb"
@@ -319,10 +309,18 @@
                                     android:visibility='@{mode.equals("walking") ? View.VISIBLE : View.INVISIBLE}'/>
                             </FrameLayout>
 
+                            <View
+                                android:layout_width="150dp"
+                                android:layout_height="10dp"
+                                android:layout_marginBottom="15dp"
+                                android:background="@drawable/round_gray_rectangle"
+                                android:visibility="@{matrix!=null ? View.GONE : View.VISIBLE}"/>
+
                             <FrameLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="@dimen/common_padding">
+                                android:layout_marginBottom="@dimen/common_padding"
+                                android:visibility="@{matrix==null ? View.GONE : View.VISIBLE}">
 
                                 <RadioButton
                                     android:id="@+id/ic_driving_rb"
@@ -343,10 +341,18 @@
                                     android:visibility='@{mode.equals("driving") ? View.VISIBLE : View.INVISIBLE}'/>
                             </FrameLayout>
 
+                            <View
+                                android:layout_width="150dp"
+                                android:layout_height="10dp"
+                                android:layout_marginBottom="15dp"
+                                android:background="@drawable/round_gray_rectangle"
+                                android:visibility="@{matrix!=null ? View.GONE : View.VISIBLE}"/>
+
                             <FrameLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="@dimen/common_padding">
+                                android:layout_marginBottom="@dimen/common_padding"
+                                android:visibility="@{matrix==null ? View.GONE : View.VISIBLE}">
 
                                 <RadioButton
                                     android:id="@+id/ic_bicycling_rb"
@@ -367,9 +373,17 @@
                                     android:visibility='@{mode.equals("bicycling") ? View.VISIBLE : View.INVISIBLE}'/>
                             </FrameLayout>
 
+                            <View
+                                android:layout_width="150dp"
+                                android:layout_height="10dp"
+                                android:layout_marginBottom="15dp"
+                                android:background="@drawable/round_gray_rectangle"
+                                android:visibility="@{matrix!=null ? View.GONE : View.VISIBLE}"/>
+
                             <FrameLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
+                                android:layout_height="wrap_content"
+                                android:visibility="@{matrix==null ? View.GONE : View.VISIBLE}">
 
                                 <RadioButton
                                     android:id="@+id/ic_transit_rb"
@@ -389,7 +403,15 @@
                                     android:theme="@style/CheckboxTheme"
                                     android:visibility='@{mode.equals("transit") ? View.VISIBLE : View.INVISIBLE}'/>
                             </FrameLayout>
+
+                            <View
+                                android:layout_width="150dp"
+                                android:layout_height="10dp"
+                                android:layout_marginBottom="15dp"
+                                android:background="@drawable/round_gray_rectangle"
+                                android:visibility="@{matrix!=null ? View.GONE : View.VISIBLE}"/>
                         </LinearLayout>
+
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -400,6 +422,12 @@
                             android:paddingLeft="@dimen/activity_horizontal_margin"
                             android:paddingRight="@dimen/activity_horizontal_margin"
                             android:paddingTop="@dimen/activity_vertical_margin">
+
+                            <View
+                                android:layout_width="200dp"
+                                android:layout_height="10dp"
+                                android:background="@drawable/round_gray_rectangle"
+                                android:visibility="@{matrix==null ? View.VISIBLE : View.GONE}"/>
 
                             <TextView
                                 android:id="@+id/duration_tv"
@@ -494,16 +522,6 @@
 
 
                 </com.playground.notification.ui.ib.appcompat.IBCompatNestedScrollView>
-
-
-                <com.pnikosis.materialishprogress.ProgressWheel
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_gravity="center"
-                    android:visibility="@{matrix!=null ? View.GONE : View.VISIBLE}"
-                    app:matProg_barColor="@color/primary_dark_color"
-                    app:matProg_fillRadius="true"
-                    app:matProg_progressIndeterminate="true"/>
 
 
                 <FrameLayout

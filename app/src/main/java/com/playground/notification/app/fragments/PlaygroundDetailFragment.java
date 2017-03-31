@@ -199,7 +199,6 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 				@Override
 				public void onClick(View view) {
 					view.setVisibility(View.INVISIBLE);
-					mBinding.loadingImgPb.setVisibility(View.VISIBLE);
 					mShowMap = !mShowMap;
 					updateSwitchButton();
 					setGoogleMapOrStreetView();
@@ -310,12 +309,10 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 	}
 
 	private void showStreetView() {
-		mBinding.loadingImgPb.setVisibility(View.VISIBLE);
 		mBinding.streetview.getStreetViewPanoramaAsync(mOnStreetViewPanoramaReadyCallback);
 	}
 
 	private void showMapLite() {
-		mBinding.loadingImgPb.setVisibility(View.VISIBLE);
 		mBinding.map.getMapAsync(mOnMapReadyCallback);
 	}
 
@@ -334,7 +331,7 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 			} else {
 				mBinding.viewSwitchIbtn.performClick();
 			}
-			mBinding.loadingImgPb.setVisibility(View.GONE);
+			mBinding.mapPb.setVisibility(View.GONE);
 		}
 	};
 
@@ -363,7 +360,6 @@ public final class PlaygroundDetailFragment extends BottomSheetDialogFragment im
 			}
 			mBinding.streetview.setVisibility(View.INVISIBLE);
 			mBinding.map.setVisibility(View.VISIBLE);
-			mBinding.loadingImgPb.setVisibility(View.GONE);
 
 
 			if (googleMap != null) {

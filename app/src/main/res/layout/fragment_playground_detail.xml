@@ -78,7 +78,19 @@
                     android:paddingTop="@dimen/activity_vertical_margin"
                     android:text="@{matrix.destination.get(0)}"
                     android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                    android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}"/>
+                    android:visibility="@{matrix==null ? View.GONE : View.VISIBLE}"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:layout_marginBottom="@dimen/common_padding"
+                    android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:background="@drawable/round_gray_rectangle"
+                    android:visibility="@{matrix!=null ? View.GONE : View.VISIBLE}"/>
 
 
                 <FrameLayout
@@ -116,6 +128,16 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"/>
 
+                        <com.pnikosis.materialishprogress.ProgressWheel
+                            android:id="@+id/map_pb"
+                            android:layout_width="45dp"
+                            android:layout_height="45dp"
+                            android:layout_gravity="center"
+                            app:matProg_barColor="@color/brown_500"
+                            app:matProg_barWidth="3dp"
+                            app:matProg_fillRadius="true"
+                            app:matProg_progressIndeterminate="true"/>
+
                     </FrameLayout>
 
                     <com.playground.notification.ui.MaterialRippleLayout
@@ -136,14 +158,6 @@
                             app:srcCompat="@drawable/ic_streetview_vec"/>
                     </com.playground.notification.ui.MaterialRippleLayout>
 
-                    <com.pnikosis.materialishprogress.ProgressWheel
-                        android:id="@+id/loading_img_pb"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:layout_gravity="center"
-                        app:matProg_barColor="@color/primary_dark_color"
-                        app:matProg_fillRadius="true"
-                        app:matProg_progressIndeterminate="true"/>
 
                     <com.playground.notification.ui.WeatherLayout
                         android:id="@+id/weather_layout"
@@ -164,13 +178,13 @@
                     android:orientation="vertical"
                     android:paddingLeft="@dimen/activity_horizontal_margin"
                     android:paddingRight="@dimen/activity_horizontal_margin"
-                    android:paddingTop="@dimen/activity_vertical_margin"
-                    android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}">
+                    android:paddingTop="@dimen/activity_vertical_margin">
 
                     <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/common_padding">
+                        android:layout_marginBottom="@dimen/common_padding"
+                        android:visibility="@{matrix==null ? View.GONE : View.VISIBLE}">
 
                         <RadioButton
                             android:id="@+id/ic_walking_rb"
@@ -191,10 +205,18 @@
                             android:visibility='@{mode.equals("walking") ? View.VISIBLE : View.INVISIBLE}'/>
                     </FrameLayout>
 
+                    <View
+                        android:layout_width="150dp"
+                        android:layout_height="10dp"
+                        android:layout_marginBottom="15dp"
+                        android:background="@drawable/round_gray_rectangle"
+                        android:visibility="@{matrix!=null ? View.GONE : View.VISIBLE}"/>
+
                     <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/common_padding">
+                        android:layout_marginBottom="@dimen/common_padding"
+                        android:visibility="@{matrix==null ? View.GONE : View.VISIBLE}">
 
                         <RadioButton
                             android:id="@+id/ic_driving_rb"
@@ -215,10 +237,18 @@
                             android:visibility='@{mode.equals("driving") ? View.VISIBLE : View.INVISIBLE}'/>
                     </FrameLayout>
 
+                    <View
+                        android:layout_width="150dp"
+                        android:layout_height="10dp"
+                        android:layout_marginBottom="15dp"
+                        android:background="@drawable/round_gray_rectangle"
+                        android:visibility="@{matrix!=null ? View.GONE : View.VISIBLE}"/>
+
                     <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/common_padding">
+                        android:layout_marginBottom="@dimen/common_padding"
+                        android:visibility="@{matrix==null ? View.GONE : View.VISIBLE}">
 
                         <RadioButton
                             android:id="@+id/ic_bicycling_rb"
@@ -239,9 +269,17 @@
                             android:visibility='@{mode.equals("bicycling") ? View.VISIBLE : View.INVISIBLE}'/>
                     </FrameLayout>
 
+                    <View
+                        android:layout_width="150dp"
+                        android:layout_height="10dp"
+                        android:layout_marginBottom="15dp"
+                        android:background="@drawable/round_gray_rectangle"
+                        android:visibility="@{matrix!=null ? View.GONE : View.VISIBLE}"/>
+
                     <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:visibility="@{matrix==null ? View.GONE : View.VISIBLE}">
 
                         <RadioButton
                             android:id="@+id/ic_transit_rb"
@@ -261,6 +299,13 @@
                             android:theme="@style/CheckboxTheme"
                             android:visibility='@{mode.equals("transit") ? View.VISIBLE : View.INVISIBLE}'/>
                     </FrameLayout>
+
+                    <View
+                        android:layout_width="150dp"
+                        android:layout_height="10dp"
+                        android:layout_marginBottom="15dp"
+                        android:background="@drawable/round_gray_rectangle"
+                        android:visibility="@{matrix!=null ? View.GONE : View.VISIBLE}"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -272,6 +317,12 @@
                     android:paddingLeft="@dimen/activity_horizontal_margin"
                     android:paddingRight="@dimen/activity_horizontal_margin"
                     android:paddingTop="@dimen/activity_vertical_margin">
+
+                    <View
+                        android:layout_width="200dp"
+                        android:layout_height="10dp"
+                        android:background="@drawable/round_gray_rectangle"
+                        android:visibility="@{matrix==null ? View.VISIBLE : View.GONE}"/>
 
                     <TextView
                         android:id="@+id/duration_tv"
@@ -301,6 +352,18 @@
                         android:text="@{matrix.rows.get(0).elements.get(0).distance.text}"
                         android:textAppearance="@style/TextAppearance.AppCompat.Title"
                         android:visibility="@{matrix==null ? View.INVISIBLE : View.VISIBLE}"/>
+
+
+                    <com.pnikosis.materialishprogress.ProgressWheel
+                        android:id="@+id/changing_pb"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="center_vertical"
+                        android:visibility="gone"
+                        app:matProg_barColor="@color/primary_dark_color"
+                        app:matProg_barWidth="3dp"
+                        app:matProg_fillRadius="true"
+                        app:matProg_progressIndeterminate="true"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -338,29 +401,6 @@
 
         </com.playground.notification.ui.ib.appcompat.IBCompatNestedScrollView>
 
-
-        <com.pnikosis.materialishprogress.ProgressWheel
-            android:id="@+id/changing_pb"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:visibility="gone"
-            app:matProg_barColor="@color/primary_dark_color"
-            app:matProg_fillRadius="true"
-            app:matProg_progressIndeterminate="true"/>
-
-
-        <com.pnikosis.materialishprogress.ProgressWheel
-            android:id="@+id/loading_pb"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_centerInParent="true"
-            android:visibility="@{matrix!=null ? View.GONE : View.VISIBLE}"
-            app:matProg_barColor="@color/primary_dark_color"
-            app:matProg_fillRadius="true"
-            app:matProg_progressIndeterminate="true"/>
 
         <LinearLayout
             android:id="@+id/operating_bar_vg"

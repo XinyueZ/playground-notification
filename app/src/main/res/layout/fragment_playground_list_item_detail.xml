@@ -2,7 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        tools:context=".app.fragments.PlaygroundDetailFragment">
+        tools:context=".app.fragments.PlaygroundListItemDetailFragment">
 
     <data class="PlaygroundListItemDetailBinding">
 
@@ -465,7 +465,7 @@
                                 android:layout_gravity="center_vertical"
                                 android:visibility="gone"
                                 app:matProg_barColor="@color/primary_dark_color"
-                                app:matProg_barWidth="5dp"
+                                app:matProg_barWidth="3dp"
                                 app:matProg_fillRadius="true"
                                 app:matProg_progressIndeterminate="true"/>
                         </LinearLayout>

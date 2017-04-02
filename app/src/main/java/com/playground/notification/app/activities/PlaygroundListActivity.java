@@ -65,6 +65,8 @@ public final class PlaygroundListActivity extends AppBarActivity {
 		getSupportFragmentManager().beginTransaction()
 		                           .replace(contentLayout.getId(), mPlaygroundListFragment = PlaygroundListFragment.newInstance(App.Instance, playgroundList))
 		                           .commit();
+
+		setHasShownDataOnUI(true);
 	}
 
 	@Override

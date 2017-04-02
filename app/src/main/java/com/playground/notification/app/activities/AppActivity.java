@@ -75,6 +75,12 @@ public abstract class AppActivity extends BaseActivity {
 	private @Nullable CommonUIDelegate mCommonUIDelegate;
 
 	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		setErrorHandlerAvailable(true);
+	}
+
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		calcAppBarHeight();

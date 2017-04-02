@@ -159,6 +159,9 @@ public final class PlaygroundListFragment extends AppFragment implements GoogleM
 
 	public void refresh(List<? extends Playground> data) {
 		mPlaygroundListAdapter.refresh(data);
+		EventBus.getDefault()
+		        .post(new ListDetailClosedEvent());
+		closeDetailView();
 	}
 
 	@Override
@@ -185,6 +188,10 @@ public final class PlaygroundListFragment extends AppFragment implements GoogleM
 
 	@Override
 	public void onCameraMoveStarted(int i) {
+		closeDetailView();
+	}
+
+	private void closeDetailView() {
 		if (mBinding.playgroundListRv.isOpened()) {
 			mBinding.playgroundDetailContainerIbLayout.close();
 		}

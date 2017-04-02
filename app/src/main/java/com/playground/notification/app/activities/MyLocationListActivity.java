@@ -215,6 +215,7 @@ public final class MyLocationListActivity extends AppActivity {
 					     mAdp = new MyLocationListAdapter(MyLocationManager.getInstance()
 					                                                       .getCachedList(), (int) cellWidth, (int) cellHeight);
 					     mBinding.listRv.setAdapter(mAdp);
+					     setHasShownDataOnUI(true);
 				     }
 			     });
 		}

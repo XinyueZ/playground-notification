@@ -1046,6 +1046,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 								                                                 .getCachedList());
 							}
 							mPlaygroundClusterManager = PlaygroundClusterManager.showAvailablePlaygrounds(MapActivity.this, mMap, mAvailablePlaygroundList);
+							setHasShownDataOnUI(true);
 							if (!getResources().getBoolean(R.bool.is_small_screen)) {
 								deselectMenuItems();
 								refreshPlaygroundList(mAvailablePlaygroundList);

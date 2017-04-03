@@ -79,8 +79,7 @@ public final class PlaygroundListFragment extends AppFragment implements GoogleM
 	 * @param e Event {@link BackPressedEvent}.
 	 */
 	public void onEvent(BackPressedEvent e) {
-		getChildFragmentManager().popBackStack();
-		mBinding.playgroundDetailContainerIbLayout.close();
+		closeDetailView();
 	}
 	//------------------------------------------------
 
@@ -194,6 +193,7 @@ public final class PlaygroundListFragment extends AppFragment implements GoogleM
 	private void closeDetailView() {
 		if (mBinding.playgroundListRv.isOpened()) {
 			mBinding.playgroundDetailContainerIbLayout.close();
+			getChildFragmentManager().popBackStack();
 		}
 	}
 }

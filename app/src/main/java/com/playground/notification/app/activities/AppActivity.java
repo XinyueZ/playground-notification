@@ -219,19 +219,20 @@ public abstract class AppActivity extends BaseActivity {
 	 * @return {@code true} It's allowed.
 	 */
 	protected boolean shouldDoBackPressed() {
-		if (mCommonUIDelegate != null && mCommonUIDelegate.mItemSelected) {
-			EventBus.getDefault()
-			        .post(new BackPressedEvent());
-			return false;
-		} else {
-			return true;
-		}
+		return true;
 	}
 
 	@Override
 	public void onBackPressed() {
-		if (shouldDoBackPressed() && mCommonUIDelegate != null && !mCommonUIDelegate.onBackPressed()) {
-			super.onBackPressed();
+		if (mCommonUIDelegate != null && mCommonUIDelegate.mDrawerLayout != null && mCommonUIDelegate.isDrawerOpened()) {
+			mCommonUIDelegate.mDrawerLayout.closeDrawers();
+		} else if (mCommonUIDelegate != null && mCommonUIDelegate.mItemSelected) {
+			EventBus.getDefault()
+			        .post(new BackPressedEvent());
+		} else {
+			if (shouldDoBackPressed()) {
+				super.onBackPressed();
+			}
 		}
 	}
 
@@ -442,6 +443,14 @@ public abstract class AppActivity extends BaseActivity {
 			return false;
 		}
 
+		private boolean isDrawerOpened() {
+			if (mActivityWeakReference == null || mActivityWeakReference.get() == null || mNavigationView == null || mDrawerLayout == null || mAppListView == null) {
+				return false;
+			}
+			mActivityWeakReference.get();
+			return mDrawerLayout.isDrawerOpen(GravityCompat.START) || mDrawerLayout.isDrawerOpen(GravityCompat.END);
+		}
+
 		private void deselectMenuItems() {
 			if (mActivityWeakReference == null || mActivityWeakReference.get() == null || mNavigationView == null) {
 				return;
@@ -473,6 +482,9 @@ public abstract class AppActivity extends BaseActivity {
 				mDrawerLayout.closeDrawer(GravityCompat.START);
 				switch (menuItem.getItemId()) {
 					case R.id.action_favorite:
+						if (prefs.getCurrentSelectedMenuItem() == MENU_ITEM_FAVORITE) {
+							return true;
+						}
 						FavoriteManager favoriteManager = FavoriteManager.getInstance();
 						if (favoriteManager.getCachedList()
 						                   .size() > 0) {
@@ -497,6 +509,9 @@ public abstract class AppActivity extends BaseActivity {
 						}
 						break;
 					case R.id.action_near_ring:
+						if (prefs.getCurrentSelectedMenuItem() == MENU_ITEM_NEAR_RING) {
+							return true;
+						}
 						NearRingManager nearRingManager = NearRingManager.getInstance();
 						if (nearRingManager.getCachedList()
 						                   .size() > 0) {

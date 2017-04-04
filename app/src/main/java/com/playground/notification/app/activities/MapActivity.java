@@ -587,8 +587,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 
 	@Override
 	public void onBackPressed() {
-		Prefs.getInstance()
-		     .setCurrentSelectedMenuItem(MENU_ITEM_OTHERS);
+		deselectMenuItems();
 		if (shouldDoBackPressed()) {
 			if (mShowcaseMyLocationV != null) {
 				closeShowcaseMyLocation();

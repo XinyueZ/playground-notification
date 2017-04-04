@@ -51,7 +51,6 @@ public final class PlaygroundListActivity extends AppBarActivity {
 		}
 		Intent intent = new Intent(cxt, PlaygroundListActivity.class);
 		intent.putExtra(EXTRAS_PLAYGROUND_LIST, (Serializable) playgroundList);
-		intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		ActivityCompat.startActivity(cxt, intent, Bundle.EMPTY);
 	}
 

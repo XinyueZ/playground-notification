@@ -155,6 +155,7 @@ public final class PlaygroundListFragment extends AppFragment implements GoogleM
 			                         .replace(R.id.playground_detail_container, mPlaygroundListItemDetailFragment)
 			                         .addToBackStack(null)
 			                         .commit();
+			mPlaygroundListItemDetailFragment = null;
 		}
 		EventBus.getDefault()
 		        .post(new ListDetailShownEvent());
@@ -163,6 +164,7 @@ public final class PlaygroundListFragment extends AppFragment implements GoogleM
 
 	public void refresh(List<? extends Playground> data) {
 		mPlaygroundListAdapter.refresh(data);
+		closeDetailView();
 	}
 
 	@Override

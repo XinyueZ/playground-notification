@@ -184,9 +184,8 @@ public abstract class AppBarActivity extends AppActivity {
 	}
 
 	@Override
-	public void onBackPressed() {
-		Prefs.getInstance()
-		     .setCurrentSelectedMenuItem(MENU_ITEM_OTHERS);
-		super.onBackPressed();
+	protected boolean shouldDoBackPressed() {
+		deselectMenuItems();
+		return true;
 	}
 }

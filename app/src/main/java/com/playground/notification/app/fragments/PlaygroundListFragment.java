@@ -39,12 +39,13 @@ import de.greenrobot.event.EventBus;
  *
  * @author Xinyue Zhao
  */
-public final class PlaygroundListFragment extends AppFragment implements GoogleMap.OnCameraMoveStartedListener {
+public final class PlaygroundListFragment extends AppFragment implements GoogleMap.OnCameraMoveStartedListener,
+                                                                         IBBackgroundRecyclerView.Callback {
 	private static final String EXTRAS_PLAYGROUND_LIST = PlaygroundListFragment.class.getName() + ".EXTRAS.playground.list";
 	private static final int LAYOUT = R.layout.fragment_playground_list;
 	private PlaygroundListBinding mBinding;
 	private PlaygroundListAdapter mPlaygroundListAdapter;
-
+	private PlaygroundListItemDetailFragment mPlaygroundListItemDetailFragment;
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -60,16 +61,13 @@ public final class PlaygroundListFragment extends AppFragment implements GoogleM
 			return;
 		}
 		if (e.getSelectedV() != null) {
-			mBinding.playgroundListRv.setSelectedPosition(e.getPosition(), e.getPosition());
-			mBinding.playgroundDetailContainerIbLayout.openWithAnim(e.getSelectedV()
-			                                                         .get());
 			Playground playground = e.getPlayground();
 			Location location = App.Instance.getCurrentLocation();
 			LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-			getChildFragmentManager().beginTransaction()
-			                         .replace(R.id.playground_detail_container, PlaygroundListItemDetailFragment.newInstance(activity, currentLatLng.latitude, currentLatLng.longitude, playground))
-			                         .addToBackStack(null)
-			                         .commit();
+			mPlaygroundListItemDetailFragment = PlaygroundListItemDetailFragment.newInstance(activity, currentLatLng.latitude, currentLatLng.longitude, playground);
+			mBinding.playgroundListRv.setSelectedPosition(e.getPosition(), e.getPosition());
+			mBinding.playgroundDetailContainerIbLayout.openWithAnim(e.getSelectedV()
+			                                                         .get());
 		}
 	}
 
@@ -124,20 +122,7 @@ public final class PlaygroundListFragment extends AppFragment implements GoogleM
 		dividerItemDecoration.setDrawable(AppCompatResources.getDrawable(getContext(), R.drawable.divider_drawable));
 		mBinding.playgroundListRv.addItemDecoration(dividerItemDecoration);
 
-		mBinding.playgroundListRv.setCallback(new IBBackgroundRecyclerView.Callback() {
-			@Override
-			public void onClose(IBBackgroundRecyclerView v) {
-				EventBus.getDefault()
-				        .post(new ListDetailClosedEvent());
-			}
-
-			@Override
-			public void onOpen(IBBackgroundRecyclerView v) {
-				EventBus.getDefault()
-				        .post(new ListDetailShownEvent());
-			}
-
-		});
+		mBinding.playgroundListRv.setCallback(this);
 		mBinding.playgroundDetailContainerIbLayout.setIBBackground(mBinding.playgroundListRv);
 		mBinding.playgroundDetailContainerIbLayout.setCloseDistance((int) getResources().getDimension(R.dimen.drag_close_distance));
 		mBinding.playgroundDetailContainerIbLayout.setOnDragStateChangeListener(new IBLayoutBase.OnDragStateChangeListener() {
@@ -156,11 +141,28 @@ public final class PlaygroundListFragment extends AppFragment implements GoogleM
 
 	}
 
-	public void refresh(List<? extends Playground> data) {
-		mPlaygroundListAdapter.refresh(data);
+	@Override
+	public void onClose(IBBackgroundRecyclerView v) {
 		EventBus.getDefault()
 		        .post(new ListDetailClosedEvent());
-		closeDetailView();
+		getChildFragmentManager().popBackStack();
+	}
+
+	@Override
+	public void onOpen(IBBackgroundRecyclerView v) {
+		if (mPlaygroundListItemDetailFragment != null) {
+			getChildFragmentManager().beginTransaction()
+			                         .replace(R.id.playground_detail_container, mPlaygroundListItemDetailFragment)
+			                         .addToBackStack(null)
+			                         .commit();
+		}
+		EventBus.getDefault()
+		        .post(new ListDetailShownEvent());
+	}
+
+
+	public void refresh(List<? extends Playground> data) {
+		mPlaygroundListAdapter.refresh(data);
 	}
 
 	@Override
@@ -193,7 +195,6 @@ public final class PlaygroundListFragment extends AppFragment implements GoogleM
 	private void closeDetailView() {
 		if (mBinding.playgroundListRv.isOpened()) {
 			mBinding.playgroundDetailContainerIbLayout.close();
-			getChildFragmentManager().popBackStack();
 		}
 	}
 }

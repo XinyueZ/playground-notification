@@ -56,6 +56,8 @@ import java.lang.ref.WeakReference;
 
 import de.greenrobot.event.EventBus;
 
+import static android.support.v7.widget.RecyclerView.NO_POSITION;
+
 /**
  * A basic {@link android.app.Activity} for application.
  *
@@ -65,6 +67,9 @@ public abstract class AppActivity extends BaseActivity {
 	public static final int MENU_ITEM_OTHERS = -1;
 	private static final int MENU_ITEM_FAVORITE = 0;
 	private static final int MENU_ITEM_NEAR_RING = 1;
+	protected static final int REQ_APP_ACTIVITY = 0x123;
+	protected static final String RES_APP_ACTIVITY = AppActivity.class.getName() + ".EXTRAS.playground.res";
+	protected static final String EXTRAS_MENU_ITEM = AppActivity.class.getName() + ".EXTRAS.playground.menu.item";
 
 	/**
 	 * Height of App-bar.
@@ -214,11 +219,11 @@ public abstract class AppActivity extends BaseActivity {
 	}
 
 	/**
-	 * {@link #shouldDoBackPressed()} tells {@link AppActivity} that we should allow process back-press.
+	 * {@link #canBackPressedBeDone()} tells {@link AppActivity} that we should allow process back-press.
 	 *
 	 * @return {@code true} It's allowed.
 	 */
-	protected boolean shouldDoBackPressed() {
+	protected boolean canBackPressedBeDone() {
 		return true;
 	}
 
@@ -230,7 +235,7 @@ public abstract class AppActivity extends BaseActivity {
 			EventBus.getDefault()
 			        .post(new BackPressedEvent());
 		} else {
-			if (shouldDoBackPressed()) {
+			if (canBackPressedBeDone()) {
 				super.onBackPressed();
 			}
 		}
@@ -500,7 +505,9 @@ public abstract class AppActivity extends BaseActivity {
 								                                                        .getCachedList()
 								                                                        .size()));
 							} else {
-								PlaygroundListActivity.showInstance(activity, favoriteManager.getCachedList());
+								PlaygroundListActivity.showInstance(activity,
+								                                    favoriteManager.getCachedList(),
+								                                    itemNearRing);
 							}
 						} else {
 							prefs.setCurrentSelectedMenuItem(MENU_ITEM_OTHERS);
@@ -527,7 +534,9 @@ public abstract class AppActivity extends BaseActivity {
 								                                                        .getCachedList()
 								                                                        .size()));
 							} else {
-								PlaygroundListActivity.showInstance(activity, nearRingManager.getCachedList());
+								PlaygroundListActivity.showInstance(activity,
+								                                    nearRingManager.getCachedList(),
+								                                    itemFav);
 							}
 						} else {
 							prefs.setCurrentSelectedMenuItem(MENU_ITEM_OTHERS);
@@ -619,5 +628,28 @@ public abstract class AppActivity extends BaseActivity {
 		if (mCommonUIDelegate != null) {
 			mCommonUIDelegate.deselectMenuItems();
 		}
+	}
+
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(getIntent().getIntExtra(EXTRAS_MENU_ITEM, NO_POSITION) == NO_POSITION) {
+			super.onActivityResult(requestCode, resultCode, data);
+			return;
+		}
+		if (requestCode == AppActivity.REQ_APP_ACTIVITY && resultCode == RESULT_OK) {
+			int menuItem = data.getIntExtra(RES_APP_ACTIVITY, NO_POSITION);
+			switch (menuItem) {
+				case R.id.action_favorite:
+					Prefs.getInstance()
+					     .setCurrentSelectedMenuItem(MENU_ITEM_FAVORITE);
+					break;
+				case R.id.action_near_ring:
+					Prefs.getInstance()
+					     .setCurrentSelectedMenuItem(MENU_ITEM_NEAR_RING);
+					break;
+			}
+		}
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 }

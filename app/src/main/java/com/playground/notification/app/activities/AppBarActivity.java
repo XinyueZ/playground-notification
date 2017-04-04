@@ -184,7 +184,7 @@ public abstract class AppBarActivity extends AppActivity {
 	}
 
 	@Override
-	protected boolean shouldDoBackPressed() {
+	protected boolean canBackPressedBeDone() {
 		deselectMenuItems();
 		return true;
 	}

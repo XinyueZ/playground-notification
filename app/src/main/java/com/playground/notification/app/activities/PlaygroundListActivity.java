@@ -22,6 +22,8 @@ import com.playground.notification.utils.Prefs;
 import java.io.Serializable;
 import java.util.List;
 
+import static android.support.v7.widget.RecyclerView.NO_POSITION;
+
 /**
  * {@link PlaygroundListActivity} shows the list-mode of search result.
  * It works only for phone.
@@ -36,22 +38,35 @@ public final class PlaygroundListActivity extends AppBarActivity {
 	 */
 	private static final int MENU = R.menu.menu_list;
 
-	private PlaygroundListFragment mPlaygroundListFragment;
-
 
 	/**
 	 * Show single instance of {@link PlaygroundListActivity}
 	 *
 	 * @param cxt            {@link Activity}.
 	 * @param playgroundList A list of {@link Playground}.
+	 * @param menuItem       The menu to start this {@link Activity}.
 	 */
-	public static void showInstance(@NonNull Activity cxt, @Nullable List<? extends Playground> playgroundList) {
+	public static void showInstance(@NonNull Activity cxt, @Nullable List<? extends Playground> playgroundList, @Nullable MenuItem menuItem) {
 		if (playgroundList == null) {
 			return;
 		}
 		Intent intent = new Intent(cxt, PlaygroundListActivity.class);
 		intent.putExtra(EXTRAS_PLAYGROUND_LIST, (Serializable) playgroundList);
-		ActivityCompat.startActivity(cxt, intent, Bundle.EMPTY);
+		intent.putExtra(EXTRAS_MENU_ITEM,
+		                menuItem == null ?
+		                NO_POSITION :
+		                menuItem.getItemId());
+		ActivityCompat.startActivityForResult(cxt, intent, REQ_APP_ACTIVITY, Bundle.EMPTY);
+	}
+
+	@Override
+	protected void onCreate(@Nullable Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		//When this activity returns, the parent's menu-item must selected again.
+		int menuItem = getIntent().getIntExtra(EXTRAS_MENU_ITEM, NO_POSITION);
+		Intent result = new Intent();
+		result.putExtra(RES_APP_ACTIVITY, menuItem);
+		setResult(RESULT_OK, result);
 	}
 
 	@Override
@@ -62,21 +77,12 @@ public final class PlaygroundListActivity extends AppBarActivity {
 		}
 		List<? extends Playground> playgroundList = (List<? extends Playground>) intent.getSerializableExtra(EXTRAS_PLAYGROUND_LIST);
 		getSupportFragmentManager().beginTransaction()
-		                           .replace(contentLayout.getId(), mPlaygroundListFragment = PlaygroundListFragment.newInstance(App.Instance, playgroundList))
+		                           .replace(contentLayout.getId(), PlaygroundListFragment.newInstance(App.Instance, playgroundList))
 		                           .commit();
 
 		setHasShownDataOnUI(true);
 	}
 
-	@Override
-	protected void onNewIntent(Intent intent) {
-		super.onNewIntent(intent);
-		setIntent(intent);
-		if (mPlaygroundListFragment != null) {
-			List<? extends Playground> playgroundList = (List<? extends Playground>) intent.getSerializableExtra(EXTRAS_PLAYGROUND_LIST);
-			mPlaygroundListFragment.refresh(playgroundList);
-		}
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -111,6 +117,4 @@ public final class PlaygroundListActivity extends AppBarActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
-
 }

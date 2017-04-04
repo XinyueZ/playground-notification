@@ -585,17 +585,6 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		mBinding.addPaneV.requestLayout();
 	}
 
-	@Override
-	public void onBackPressed() {
-		deselectMenuItems();
-		if (shouldDoBackPressed()) {
-			if (mShowcaseMyLocationV != null) {
-				closeShowcaseMyLocation();
-			} else {
-				super.onBackPressed();
-			}
-		}
-	}
 
 	/**
 	 * Close current showcase of my-location.
@@ -1169,7 +1158,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		menuLayoutV.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				PlaygroundListActivity.showInstance(MapActivity.this, mAvailablePlaygroundList);
+				PlaygroundListActivity.showInstance(MapActivity.this, mAvailablePlaygroundList, null);
 			}
 		});
 	}
@@ -1343,14 +1332,20 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	}
 
 	@Override
-	protected boolean shouldDoBackPressed() {
-		boolean should = super.shouldDoBackPressed();
-		final Prefs prefs = Prefs.getInstance();
-		LatLng latLng = prefs.getSelectedPlayground();
-		if (latLng != null) {
-			prefs.setSelectedPlayground(null);
-			mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+	protected boolean canBackPressedBeDone() {
+		boolean should = super.canBackPressedBeDone();
+		if (mShowcaseMyLocationV != null) {
+			closeShowcaseMyLocation();
 			should = false;
+		} else {
+			final Prefs prefs = Prefs.getInstance();
+			LatLng latLng = prefs.getSelectedPlayground();
+			if (latLng != null) {
+				prefs.setSelectedPlayground(null);
+				mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+				should = false;
+			}
+			deselectMenuItems();
 		}
 		return should;
 	}

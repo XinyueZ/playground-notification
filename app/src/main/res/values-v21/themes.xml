@@ -33,4 +33,8 @@
     <style name="MyLocationTheme" parent="AppTheme" >
         <item name="android:statusBarColor">@color/primary_dark_color</item>
     </style>
+
+    <style name="StreetViewTheme" parent="AppTheme" >
+        <item name="android:statusBarColor">@color/primary_dark_color</item>
+    </style>
 </resources>

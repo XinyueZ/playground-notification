@@ -79,7 +79,8 @@
 
 
         <activity
-            android:name=".app.activities.StreetViewActivity"/>
+            android:name=".app.activities.StreetViewActivity"
+            android:theme="@style/StreetViewTheme"/>
 
         <activity
             android:name=".app.activities.PlaygroundListActivity"

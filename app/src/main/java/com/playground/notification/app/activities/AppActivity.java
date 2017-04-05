@@ -634,6 +634,8 @@ public abstract class AppActivity extends BaseActivity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(getIntent().getIntExtra(EXTRAS_MENU_ITEM, NO_POSITION) == NO_POSITION) {
+			Prefs.getInstance()
+			     .setCurrentSelectedMenuItem(MENU_ITEM_OTHERS);
 			super.onActivityResult(requestCode, resultCode, data);
 			return;
 		}

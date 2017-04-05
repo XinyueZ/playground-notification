@@ -109,7 +109,7 @@ public final class PlaygroundListActivity extends AppBarActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.action_map_mode:
-				supportFinishAfterTransition();
+				MapActivity.showInstance(this);
 				break;
 			case R.id.action_about:
 				showDialogFragment(AboutDialogFragment.newInstance(this), null);

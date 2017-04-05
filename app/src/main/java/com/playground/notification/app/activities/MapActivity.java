@@ -118,6 +118,7 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
 import static android.support.v4.content.PermissionChecker.PERMISSION_GRANTED;
+import static android.support.v7.widget.RecyclerView.NO_POSITION;
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
 import static pub.devrel.easypermissions.AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE;
 
@@ -266,7 +267,7 @@ public final class MapActivity extends AppActivity implements LocationListener,
 		Intent intent = new Intent(cxt, MapActivity.class);
 		intent.putExtra(EXTRAS_GROUND, ground);
 		intent.setFlags(FLAG_ACTIVITY_SINGLE_TOP | FLAG_ACTIVITY_CLEAR_TOP);
-		ActivityCompat.startActivity(cxt, intent, null);
+		ActivityCompat.startActivity(cxt, intent, Bundle.EMPTY);
 	}
 
 	/**
@@ -277,7 +278,8 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	public static void showInstance(Activity cxt) {
 		Intent intent = new Intent(cxt, MapActivity.class);
 		intent.setFlags(FLAG_ACTIVITY_SINGLE_TOP | FLAG_ACTIVITY_CLEAR_TOP);
-		ActivityCompat.startActivity(cxt, intent, null);
+		intent.putExtra(EXTRAS_MENU_ITEM, NO_POSITION);
+		ActivityCompat.startActivityForResult(cxt, intent, REQ_APP_ACTIVITY, Bundle.EMPTY);
 	}
 
 	@Override

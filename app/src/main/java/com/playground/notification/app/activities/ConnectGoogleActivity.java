@@ -62,7 +62,7 @@ public final class ConnectGoogleActivity extends AppActivity {
 	public static void showInstance(Activity cxt) {
 		Intent intent = new Intent(cxt, ConnectGoogleActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		ActivityCompat.startActivityForResult(cxt, intent, REQ, null);
+		ActivityCompat.startActivityForResult(cxt, intent, REQ, Bundle.EMPTY);
 	}
 
 	@Override

@@ -81,6 +81,7 @@ import com.playground.notification.app.fragments.AboutDialogFragment;
 import com.playground.notification.app.fragments.MyLocationFragment;
 import com.playground.notification.app.fragments.PlaygroundDetailFragment;
 import com.playground.notification.app.fragments.PlaygroundListFragment;
+import com.playground.notification.bus.LogoutEvent;
 import com.playground.notification.bus.OpenPlaygroundEvent;
 import com.playground.notification.bus.PinSelectedEvent;
 import com.playground.notification.bus.RefreshListEvent;
@@ -220,6 +221,15 @@ public final class MapActivity extends AppActivity implements LocationListener,
 	//Subscribes, event-handlers
 	//------------------------------------------------
 
+	/**
+	 * Handler for {@link LogoutEvent}.
+	 *
+	 * @param e Event {@link LogoutEvent}.
+	 */
+	public void onEvent(LogoutEvent e) {
+		EventBus.getDefault().removeStickyEvent(e);
+		ConnectGoogleActivity.showInstance(this);
+	}
 	/**
 	 * Handler for {@link PinSelectedEvent}.
 	 *

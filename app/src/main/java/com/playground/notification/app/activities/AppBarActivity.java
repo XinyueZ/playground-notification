@@ -18,6 +18,7 @@ import android.widget.FrameLayout;
 import com.playground.notification.R;
 import com.playground.notification.bus.ListDetailClosedEvent;
 import com.playground.notification.bus.ListDetailShownEvent;
+import com.playground.notification.bus.LogoutEvent;
 import com.playground.notification.databinding.AppBarLayoutBinding;
 import com.playground.notification.sync.FavoriteManager;
 import com.playground.notification.sync.MyLocationManager;
@@ -57,6 +58,14 @@ public abstract class AppBarActivity extends AppActivity {
 		showToolbar();
 	}
 
+	/**
+	 * Handler for {@link LogoutEvent}.
+	 *
+	 * @param e Event {@link LogoutEvent}.
+	 */
+	public void onEvent(LogoutEvent e) {
+		finish();
+	}
 	//------------------------------------------------
 
 	@Override

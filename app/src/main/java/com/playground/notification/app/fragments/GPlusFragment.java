@@ -18,7 +18,7 @@ import com.chopping.bus.CloseDrawerEvent;
 import com.chopping.utils.Utils;
 import com.playground.notification.R;
 import com.playground.notification.app.App;
-import com.playground.notification.app.activities.ConnectGoogleActivity;
+import com.playground.notification.bus.LogoutEvent;
 import com.playground.notification.databinding.FragmentGplusBinding;
 import com.playground.notification.geofence.GeofenceManagerService;
 import com.playground.notification.sync.FavoriteManager;
@@ -72,7 +72,8 @@ public final class GPlusFragment extends AppFragment {
 				logout();
 				Activity activity = getActivity();
 				if (activity != null) {
-					ConnectGoogleActivity.showInstance(activity);
+					EventBus.getDefault().postSticky(new LogoutEvent());
+//					ConnectGoogleActivity.showInstance(activity);
 				}
 			}
 		});

@@ -12,3 +12,4 @@ gradle/*.*
 gradle/
 gradle*
 !gradle.properties
+google_maps_api.xml

@@ -15,3 +15,16 @@ allprojects {
         maven { url "https://raw.github.com/bmob/bmob-android-sdk/master" }
     }
 }
+
+
+ext {
+    appCompatVersion = "25.3.1"
+    multidexVersion = "1.0.1"
+    mapsUtilsVersion = "0.5+"
+    easyPermissions="0.2.0"
+    playService = "10.2.0"
+    imageLoad = "3.7.0"
+    retrofit = "1.9.0"
+    okhttp = "2.0.0"
+    okio = "1.4.0"
+}
